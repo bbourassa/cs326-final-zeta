@@ -10,7 +10,7 @@ Name: Sara Whitlock GitHub Username:
 Name: Meghan Arnold GitHub Username: arnol24m
 
 Innovative Idea:
-Combining the branching and merging functional concept of GitHub with a calendar sharing functionality.
+The primary innovative idea for our project is to combine the branching and merging functionality that is essential to GitHub with the calendar sharing aspects of Google Calendar and the to-do list capabilities that many scheduling tools employ. While no aspect of this is wholly unique, we hope that students will be able to leverage these functionalities during group projects. It could also be useful in business settings, household coordination, and general task management.
 
 Important Components:
 Our application is broken into the following components:
