@@ -28,4 +28,4 @@ Our application is broken into the following components:
 
 <p>A potential layout and example (very likely to change, this is preliminary!</p>
 
-<img src="docs/possible-layout.jpg">
+![Image of Layout](docs/possible-layout.jpg)
