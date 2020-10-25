@@ -84,3 +84,15 @@
 .form-inline {
     display: flex;
 }
+
+.new-cal {
+    margin-left: 10px;
+}
+
+.sub-cal {
+    margin-left: 10px;
+}
+
+.gen-cal {
+    margin-left: 10px;
+}
