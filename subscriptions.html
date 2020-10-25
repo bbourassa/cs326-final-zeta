@@ -19,18 +19,83 @@
                 </ul>    
         </nav>
 
-            <br>
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Select Calendar
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="#">CS 326</a>
-                    <a class="dropdown-item" href="#">Econ 203H</a>
-                    <a class="dropdown-item" href="#">CS 311</a>
-                    <a class="dropdown-item" href="#">Stats 240</a>
+        <br>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-2">
+                    <h4>Subscriptions:</h4>
+                    <div class = "btn-group-vertical" role ="group" id="subscribed-cals" aria-label="All calendars">
+                        <button type="button" class="btn btn-secondary">Example</button>
+                        <button type="button" class="btn btn-light">Vertical buttons</button>
+                        <br>
+                        <button type="button" class="btn btn-secondary">Make a new calendar</button>
+
+                        <!-- To be removed and filled programatically -->
+
+                    </div>
                 </div>
+                <div class="col-sm-7">
+                     <!-- Grid view of calendar events -->
+                     <table class="table">
+                         <thead>
+                             <tr>
+                                <th scope="col">
+                                    <input type="checkbox" aria-label="Checkbox for selection">
+                                </th>
+                                <th scope="col">Item Name</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Status</th>
+
+                             </tr>
+                         </thead>
+                         <tbody>
+                            <td scope="row">
+                                <input type="checkbox" aria-label="Checkbox for selection">
+                            </td>
+                            <td>Example Task</th>
+                            <td>10/27/2020</th>
+                            <td>Action Item</td>
+                            <td>
+                                <div class="progress">
+                                <div class="progress-bar" role="progressbar"  style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                              </div>
+                            </td>   
+                         </tbody>
+                     </table>
+
+                </div>
+                <div class="col-md">
+                    <!-- Settings -->
+                    <div class="list-group">
+                        <li class="list-group-item list-group-item-dark">Settings</li>
+                        <a href="#" class="list-group-item list-group-item-action">Add selected items to my calendar</a>
+                        <a href="#" class="list-group-item list-group-item-action">Add all action items to my calendar</a>
+                        <a href="#" class="list-group-item list-group-item-action">Add all events to my calendar</a>
+                        <a href="#" class="list-group-item list-group-item-action">Update items on my calendar</a>
+                        <li class="list-group-item list-group-item-dark">Admin Settings</li>
+                        <a href="#" class="list-group-item list-group-item-action">Create an event</a>
+                        <a href="#" class="list-group-item list-group-item-action">Delete an event</a>
+                        <a href="#" class="list-group-item list-group-item-action">Delete this calendar</a>
+                        
+                        <li class="list-group-item list-group-item-action">Public Calendar: Off/On
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                                <label class="custom-control-label" for="customSwitch1"></label>
+                              </div>
+                            </li>
+                    </div>
+                        
+
+                
+                    
+                    
+                    
+                </div>
+
             </div>
+        </div>
+            
 
     </body>
 </html>
