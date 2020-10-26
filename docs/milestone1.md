@@ -14,7 +14,7 @@
 <p>Subscriptions View</p>
 <img src="subview.png">
 <p>Subscriptions Edit View</p>
-<img src="subedit.png">
+<img src="editview.png">
 <p>Calendar Gallery View</p>
 <img src="calgal.png">
 
