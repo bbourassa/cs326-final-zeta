@@ -6,7 +6,17 @@
 
 <h2>Wireframes<h2>
 <p>Login View</p>
-<img src="/login.png">
+<img src="login.png">
+<p>Sign Up View</p>
+<img src="signup.png">
+<p>Personal Calendar View</p>
+<img src="personalcal.png">
+<p>Subscriptions View</p>
+<img src="subview.png">
+<p>Subscriptions Edit View</p>
+<img src="subedit.png">
+<p>Calendar Gallery View</p>
+<img src="calgal.png">
 
 <h2>Divsision of Labor<h2>
 <ul>
