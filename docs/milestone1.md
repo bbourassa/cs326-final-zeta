@@ -12,7 +12,7 @@
 <p>Personal Calendar View</p>
 <img src="personalcal.png">
 <p>Subscriptions View</p>
-<img src="subview.png">
+<img src="viewsub.png">
 <p>Subscriptions Edit View</p>
 <img src="editview.png">
 <p>Calendar Gallery View</p>
