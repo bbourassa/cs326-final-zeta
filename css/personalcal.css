@@ -1,37 +1,38 @@
 .clearfix:after,
 .calendar ol:after {
-  content: ".";
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
 }
 .month {
-  font-size: 3.5rem;
+    font-size: 3.5rem;
 }
 .calendar ol li {
-  float: left;
-  width: 14.28571%;
+    float: left;
+    width: 14.28571%;
 }
 .day-names li {
-  margin-bottom: 0.2rem;
+    margin-bottom: 0.2rem;
 }
 .days li {
-  border-bottom: 1px solid #eee;
-  min-height: 8rem;
+    border-bottom: 1px solid #eee;
+    min-height: 8rem;
 }
 .days li .date {
-  margin: 0.5rem 0;
+    margin: 0.5rem 0;
 }
 .days li .event {
-  font-size: 0.75rem;
-  padding: 0.4rem;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  border-radius: 4rem;
-  margin-bottom: 1px;
+    font-size: 0.75rem;
+    padding: 0.4rem;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    border-radius: 4rem;
+    margin-bottom: 1px;
 }
 .days li:nth-child(n+29) {
-  border-bottom: none;
+    border-bottom: none;
 }
+
