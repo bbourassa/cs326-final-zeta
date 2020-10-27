@@ -18,15 +18,15 @@
 <p>Calendar Gallery View</p>
 <img src="calgal.png">
 <p>Login View</p>
-<img src="loginscreenshot.jpg">
+<img src="loginscreenshot.JPG">
 <p>Sign Up View</p>
-<img src="signupscreenshot.jpg">
+<img src="signupscreenshot.JPG">
 <p>Personal Calendar View</p>
-<img src="personalcalscreenshot.jpg">
+<img src="personalcalscreenshot.JPG">
 <p>Subscriptions View</p>
-<img src="subscriptionsscreenshot.jpg">
+<img src="subscriptionsscreenshot.JPG">
 <p>Calendar Gallery View</p>
-<img src="calgalscreenshot.jpg">
+<img src="calgalscreenshot.JPG">
 
 <h2>Screenshots</h2>
 
