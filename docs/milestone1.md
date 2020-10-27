@@ -22,6 +22,18 @@
 <p>Calendar Gallery View</p>
     <p>Calendar Gallery allows you to subscribe to one of our calendars, create a new calendar, or subscribe to one. The page itself is mostly self-explanatory. For our previous calendars, you simply hit "ADD CALENDAR" which will redirect you to the new calendar in "My Subscriptions." For generating a new calendar, you give your calendar a new name and hit the button and are redirected to "My Subscriptions" where you will have a new calendar with admin settings and an example action item and event in your table for reference. Subscriptions are done by pasting the link of an already made calendar by a user into the input and the button also redirects to that particular calendar on your subscriptions page.</p>
 <img src="calgal.png">
+<p>Login View</p>
+<img src="loginscreenshot.jpg">
+<p>Sign Up View</p>
+<img src="signupscreenshot.jpg">
+<p>Personal Calendar View</p>
+<img src="personalcalscreenshot.jpg">
+<p>Subscriptions View</p>
+<img src="subscriptionsscreenshot.jpg">
+<p>Calendar Gallery View</p>
+<img src="calgalscreenshot.jpg">
+
+<h2>Screenshots</h2>
 
 <h2>Divsision of Labor<h2>
 <ul>
