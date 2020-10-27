@@ -1,5 +1,4 @@
-<title>Team Zeta</title>
-<h1>Milestone 1</h1>
+<h1>Team Zeta: Milestone 1</h1>
 
 <h2>Data Interactions<h2>
 <p>The user will be able to save their own calendar, access public calendars, and accessed private, shared calendars. Information saved will include the event date/time, a description about it, and completion status. The idea is that users can customize their personal calendars to reflect the items that they take from the calendars they create along with other users' previously generated calendar. They are also provided the option to use a premade calendar by us - there are four: song of the day, daily podcast, daily news, and daily mantra - which allows them to add something fun they want to pick up daily and gives them something new to look forward to viewing. All of these items will be added via links so that the user can navigate straight to the source of the item. For items on calendars, the ability to add relevant information will also include link sharing to any important links or documents that may be necessary. The generation of a public calendar will also be done by creating a link to the calendar that can be shared with others. This is how you can access your family and friends' calendars.</p>
