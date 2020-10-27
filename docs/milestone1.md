@@ -31,7 +31,7 @@
 <p>Subscriptions View</p>
 <img src="subscriptionsscreenshot.JPG">
 <p>Calendar Gallery View</p>
-<img src="calgalscreenshot.JPG">
+<img src="calgalscreenshto.JPG">
 
 <h2>Screenshots</h2>
 
