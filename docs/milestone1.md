@@ -17,6 +17,18 @@
 <img src="editview.png">
 <p>Calendar Gallery View</p>
 <img src="calgal.png">
+<p>Login View</p>
+<img src="loginscreenshot.jpg">
+<p>Sign Up View</p>
+<img src="signupscreenshot.jpg">
+<p>Personal Calendar View</p>
+<img src="personalcalscreenshot.jpg">
+<p>Subscriptions View</p>
+<img src="subscriptionsscreenshot.jpg">
+<p>Calendar Gallery View</p>
+<img src="calgalscreenshot.jpg">
+
+<h2>Screenshots</h2>
 
 <h2>Divsision of Labor<h2>
 <ul>
