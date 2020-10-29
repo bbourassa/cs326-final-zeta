@@ -35,4 +35,16 @@
 .days li:nth-child(n+29) {
     border-bottom: none;
 }
-
+textarea {
+    min-width: 453px;
+    resize: none;
+}
+.modal-dialog {
+    min-width: 600px !important;
+}
+label {
+    margin-right: 10px;
+}
+.item-checked {
+    text-decoration: line-through;
+}
