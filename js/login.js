@@ -24,10 +24,8 @@ function redirectToPasswordRet() {
 const signInButton = document.getElementById('signIn');
 signInButton.addEventListener('click', redirectToCal);
 
-const retPassButton = document.getElementById('passRet');
-retPassButton.addEventListener('click', redirectToPasswordRet);
-
 const inputs = document.getElementsByTagName('input');
 for(let input of inputs) {
     input.addEventListener('keyup', checkValidation);
 }
+console.log('hit');
