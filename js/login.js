@@ -9,16 +9,16 @@ FUTURE:  will check that user login info is valid
          before allowing sign-in to occur
 */
 function checkValidation() {
-    let setActive = true;
-    for(let input of inputs) {
-        if(input.value === '') {
-            setActive = false;
-            break;
-        }
-    }
-    if (setActive === true) {
-        signInButton.disabled = false;
-    }
+	let setActive = true;
+	for(let input of inputs) {
+		if(input.value === '') {
+			setActive = false;
+			break;
+		}
+	}
+	if (setActive === true) {
+		signInButton.disabled = false;
+	}
 }
 
 /*
@@ -26,7 +26,7 @@ FOR NOW: redirects to the Personal Calendar
          page on sign-in
 */
 function redirectToCal() {
-    window.location = '../html/personalcal.html';
+	window.location = '../html/personalcal.html';
 }
 
 /*
@@ -39,5 +39,5 @@ signInButton.addEventListener('click', redirectToCal);
 
 const inputs = document.getElementsByTagName('input');
 for(let input of inputs) {
-    input.addEventListener('keyup', checkValidation);
+	input.addEventListener('keyup', checkValidation);
 }
