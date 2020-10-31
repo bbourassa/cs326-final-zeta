@@ -34,21 +34,16 @@
                         <h4 class="text-uppercase font-weight-bold">Subscriptions</h4>
                         <div class = "btn-group-vertical" role ="group" id="subscribed-cals" aria-label="All calendars">
                             <!-- To be removed and filled programatically -->
-                            <!-- <button type="button" class="btn btn-secondary text-uppercase">Show All</button>
-                            <button type="button" class="btn btn-light">Daily Mantra</button>
-                            <button type="button" class="btn btn-info">Greek 200 - Admin</button>
-                            <button type="button" class="btn btn-light">CS 326</button>
-                            <button type="button" class="btn btn-light">Riding Team</button> -->
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="card shadow bg-white item-table">
                      <!-- Grid view of calendar events -->
-                     <h2 class="card-title text-uppercase font-weight-bold">Greek 200</h2>
+                     <h2 class="card-title text-uppercase font-weight-bold" id="cal-name">Greek 200</h2>
                      <table class="table table-responsive">
                          <thead>
-                             <tr>
+                             <tr   id="table-head">
                                 <th scope="col">
                                     <input type="checkbox" aria-label="Checkbox for selection">
                                 </th>
@@ -56,10 +51,10 @@
                                 <th scope="col" class="text-uppercase font-weight-bold">Date</th>
                                 <th scope="col" class="text-uppercase font-weight-bold">Category</th>
                                 <th scope="col" class="text-uppercase font-weight-bold">Status</th>
-                                <th scope="col" class="text-uppercase font-weight-bold">Edit</th>
+                                <th scope="col" class="text-uppercase font-weight-bold" id="table-edit">Edit</th>
                              </tr>
                          </thead>
-                         <tbody>
+                         <tbody id="eventTable">
                             <tr>
                                 <td>
                                     <input type="checkbox" aria-label="Checkbox for selection">
