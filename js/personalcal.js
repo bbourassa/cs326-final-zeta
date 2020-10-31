@@ -9,18 +9,18 @@ FUTURE:  -will update ALL card date for daily view on date
           button click
 */
 function switchDate(day) {
-    let dayViewTitle = document.getElementById('dayViewTitle');
-    let currentDate = document.getElementById(day);
-    let lastDate;
-    if (lastDay !== 0) {
-        lastDate = document.getElementById(lastDay);
-        lastDate.classList.remove('btn-secondary');
-    }
-    dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[currentMonth] + ' ' + day + ' ' + currentYear;
-    if(day !== currentDay.getDate()) {
-        currentDate.classList.add('btn-secondary');
-        lastDay = day;
-    }
+	let dayViewTitle = document.getElementById('dayViewTitle');
+	let currentDate = document.getElementById(day);
+	let lastDate;
+	if (lastDay !== 0) {
+		lastDate = document.getElementById(lastDay);
+		lastDate.classList.remove('btn-secondary');
+	}
+	dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[currentMonth] + ' ' + day + ' ' + currentYear;
+	if(day !== currentDay.getDate()) {
+		currentDate.classList.add('btn-secondary');
+		lastDay = day;
+	}
 }
 
 /*
@@ -33,35 +33,35 @@ FUTURE:  -will associate appropriate item data with each
           day on calendar
 */
 function setupCalendar(month, year) {
-    let firstDay = (new Date(year, month)).getDay();
-    let calendar = document.getElementById('calendarBody');
-    ;
-    currentMonthAndYear.innerHTML += ' ' + months[month] + ' ' + year;
+	let firstDay = (new Date(year, month)).getDay();
     
-    let days = document.getElementById('days');
-    let totalDays = daysInMonth(month, year);
-    for(let i = 1; i < firstDay+1; i++) {
-        let newDateItem = document.createElement('li');
-        let newDateDiv = document.createElement('div');
-        newDateDiv.classList.add('btn');
-        newDateDiv.classList.add('date');
-        newDateItem.appendChild(newDateDiv);
-        days.appendChild(newDateItem); 
-    }
-    for(let i = 1; i < totalDays+1; i++) {
-        let newDateItem = document.createElement('li');
-        let newDateDiv = document.createElement('div');
-        newDateDiv.classList.add('btn');
-        newDateDiv.classList.add('date');
-        newDateDiv.id = i;
-        newDateDiv.innerHTML = i;
-        newDateDiv.addEventListener('click', () => switchDate(i));
-        newDateItem.appendChild(newDateDiv);
-        days.appendChild(newDateItem);
-        if(i == currentDay.getDate()) {
-            newDateDiv.classList.add('btn-danger');
-        }
-    }
+	let currentMonthAndYear = document.getElementById('currentMonthAndYear');
+	currentMonthAndYear.innerHTML += ' ' + months[month] + ' ' + year;
+    
+	let days = document.getElementById('days');
+	let totalDays = daysInMonth(month, year);
+	for(let i = 1; i < firstDay+1; i++) {
+		let newDateItem = document.createElement('li');
+		let newDateDiv = document.createElement('div');
+		newDateDiv.classList.add('btn');
+		newDateDiv.classList.add('date');
+		newDateItem.appendChild(newDateDiv);
+		days.appendChild(newDateItem); 
+	}
+	for(let i = 1; i < totalDays+1; i++) {
+		let newDateItem = document.createElement('li');
+		let newDateDiv = document.createElement('div');
+		newDateDiv.classList.add('btn');
+		newDateDiv.classList.add('date');
+		newDateDiv.id = i;
+		newDateDiv.innerHTML = i;
+		newDateDiv.addEventListener('click', () => switchDate(i));
+		newDateItem.appendChild(newDateDiv);
+		days.appendChild(newDateItem);
+		if(i == currentDay.getDate()) {
+			newDateDiv.classList.add('btn-danger');
+		}
+	}
     
 }
 
@@ -70,7 +70,7 @@ FOR NOW: assists in generating the correct number of days
          based on the month and year that we are looking for
 */
 function daysInMonth(month, year) {
-    return (32 - new Date(month, year, 32).getDate());
+	return (32 - new Date(month, year, 32).getDate());
 }
 
 /*
@@ -83,9 +83,9 @@ FUTURE:  will update item information based on status in
          for what is due on which day
 */
 function setUpDayCard() {
-    let dayViewTitle = document.getElementById('dayViewTitle');
-    let today = currentDay.getDate();
-    dayViewTitle.innerHTML += ' ' + months[currentMonth] + ' ' + today + ' ' + currentYear;
+	let dayViewTitle = document.getElementById('dayViewTitle');
+	let today = currentDay.getDate();
+	dayViewTitle.innerHTML += ' ' + months[currentMonth] + ' ' + today + ' ' + currentYear;
 }
 
 /*
@@ -94,8 +94,8 @@ FUTURE:  will update all modal information to reflect
          the information for the item being stored
 */
 function switchItem(itemName) {
-    let itemTitle = document.getElementById('modalTitle');
-    itemTitle.innerHTML = itemName;
+	let itemTitle = document.getElementById('modalTitle');
+	itemTitle.innerHTML = itemName;
 }
 
 /*
@@ -122,5 +122,5 @@ setUpDayCard();
 const dayItems = document.getElementsByClassName('day-item');
 
 for (let item of dayItems) {
-    item.addEventListener('click', () => switchItem(item.textContent));
+	item.addEventListener('click', () => switchItem(item.textContent));
 }
