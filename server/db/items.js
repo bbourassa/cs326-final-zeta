@@ -99,3 +99,16 @@ exports.edit = function(req, res) {
 exports.remove = function(req, res) {
     res.sendStatus(204);
 };
+
+exports.listSubscribed = function(req, res) {
+    res.json(req.cals.map(cal => {
+        const itemList = items.filter(item => item.calendar_id === cal.id);
+        const obj = {
+            id: cal.id,
+            name: cal.name,
+            owner: cal.owner_id,
+            items: itemList
+        };
+        return obj;
+    }));
+};

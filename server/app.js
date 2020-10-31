@@ -39,7 +39,9 @@ app.delete('/api/users/:user/todos/:todo', todos.remove);
 app.use('/api/users/:user/subscriptions', subs.loadUser);
 app.get('/api/users/:user/subscriptions', subs.list);
 app.post('/api/users/:user/subscriptions', subs.create);
+app.use('/api/users/:user/subscriptions/calendars', cals.loadSubscribed);
 app.get('/api/users/:user/subscriptions/calendars', cals.listSubscribed);
+app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
 app.get('/api/users/:user/subscriptions/:sub', subs.find);
 app.delete('/api/users/:user/subscriptions/:sub', subs.remove);
 
