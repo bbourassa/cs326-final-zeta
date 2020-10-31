@@ -23,6 +23,7 @@
     "express": "^4.17.1"
   },
   "devDependencies": {
+    "eslint": "^7.12.1",
     "faker": "^5.1.0"
   }
 }

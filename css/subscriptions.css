@@ -11,3 +11,9 @@
 .item-table {
     padding: .5em;
 }
+.modal-dialog {
+    min-width: 600px !important;
+}
+label {
+    margin-right: 10px;
+}
