@@ -55,11 +55,16 @@ exports.remove = function(req, res) {
 };
 
 exports.listOurs = function(req, res) {
-    res.json(cals.filter(cal => cal.owner_id === 0 && !(cal.personal)));
+    res.json(cals.filter(cal => cal.owner_id === 0 && !cal.personal));
 };
 
+exports.loadSubscribed = function(req, res, next) {
+    req.cals = req.subs.map(sub => cals[sub.calendar_id]);
+    next();
+}
+
 exports.listSubscribed = function(req, res) {
-    res.json(req.subs.map(sub => cals[sub.calendar_id]));
+    res.json(req.cals);
 };
 
 exports.updatePersonal = function(req, res) {

@@ -13,7 +13,8 @@ users.push({
     firstName: 'Jane',
     lastName: 'Doe',
     email: 'jdoe@example.com',
-    password: 'password'
+    password: 'password',
+    calendar_id: 0
 });
 for (let i = 1; i < sizes.users; ++i) {
     const first = faker.name.firstName();
