@@ -12,25 +12,23 @@ function loadCalendars(userId){
             id:'0',
             name:'CS 221', 
             admin:false,
-            events: [
-                {name: 'Zoom meeting', date:'11/3/2020'},
-                ],
-            action: [
-                {name: 'Milestone 2', date:'11/6/2020'}, 
-                {name:'Homework 9', date: '11/2/2020'}
+            items: [
+                {name: 'Zoom meeting', date:'11/3/2020', type:'event', status:"Not Started"},
+                {name: 'Milestone 2', date:'11/6/2020', type:'action',status : "In Progress"}, 
+                {name:'Homework 9', date: '11/2/2020', type:'action', status:"In Progress"}
             ]
+            
         },
         {
             id:'1',
             name:'Greek 200', 
             admin:true,
-            events: [
-                {name:'Agape Test', date:'10/31/2020'},
-                {name:'Alpha', date:'11/5/2020'}
+            items: [
+                {name:'Agape Test', date:'10/31/2020', type:'event',status:"Not Started"},
+                {name:'Alpha', date:'11/5/2020', type:'event', status:"Not Started"},
+                {name: 'Reading', date:'11/7/2020', type:'action', status:"In Progress"}
             ],
-            action: [
-                {name: 'Reading', date:'11/7/2020'}
-            ]
+          
         }
     ];
     
@@ -113,6 +111,7 @@ function loadTable(calId){
         edit.classList.add("text-uppercase", "font-weight-bold");
         document.getElementById("table-head").appendChild(edit);
     }
+    //load each item in this calendar
     thisCal.items.forEach((item) => {
         let anItem = document.createElement('tr');
 
@@ -152,19 +151,61 @@ function loadTable(calId){
             editBtn.setAttribute("type", "button");
             editBtn.classList.add("btn", "btn-outline-primary", "btn-sm");
             editBtn.innerHTML = "Edit";
+            editBtn.addEventListener("click", ()=> loadModal(item));
+            document.getElementById("saveChanges").addEventListener("click", () =>{
+                commitChanges();
+            });
             editable.appendChild(editBtn);
+
             anItem.appendChild(editable);
+
         }
 
         document.getElementById('eventTable').appendChild(anItem);
+
     });
 
     
 
 }
 
-function makeAllListners(){
+/**
+ * Fills the modal with the appropriate information
+
+ * @param {Item object} item 
+ */
+function loadModal(item){
+    document.getElementById("itemName").value = item.name;
+    document.getElementById("statusModal").value = item.status;
+    document.getElementById("typeItem").value = item.type;
+    document.getElementById("due").value = item.date;
+    if(item.details !== undefined){
+        document.getElementById("detailsText").value = item.details;
+    }
+    if(item.links !== undefined){
+        document.getElementById("itemLinks").value = item.links;
+    }
 
 }
-// window.onload(loadCalendars());
+
+/**
+ * Closes editing modal and opens a new confirmation modal.
+ */
+function commitChanges(){
+    //close modal and open confirmation modal
+}
+
 loadCalendars(0);
+/**
+ * {
+            id:'1',
+            name:'Greek 200', 
+            admin:true,
+            items: [
+                {name:'Agape Test', date:'10/31/2020', type:'event',status:"Not Started"},
+                {name:'Alpha', date:'11/5/2020', type:'event', status:"Not Started"},
+                {name: 'Reading', date:'11/7/2020', type:'action', status:"In Progress"}
+            ],
+          
+        }
+ */

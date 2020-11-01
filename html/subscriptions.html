@@ -118,7 +118,7 @@
 
             </div>
         </div>
-        
+        <!-- Editing modal -->
         <div class="modal fade" id="itemEditCenter" tabindex="-1" role="dialog" aria-labelledby="itemEditCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
@@ -141,18 +141,18 @@
                             <div class="form-group">
                                 <label class="font-weight-bold">
                                     Item Description:
-                                    <textarea class="form-control shadow-sm" rows="3" type="text" placeholder="Add any details regarding the item"></textarea>
+                                    <textarea class="form-control shadow-sm" rows="3" type="text" placeholder="Add any details regarding the item" id="detailsText"></textarea>
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label class="font-weight-bold">Item Type:
-                                    <select class="custom-select shadow-sm">
-                                        <option selected value="Action Item">Action Item</option>
-                                        <option value="Event">Event</option>
+                                    <select class="custom-select shadow-sm" id="typeItem">
+                                        <option selected value="action">Action Item</option>
+                                        <option value="event">Event</option>
                                       </select>
                                 </label>
                                 <label class="font-weight-bold">Item Status:
-                                    <select class="custom-select shadow-sm">
+                                    <select class="custom-select shadow-sm" id="statusModal">
                                         <option selected value="Not Started">
                                             Not Started
                                         </option>
@@ -167,20 +167,20 @@
                             </div>
                             <div class="form-group ">
                                 <label class="font-weight-bold">Due Date:
-                                    <input class="form-control shadow-sm" type="datetime-local" placeholder="When is this event or activity?">
+                                    <input class="form-control shadow-sm" type="datetime-local" placeholder="When is this event or activity?" id="due">
                                 </label>
                             </div>
                             
                             <div class="form-group item-on-table">
                                 <label class="font-weight-bold">Related Links:
-                                    <textarea class="form-control shadow-sm" rows="3" type="text" placeholder="Add related links if necessary here"></textarea>
+                                    <textarea class="form-control shadow-sm" rows="3" type="text" placeholder="Add related links if necessary here" id="itemLinks"></textarea>
                                 </label>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary shadow-sm">Save changes</button>
+                        <button type="button" class="btn btn-primary shadow-sm" id="saveChanges">Save changes</button>
                     </div>
                 </div>
             </div>
