@@ -9,10 +9,10 @@ faker.seed(579);
 const users = [];
 users.push({
     id: 0,
-    username: 'janedoe101',
-    firstName: 'Jane',
-    lastName: 'Doe',
-    email: 'jdoe@example.com',
+    username: 'LifeOnTrack',
+    firstName: 'No',
+    lastName: 'Name',
+    email: 'lifeontrack@example.com',
     password: 'password',
     calendar_id: 0
 });
