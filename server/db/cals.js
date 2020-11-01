@@ -2,11 +2,15 @@
 
 // fake calendar database
 
+const fs = require('fs');
+const path = require('path');
 const sizes = require('./fakeSizes');
 const faker = require('faker');
 faker.seed(329);
+const filename = path.resolve(__dirname, './ours/ourcals.json');
 
-const cals = [];
+const cals = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : [];
+
 for (let i = 0; i < sizes.users; ++i) {
     cals.push({
         id: i,
@@ -19,7 +23,7 @@ for (let i = sizes.users; i < sizes.cals; ++i) {
     cals.push({
         id: i,
         name: faker.lorem.words(),
-        owner_id: faker.random.number(sizes.users - 1),
+        owner_id: faker.random.number({ min: 1, max: sizes.users - 1 }),
         personal: false
     });
 }
