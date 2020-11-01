@@ -2,12 +2,16 @@
 
 // fake item database
 
+const fs = require('fs');
+const path = require('path');
 const sizes = require('./fakeSizes');
 const faker = require('faker');
 faker.seed(640);
 const refDate = new Date(2020, 10, 1);
+const filename = path.resolve(__dirname, './ours/ouritems.json');
 
-const items = [];
+const items = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : [];
+
 for (let i = 0; i < sizes.items; ++i) {
     const name = faker.lorem.words(),
         type = faker.random.boolean() ? 'event' : 'action',

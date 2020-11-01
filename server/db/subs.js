@@ -2,16 +2,20 @@
 
 // fake subscription database
 
+const fs = require('fs');
+const path = require('path');
 const sizes = require('./fakeSizes');
 const faker = require('faker');
 faker.seed(194);
+const filename = path.resolve(__dirname, './ours/oursubs.json');
 
-const subs = [];
+const subs = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : [];
+
 for (let i = 0; i < sizes.subs; ++i) {
     subs.push({
         id: i,
-        user_id: faker.random.number(sizes.users - 1),
-        calendar_id: faker.random.number({ min: sizes.users, max: sizes.cals - 1 })
+        user_id: faker.random.number({ min: 1, max: sizes.users - 1 }),
+        calendar_id: faker.random.number({ min: sizes.users, max: sizes.cals + 3 })
     });
 }
 

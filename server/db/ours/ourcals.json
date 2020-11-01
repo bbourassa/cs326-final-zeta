@@ -1,0 +1,30 @@
+[
+	{
+		"id": 20,
+		"name": "Song of the Day",
+		"owner_id": 0,
+		"personal": false,
+		"description": "Add this calendar to your subscriptions to get a new song recommendation every day for one month"
+	},
+	{
+		"id": 21,
+		"name": "Daily Mantras",
+		"owner_id": 0,
+		"personal": false,
+		"description": "Add this calendar to your subscriptons to get a daily mantra every day for a month"
+	},
+	{
+		"id": 22,
+		"name": "Daily Updates",
+		"owner_id": 0,
+		"personal": false,
+		"description": "Get notified about current events for the next month by adding this calendar to your subscriptions"
+	},
+	{
+		"id": 23,
+		"name": "Daily Podcasts",
+		"owner_id": 0,
+		"personal": false,
+		"description": "Get daily recommendations for the next month about interesting podcasts by adding this calendar to your subscriptions"
+	}
+]
