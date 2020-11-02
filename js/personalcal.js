@@ -33,10 +33,11 @@ FUTURE:  -will associate appropriate item data with each
           day on calendar
 */
 function setupCalendar(month, year) {
-	let firstDay = (new Date(year, month)).getDay();
+    let firstDay = (new Date(year, month)).getDay();
+    console.log(firstDay);
     
 	let currentMonthAndYear = document.getElementById('currentMonthAndYear');
-	currentMonthAndYear.innerHTML += ' ' + months[month] + ' ' + year;
+    //currentMonthAndYear.innerHTML += ' ' + months[month] + ' ' + year;
     
 	let days = document.getElementById('days');
 	let totalDays = daysInMonth(month, year);
