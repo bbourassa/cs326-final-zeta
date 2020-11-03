@@ -175,6 +175,54 @@ function updateCalendar() {
         switchCalendar(monthValue.value, yearValue.value);
     }
 }
+
+function switchToDoLocation(toDo) {
+    //toDo.checked = true;
+    console.log(toDo.checked);
+    console.log(toDo);
+}
+
+function setUpdateForm() {
+    let currentType = document.getElementById('itemType');
+    let dueDateSetup = document.getElementById('dueDateSet');
+    dueDateSetup.innerHTML = '';
+    console.log(currentType.value);
+    if(currentType.value === 'Action Item') {
+        console.log('enter');
+        let dueDateLabel = document.createElement('label');
+        dueDateLabel.classList.add('font-weight-bold');
+        dueDateLabel.innerHTML = 'Due Date:'
+        let dueDateInput = document.createElement('input');
+        dueDateInput.classList.add('form-control');
+        dueDateInput.classList.add('shadow-sm');
+        dueDateInput.type = 'datetime-local';
+        dueDateInput.placeholder = 'When is the Item Due?';
+        dueDateLabel.appendChild(dueDateInput);
+        dueDateSetup.appendChild(dueDateLabel);
+    } else if (currentType.value === 'Event') {
+        let startTimeLabel = document.createElement('label');
+        startTimeLabel.classList.add('font-weight-bold');
+        startTimeLabel.innerHTML = 'Start Time: ';
+        let startTimeInput = document.createElement('input');
+        startTimeInput.classList.add('form-control');
+        startTimeInput.classList.add('shadow-sm');
+        startTimeInput.type = 'datetime-local';
+        startTimeInput.placeholder = 'When does the event start?';
+        startTimeLabel.appendChild(startTimeInput);
+        dueDateSetup.appendChild(startTimeLabel);
+        let endTimeLabel = document.createElement('label');
+        endTimeLabel.classList.add('font-weight-bold');
+        endTimeLabel.innerHTML = 'End Time: ';
+        let endTimeInput = document.createElement('input');
+        endTimeInput.classList.add('form-control');
+        endTimeInput.classList.add('shadow-sm');
+        endTimeInput.type = 'datetime-local';
+        endTimeInput.placeholder = 'When does the event end?';
+        endTimeLabel.appendChild(endTimeInput);
+        dueDateSetup.appendChild(endTimeLabel);
+    }
+}
+
 /*
 helper variables to pass information about the date
 */
@@ -196,6 +244,7 @@ daily view
 setUpCalendar(currentMonth, currentYear);
 setUpDayCard();
 setUpCalendarSelection();
+setUpdateForm();
 
 const dayItems = document.getElementsByClassName('day-item');
 
@@ -208,3 +257,13 @@ const calSelections = document.getElementsByClassName('calendar-selection');
 for (let item of calSelections) {
     item.addEventListener('change', updateCalendar);
 }
+
+const toDoActions = document.getElementsByClassName('to-dos');
+
+for (let item of toDoActions) {
+    item.addEventListener('click', () => switchToDoLocation(item.innerHTML));
+}
+
+let dueDateInput = document.getElementById('itemType');
+
+dueDateInput.addEventListener('change', setUpdateForm);
