@@ -69,7 +69,7 @@ app.get('/api/todos', todos.listAll);
 app.get('/api/subscriptions', subs.listAll);
 app.get('/api/items', items.listAll);
 
-const port = 3000;
+const port = process.env.PORT;
 app.listen(port, () => {
-	console.log('Listening on http://localhost:' + process.env.PORT);
+	console.log('Listening on http://localhost:' + port);
 });
