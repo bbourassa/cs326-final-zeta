@@ -1,6 +1,7 @@
   
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
   "name": "life-on-track",
   "version": "1.0.0",
   "description": "",
@@ -32,6 +33,8 @@
   }
 }
 =======
+=======
+>>>>>>> baad0734d095e9208a1777e097d14339c91e2b14
     "name": "life-on-track",
     "version": "1.0.0",
     "description": "",
@@ -61,5 +64,9 @@
       "eslint": "^7.12.1",
       "faker": "^5.1.0"
     }
+<<<<<<< HEAD
   }
 >>>>>>> baad073... fixing start error
+=======
+  }
+>>>>>>> baad0734d095e9208a1777e097d14339c91e2b14
