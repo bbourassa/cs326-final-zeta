@@ -77,7 +77,19 @@ FOR NOW: assists in generating the correct number of days
          based on the month and year that we are looking for
 */
 function daysInMonth(month, year) {
-	return (32 - new Date(month, year, 32).getDate());
+    let thirtyDays = ['April', 'June', 'September', 'November'];
+    let thirtyOneDays = ['January', 'March', 'May', 'July', 'August', 'October', 'December'];
+    if(thirtyDays.includes(months[month])) {
+        return 30;
+    } else if (thirtyOneDays.includes(months[month])) {
+        return 31;
+    } else {
+        if(year % 4 === 0) {
+            return 29;
+        } else {
+            return 28;
+        }
+    }
 }
 
 /*
@@ -137,6 +149,7 @@ function switchCalendar(selectedMonth, selectedYear) {
     let days = document.getElementById('days');
     days.innerHTML = '';
     let totalDays = daysInMonth(months.indexOf(selectedMonth), selectedYear);
+    console.log(totalDays);
 	for(let i = 1; i < firstDay+1; i++) {
 		let newDateItem = document.createElement('li');
 		let newDateDiv = document.createElement('div');
