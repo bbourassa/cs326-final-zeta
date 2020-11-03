@@ -1,4 +1,3 @@
-  
 {
   "name": "life-on-track",
   "version": "1.0.0",
@@ -9,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"node server/app.js",
+    "start":"node app.js",
     "lint": "eslint"
   },
   "repository": {
