@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
  {
 =======
   
@@ -7,6 +8,9 @@
 >>>>>>> d22f606... fix start error
 {
 >>>>>>> d2be7b4... fix package.json
+=======
+{
+>>>>>>> 69a6041... fix start error
   "name": "life-on-track",
   "version": "1.0.0",
   "description": "",
@@ -37,7 +41,11 @@
     "faker": "^5.1.0"
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 =======
 }
 >>>>>>> d2be7b4... fix package.json
+=======
+}
+>>>>>>> 69a6041... fix start error
