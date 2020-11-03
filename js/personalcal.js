@@ -149,7 +149,6 @@ function switchCalendar(selectedMonth, selectedYear) {
     let days = document.getElementById('days');
     days.innerHTML = '';
     let totalDays = daysInMonth(months.indexOf(selectedMonth), selectedYear);
-    console.log(totalDays);
 	for(let i = 1; i < firstDay+1; i++) {
 		let newDateItem = document.createElement('li');
 		let newDateDiv = document.createElement('div');
@@ -169,7 +168,6 @@ function switchCalendar(selectedMonth, selectedYear) {
 		newDateItem.appendChild(newDateDiv);
         days.appendChild(newDateItem);
         if(i === currentDay.getDate() && months.indexOf(selectedMonth) === currentMonth && parseInt(selectedYear) === currentYear) {
-            console.log('enter');
 			newDateDiv.classList.add('btn-danger');
 		}
 	}
@@ -197,42 +195,20 @@ function switchToDoLocation(toDo) {
 
 function setUpdateForm() {
     let currentType = document.getElementById('itemType');
-    let dueDateSetup = document.getElementById('dueDateSet');
-    dueDateSetup.innerHTML = '';
-    console.log(currentType.value);
+    let itemStatus = document.getElementById('showStatus');
+    let dueDateShow = document.getElementById('showDueDate');
+    let startTimeShow = document.getElementById('showStartTime');
+    let endTimeShow = document.getElementById('showEndTime');
     if(currentType.value === 'Action Item') {
-        console.log('enter');
-        let dueDateLabel = document.createElement('label');
-        dueDateLabel.classList.add('font-weight-bold');
-        dueDateLabel.innerHTML = 'Due Date:'
-        let dueDateInput = document.createElement('input');
-        dueDateInput.classList.add('form-control');
-        dueDateInput.classList.add('shadow-sm');
-        dueDateInput.type = 'datetime-local';
-        dueDateInput.placeholder = 'When is the Item Due?';
-        dueDateLabel.appendChild(dueDateInput);
-        dueDateSetup.appendChild(dueDateLabel);
+        itemStatus.style.display = 'inline-block';
+        dueDateShow.style.display = 'inline-block';
+        startTimeShow.style.display = 'none';
+        endTimeShow.style.display = 'none';
     } else if (currentType.value === 'Event') {
-        let startTimeLabel = document.createElement('label');
-        startTimeLabel.classList.add('font-weight-bold');
-        startTimeLabel.innerHTML = 'Start Time: ';
-        let startTimeInput = document.createElement('input');
-        startTimeInput.classList.add('form-control');
-        startTimeInput.classList.add('shadow-sm');
-        startTimeInput.type = 'datetime-local';
-        startTimeInput.placeholder = 'When does the event start?';
-        startTimeLabel.appendChild(startTimeInput);
-        dueDateSetup.appendChild(startTimeLabel);
-        let endTimeLabel = document.createElement('label');
-        endTimeLabel.classList.add('font-weight-bold');
-        endTimeLabel.innerHTML = 'End Time: ';
-        let endTimeInput = document.createElement('input');
-        endTimeInput.classList.add('form-control');
-        endTimeInput.classList.add('shadow-sm');
-        endTimeInput.type = 'datetime-local';
-        endTimeInput.placeholder = 'When does the event end?';
-        endTimeLabel.appendChild(endTimeInput);
-        dueDateSetup.appendChild(endTimeLabel);
+        itemStatus.style.display = 'none';
+        dueDateShow.style.display = 'none';
+        startTimeShow.style.display = 'inline-block';
+        endTimeShow.style.display = 'inline-block';
     }
 }
 
