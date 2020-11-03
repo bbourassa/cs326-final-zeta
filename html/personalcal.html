@@ -39,24 +39,15 @@
                     <div class="calendar shadow bg-white p-2">
                         <div>
                             <div class="form-group">
-                                <label class="font-weight-bold text-uppercase">November
-                                    <select class="custom-select shadow-sm" id="monthSelection">
-                                        <option selected value="Action Item">November</option>
-                                        <option value="Event">December</option>
-                                      </select>
+                                <label>
+                                    <h6 class="font-weight-bold text-uppercase calendar" id="currentMonth"></h6>
+                                    <select class="custom-select shadow-sm calendar-selection" id="monthSelection">
+                                    </select>
                                 </label>
-                                <label class="font-weight-bold">2020
-                                    <select class="custom-select shadow-sm">
-                                        <option selected value="Not Started">
-                                            2020
-                                        </option>
-                                        <option value="In Progress">
-                                            2021
-                                        </option>
-                                        <option value="Completed">
-                                            2022
-                                        </option>
-                                      </select>
+                                <label>
+                                    <h6 class="font-weight-bold text-uppercase calendar" id="currentYear"></h6>
+                                    <select class="custom-select shadow-sm calendar-selection" id="yearSelection">
+                                    </select>
                                 </label>
                             </div>
                             <h2 class="month font-weight-bold mb-0 text-uppercase" id="currentMonthAndYear">
