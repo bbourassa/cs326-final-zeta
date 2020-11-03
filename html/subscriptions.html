@@ -51,6 +51,7 @@
                                 <th scope="col" class="text-uppercase font-weight-bold">Date</th>
                                 <th scope="col" class="text-uppercase font-weight-bold">Category</th>
                                 <th scope="col" class="text-uppercase font-weight-bold">Status</th>
+                                <th scope="col" class="text-uppercase font-weight-bold">Info</th>
                                 <th scope="col" class="text-uppercase font-weight-bold" id="table-edit">Edit</th>
                              </tr>
                          </thead>
@@ -165,9 +166,15 @@
                                       </select>
                                 </label>
                             </div>
-                            <div class="form-group ">
-                                <label class="font-weight-bold">Due Date:
-                                    <input class="form-control shadow-sm" type="datetime-local" placeholder="When is this event or activity?" id="due">
+                            <div class="form-group" id="dueDateSet">
+                                <label class="font-weight-bold" id="showDueDate">Due Date:
+                                    <input class="form-control shadow-sm" type="datetime-local" id="dueDate"> 
+                                </label>
+                                <label class="font-weight-bold" id="showStartTime">Start Time:
+                                    <input class="form-control shadow-sm" type="datetime-local" id="startTime">
+                                </label>
+                                <label class="font-weight-bold" id="showEndTime">End Time:
+                                    <input class="form-control shadow-sm" type="datetime-local", id="endTime">
                                 </label>
                             </div>
                             

@@ -13,7 +13,7 @@ function loadCalendars(userId){
             name:'CS 221', 
             admin:false,
             items: [
-                {name: 'Zoom meeting', date:'11/3/2020', type:'event', status:"Not Started"},
+                {name: 'Zoom meeting', date:'11/3/2020', type:'event', status:"N/A"},
                 {name: 'Milestone 2', date:'11/6/2020', type:'action',status : "In Progress"}, 
                 {name:'Homework 9', date: '11/2/2020', type:'action', status:"In Progress"}
             ]
@@ -24,8 +24,8 @@ function loadCalendars(userId){
             name:'Greek 200', 
             admin:true,
             items: [
-                {name:'Agape Test', date:'10/31/2020', type:'event',status:"Not Started"},
-                {name:'Alpha', date:'11/5/2020', type:'event', status:"Not Started"},
+                {name:'Agape Test', date:'10/31/2020', type:'event',status:"N/A"},
+                {name:'Alpha', date:'11/5/2020', type:'event', status:"N/A"},
                 {name: 'Reading', date:'11/7/2020', type:'action', status:"In Progress"}
             ],
           
@@ -73,7 +73,7 @@ function loadTable(calId){
             name:'CS 221', 
             admin:false,
             items: [
-                {name: 'Zoom meeting', date:'11/3/2020', type:'event', status:"Not Started"},
+                {name: 'Zoom meeting', date:'11/3/2020', type:'event', status:"N/A"},
                 {name: 'Milestone 2', date:'11/6/2020', type:'action',status : "In Progress"}, 
                 {name:'Homework 9', date: '11/2/2020', type:'action', status:"In Progress"}
             ]
@@ -84,9 +84,9 @@ function loadTable(calId){
             name:'Greek 200', 
             admin:true,
             items: [
-                {name:'Agape Test', date:'10/31/2020', type:'event',status:"Not Started"},
-                {name:'Alpha', date:'11/5/2020', type:'event', status:"Not Started"},
-                {name: 'Reading', date:'11/7/2020', type:'action', status:"In Progress"}
+                {name:'Agape Test', start:'10/31/2020',  end: "11/5/2020",all_day:false,  type:'event',status:"N/A"},
+                {name:'Alpha', start:'11/5/2020', all_day:true, type:'event', status:"N/A"},
+                {name: 'Reading', dueDate:'11/7/2020', type:'action', status:"In Progress"}
             ],
           
         }
@@ -133,16 +133,36 @@ function loadTable(calId){
         type.innerHTML = (item.type === 'event' ? 'Event':'Action Item');
         anItem.appendChild(type);
 
-        //creates the progress marker
+        //creates status indicator
         let status = document.createElement('td');
         let prog = document.createElement("button");
         prog.classList.add("btn","btn-sm", "disabled");
-        prog.classList.add( (item.status === "In Progress" ? "btn-warning":"btn-danger"));
+        if(item.status === "In Progress"){
+            prog.classList.add("btn-warning");
+        } else if (item.status === "Not Started"){
+            prog.classList.add("btn-danger");
+        } else if(item.status === "Completed"){
+            prog.classList.add("btn-success");
+        }else{
+            prog.classList.add("btn-light");
+        }
         prog.innerHTML=item.status;
         status.appendChild(prog);
         anItem.appendChild(status);
 
 
+        //creates detail
+        let info = document.createElement("td");
+        let infoBtn = document.createElement ("button");
+        infoBtn.classList.add("btn", "btn-sm", "btn-outline-info");
+        infoBtn.innerText = "Details"
+        infoBtn.addEventListener("click", () =>{
+            //pop up modal with any details, non-editable
+        })
+        info.appendChild(infoBtn);
+        anItem.appendChild(info);
+
+        
         if(thisCal.admin){
             let editable = document.createElement('td');
             let editBtn = document.createElement("button");
@@ -155,8 +175,11 @@ function loadTable(calId){
             document.getElementById("saveChanges").addEventListener("click", () =>{
                 commitChanges();
             });
-            editable.appendChild(editBtn);
 
+            let toggleType = document.getElementById("typeItem");
+            toggleType.addEventListener('change', setUpdateForm());
+            
+            editable.appendChild(editBtn);
             anItem.appendChild(editable);
 
         }
@@ -178,14 +201,51 @@ function loadModal(item){
     document.getElementById("itemName").value = item.name;
     document.getElementById("statusModal").value = item.status;
     document.getElementById("typeItem").value = item.type;
-    document.getElementById("due").value = item.date;
+    // document.getElementById("due").value = item.date;
+    setUpdateForm(item);
     if(item.details !== undefined){
         document.getElementById("detailsText").value = item.details;
     }
     if(item.links !== undefined){
         document.getElementById("itemLinks").value = item.links;
     }
+    
+    
 
+}
+
+function newItem(){
+    //initialize as an action item
+    document.getElementById('typeItem').value = "Action Item";
+
+}
+
+/**
+ * Function to switch between date settings in the edit modal
+ */
+function setUpdateForm(item) {
+    let currentType = document.getElementById('typeItem');
+    let itemStatus = document.getElementById('showStatus');
+    let dueDateShow = document.getElementById('showDueDate');
+    let startTimeShow = document.getElementById('showStartTime');
+    let endTimeShow = document.getElementById('showEndTime');
+    if(currentType.value === 'Action Item') {
+        itemStatus.style.display = 'inline-block';
+        dueDateShow.style.display = 'inline-block';
+        startTimeShow.style.display = 'none';
+        endTimeShow.style.display = 'none';
+        console.log("tst");
+        if(item.dueDate !== undefined){
+            console.log("test");
+            document.getElementById('dueDate').value = item.dueDate;
+        }
+
+    } else if (currentType.value === 'Event') {
+        itemStatus.style.display = 'none';
+        dueDateShow.style.display = 'none';
+        startTimeShow.style.display = 'inline-block';
+        endTimeShow.style.display = 'inline-block';
+    }
 }
 
 /**
