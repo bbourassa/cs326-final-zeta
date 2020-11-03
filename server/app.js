@@ -20,7 +20,7 @@ const dir = path.dirname(__dirname);
 app.use('/images', express.static(path.join(dir, 'images')));
 app.use('/css', express.static(path.join(dir, 'css')));
 app.use('/js', express.static(path.join(dir, 'js')));
-app.use(express.static(path.join(dir, 'html')));
+app.use('/html', express.static(path.join(dir, 'html')));
 
 app.post('/api/login', users.auth);
 
