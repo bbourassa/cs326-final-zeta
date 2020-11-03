@@ -1,4 +1,9 @@
+<<<<<<< HEAD
  {
+=======
+  
+{
+>>>>>>> d2be7b4... fix package.json
   "name": "life-on-track",
   "version": "1.0.0",
   "description": "",
@@ -28,4 +33,8 @@
     "eslint": "^7.12.1",
     "faker": "^5.1.0"
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> d2be7b4... fix package.json
