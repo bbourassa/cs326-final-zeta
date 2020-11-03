@@ -200,6 +200,7 @@ function setUpdateForm() {
     let startTimeShow = document.getElementById('showStartTime');
     let endTimeShow = document.getElementById('showEndTime');
     if(currentType.value === 'Action Item') {
+        console.log('enter');
         itemStatus.style.display = 'inline-block';
         dueDateShow.style.display = 'inline-block';
         startTimeShow.style.display = 'none';
