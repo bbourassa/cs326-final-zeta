@@ -213,6 +213,29 @@ function setUpdateForm() {
     }
 }
 
+function setNewToDo() {
+    let newToDo = document.getElementById('toDoName');
+    let currentToDoList = document.getElementById('toDoItems');
+    let listGroupItem = document.createElement('div');
+    listGroupItem.classList.add('list-group-item', 'list-group-item-action');
+    let addedToDo = document.createElement('div');
+    addedToDo.classList.add('form-check');
+    let formCheckLabel = document.createElement('label');
+    formCheckLabel.classList.add('form-check-label');
+    let checkBoxInput = document.createElement('input');
+    checkBoxInput.classList.add('checkbox');
+    checkBoxInput.type = 'checkbox';
+    formCheckLabel.appendChild(checkBoxInput);
+    formCheckLabel.innerHTML += ' ' + newToDo.value + ' ';
+    let inputHelper = document.createElement('i');
+    inputHelper.classList.add('input-helper');
+    formCheckLabel.appendChild(inputHelper);
+    addedToDo.appendChild(formCheckLabel);
+    listGroupItem.appendChild(addedToDo);
+    currentToDoList.appendChild(listGroupItem);
+
+}
+
 /*
 helper variables to pass information about the date
 */
@@ -257,3 +280,7 @@ for (let item of toDoActions) {
 let dueDateInput = document.getElementById('itemType');
 
 dueDateInput.addEventListener('change', setUpdateForm);
+
+let addToDoItem = document.getElementById('addToDo');
+
+addToDoItem.addEventListener('click', setNewToDo);
