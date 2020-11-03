@@ -36,10 +36,13 @@ FOR NOW: -sets calendar body based on the current day
 FUTURE:  -will associate appropriate item data with each 
           day on calendar
 */
-function setUpCalendar(month, year) {
-    let firstDay = (new Date(year, month)).getDay();
     
 	//let currentMonthAndYear = document.getElementById('currentMonthAndYear');
+function setUpCalendar(month, year) {
+    let firstDay = (new Date(year, month)).getDay();
+    console.log(firstDay);
+    
+	let currentMonthAndYear = document.getElementById('currentMonthAndYear');
     //currentMonthAndYear.innerHTML += ' ' + months[month] + ' ' + year;
     
 	let days = document.getElementById('days');
