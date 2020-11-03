@@ -73,9 +73,9 @@ function loadTable(calId){
             name:'CS 221', 
             admin:false,
             items: [
-                {name: 'Zoom meeting', date:'11/3/2020', type:'event', status:"N/A"},
-                {name: 'Milestone 2', date:'11/6/2020', type:'action',status : "In Progress"}, 
-                {name:'Homework 9', date: '11/2/2020', type:'action', status:"In Progress"}
+                {name: 'Zoom meeting', start:'11/3/2020', all_day:true, type:'event', status:"N/A"},
+                {name: 'Milestone 2', dueDate:'11/6/2020', type:'action',status : "In Progress"}, 
+                {name:'Homework 9', dueDate: '11/2/2020', type:'action', status:"In Progress"}
             ]
             
         },
@@ -121,14 +121,21 @@ function loadTable(calId){
         check.appendChild(box)
         anItem.appendChild(check);
 
+        //load name
         let name= document.createElement('td');
         name.innerHTML = item.name;
         anItem.appendChild(name);
 
+        //load duedate/start date
         let date = document.createElement('td');
-        date.innerHTML = item.date;
+        if(item.dueDate !== undefined){
+            date.innerHTML = item.dueDate;
+        } else if(item.start !== undefined){
+            date.innerHTML = item.start;
+        }
         anItem.appendChild(date);
 
+        //load type of event
         let type = document.createElement('td');
         type.innerHTML = (item.type === 'event' ? 'Event':'Action Item');
         anItem.appendChild(type);
@@ -157,28 +164,26 @@ function loadTable(calId){
         infoBtn.classList.add("btn", "btn-sm", "btn-outline-info");
         infoBtn.innerText = "Details"
         infoBtn.addEventListener("click", () =>{
-            //pop up modal with any details, non-editable
+            //pop up modal with any details, non-editable TODO 
         })
         info.appendChild(infoBtn);
         anItem.appendChild(info);
 
         
         if(thisCal.admin){
+            //make cell and button
             let editable = document.createElement('td');
             let editBtn = document.createElement("button");
+            //button activates modal
             editBtn.setAttribute("data-toggle", "modal");
             editBtn.setAttribute("data-target", "#itemEditCenter");
             editBtn.setAttribute("type", "button");
             editBtn.classList.add("btn", "btn-outline-primary", "btn-sm");
             editBtn.innerHTML = "Edit";
-            editBtn.addEventListener("click", ()=> loadModal(item));
-            document.getElementById("saveChanges").addEventListener("click", () =>{
-                commitChanges();
-            });
 
-            let toggleType = document.getElementById("typeItem");
-            toggleType.addEventListener('change', setUpdateForm());
+            editBtn.addEventListener("click", ()=> {loadModal(item)});
             
+
             editable.appendChild(editBtn);
             anItem.appendChild(editable);
 
@@ -201,15 +206,22 @@ function loadModal(item){
     document.getElementById("itemName").value = item.name;
     document.getElementById("statusModal").value = item.status;
     document.getElementById("typeItem").value = item.type;
-    // document.getElementById("due").value = item.date;
+    //update the date within the form
     setUpdateForm(item);
+    //check for details and links to prefill
     if(item.details !== undefined){
         document.getElementById("detailsText").value = item.details;
     }
     if(item.links !== undefined){
         document.getElementById("itemLinks").value = item.links;
     }
-    
+    //listener to save
+    document.getElementById("saveChanges").addEventListener("click", () =>{
+        commitChanges();
+    });
+    //event listener to toggle between event and action inputs
+    let toggleType = document.getElementById("typeItem");
+    toggleType.addEventListener('change', () =>{setUpdateForm(item)});
     
 
 }
@@ -225,26 +237,31 @@ function newItem(){
  */
 function setUpdateForm(item) {
     let currentType = document.getElementById('typeItem');
-    let itemStatus = document.getElementById('showStatus');
+    let itemStatus = document.getElementById('statusModal');
     let dueDateShow = document.getElementById('showDueDate');
     let startTimeShow = document.getElementById('showStartTime');
     let endTimeShow = document.getElementById('showEndTime');
-    if(currentType.value === 'Action Item') {
+    if(currentType.value === 'action') {
         itemStatus.style.display = 'inline-block';
         dueDateShow.style.display = 'inline-block';
         startTimeShow.style.display = 'none';
         endTimeShow.style.display = 'none';
-        console.log("tst");
         if(item.dueDate !== undefined){
-            console.log("test");
             document.getElementById('dueDate').value = item.dueDate;
         }
-
-    } else if (currentType.value === 'Event') {
+//TODO this is loading another item's times if it is undefined. I think it is just 
+//being written somewhere else and not getting overridden
+    } else if (currentType.value === 'event') {
         itemStatus.style.display = 'none';
         dueDateShow.style.display = 'none';
         startTimeShow.style.display = 'inline-block';
         endTimeShow.style.display = 'inline-block';
+        if(item.start !==undefined){
+            document.getElementById("startTime").value = item.start;
+        }
+        if(item.end !== undefined){
+            document.getElementById("endTime").value = item.end;
+        }
     }
 }
 
