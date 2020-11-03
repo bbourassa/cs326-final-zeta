@@ -1,31 +1,32 @@
+  
 {
-  "name": "life-on-track",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "directories": {
-    "doc": "docs"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"node app.js",
-    "lint": "eslint"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bbourassa/cs326-final-zeta.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/bbourassa/cs326-final-zeta/issues"
-  },
-  "homepage": "https://github.com/bbourassa/cs326-final-zeta#readme",
-  "dependencies": {
-    "express": "^4.17.1"
-  },
-  "devDependencies": {
-    "eslint": "^7.12.1",
-    "faker": "^5.1.0"
+    "name": "life-on-track",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "directories": {
+      "doc": "docs"
+    },
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start":"node /server/app.js",
+      "lint": "eslint"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/bbourassa/cs326-final-zeta.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/bbourassa/cs326-final-zeta/issues"
+    },
+    "homepage": "https://github.com/bbourassa/cs326-final-zeta#readme",
+    "dependencies": {
+      "express": "^4.17.1"
+    },
+    "devDependencies": {
+      "eslint": "^7.12.1",
+      "faker": "^5.1.0"
+    }
   }
-}
