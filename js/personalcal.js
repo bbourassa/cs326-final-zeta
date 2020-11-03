@@ -19,7 +19,7 @@ function switchDate(day, month, year) {
     dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[month] + ' ' + day + ' ' + year;
     console.log(month);
     console.log(currentMonth);
-	if(day === currentDay.getDate() && month === currentMonth && year === currentYear) {
+	if(day === currentDay.getDate() && month === currentMonth && parseInt(year) === currentYear) {
 		lastDay = day;
 	} else {
         currentDate.classList.add('btn-secondary');
@@ -137,7 +137,6 @@ function switchCalendar(selectedMonth, selectedYear) {
     let days = document.getElementById('days');
     days.innerHTML = '';
     let totalDays = daysInMonth(months.indexOf(selectedMonth), selectedYear);
-    console.log(totalDays);
 	for(let i = 1; i < firstDay+1; i++) {
 		let newDateItem = document.createElement('li');
 		let newDateDiv = document.createElement('div');
@@ -155,7 +154,11 @@ function switchCalendar(selectedMonth, selectedYear) {
 		newDateDiv.innerHTML = i;
 		newDateDiv.addEventListener('click', () => switchDate(i, months.indexOf(selectedMonth), selectedYear));
 		newDateItem.appendChild(newDateDiv);
-		days.appendChild(newDateItem);
+        days.appendChild(newDateItem);
+        if(i === currentDay.getDate() && months.indexOf(selectedMonth) === currentMonth && parseInt(selectedYear) === currentYear) {
+            console.log('enter');
+			newDateDiv.classList.add('btn-danger');
+		}
 	}
 }
 
