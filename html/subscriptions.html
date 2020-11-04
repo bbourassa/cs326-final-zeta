@@ -51,6 +51,7 @@
                                 <th scope="col" class="text-uppercase font-weight-bold">Date</th>
                                 <th scope="col" class="text-uppercase font-weight-bold">Category</th>
                                 <th scope="col" class="text-uppercase font-weight-bold">Status</th>
+                                <th scope="col" class="text-uppercase font-weight-bold">Info</th>
                                 <th scope="col" class="text-uppercase font-weight-bold" id="table-edit">Edit</th>
                              </tr>
                          </thead>
@@ -92,6 +93,18 @@
                     </div>
                 </div>
                 <div class="col-md">
+                    <!-- Notification center -->
+                    <div class="card shadow bg-white item-table" id="notificationCenter" aria-hidden="true">
+                        <div class= "list-group">
+                            <div class="list-group-item list-group-item-dark text-uppercase font-weight-bold">Notifications
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="clearNoteCenter">Clear</button>
+                            </div>
+                            <!-- TODO I'm not sure if this will deprecate, don't want that -->
+                            <div class="list-group" id="allNotes">
+                                <!-- fill with notifications -->
+                            </div>
+                        </div>
+                    </div>
                     <div class="card shadow bg-white item-table">
                     <!-- Settings -->
                         <div class="list-group">
@@ -123,7 +136,7 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="card-title text-uppercase font-weight-bold">Milestone 1</h2>
+                        <h2 class="card-title text-uppercase font-weight-bold">Edit Item</h2>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -135,7 +148,7 @@
                                     <input type="text" class="form-control shadow-sm" id="itemName" placeholder="Milestone 1">
                                 </label>
                                 <label class="font-weight-bold">Current Calendar: 
-                                    <input class="form-control shadow-sm" type="text" placeholder="CS 326" readonly>
+                                    <input class="form-control shadow-sm" type="text" placeholder="CS 326" id="currCal" readonly>
                                 </label>
                             </div>
                             <div class="form-group">
@@ -147,12 +160,12 @@
                             <div class="form-group">
                                 <label class="font-weight-bold">Item Type:
                                     <select class="custom-select shadow-sm" id="typeItem">
-                                        <option selected value="action">Action Item</option>
+                                        <option value="action">Action Item</option>
                                         <option value="event">Event</option>
                                       </select>
                                 </label>
-                                <label class="font-weight-bold">Item Status:
-                                    <select class="custom-select shadow-sm" id="statusModal">
+                                <label class="font-weight-bold"id="statusModal">Item Status:
+                                    <select class="custom-select shadow-sm" >
                                         <option selected value="Not Started">
                                             Not Started
                                         </option>
@@ -165,9 +178,15 @@
                                       </select>
                                 </label>
                             </div>
-                            <div class="form-group ">
-                                <label class="font-weight-bold">Due Date:
-                                    <input class="form-control shadow-sm" type="datetime-local" placeholder="When is this event or activity?" id="due">
+                            <div class="form-group" id="dueDateSet">
+                                <label class="font-weight-bold" id="showDueDate">Due Date:
+                                    <input class="form-control shadow-sm" type="datetime-local" id="dueDate"> 
+                                </label>
+                                <label class="font-weight-bold" id="showStartTime">Start Time:
+                                    <input class="form-control shadow-sm" type="datetime-local" id="startTime">
+                                </label>
+                                <label class="font-weight-bold" id="showEndTime">End Time:
+                                    <input class="form-control shadow-sm" type="datetime-local", id="endTime">
                                 </label>
                             </div>
                             
@@ -181,6 +200,36 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary shadow-sm" id="saveChanges">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- TODO Edit confirmation modal -->
+        <div class = "modal fade" id="editConfirmation" tabindex="-1" role="dialog" aria-labelledby="editConfirmationTitle" aria-hidden="true" >
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="card-title text-uppercase font-weight-bold">Confirm Edits</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h3 class="card-subtitle">Review your item and write a message to confirm.</h3>
+                        <!-- fill in with non-editable info -->
+                        <div id="editsToConfirm">
+                            <input class="form-control shadow-sm" type="text" id="fillEdits" >
+                            
+                        </div>
+                        <br>
+                        <div id="commitMessage">
+                            <input class="form-control shadow-sm" type="text" id="message" placeholder="Add a message to your subscribers">
+                        </div>
+                       
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close without saving</button>
+                        <button type="button" class="btn btn-primary shadow-sm" id="confirmBtn">Confirm changes</button>
                     </div>
                 </div>
             </div>

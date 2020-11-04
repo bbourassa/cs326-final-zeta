@@ -1,6 +1,20 @@
 'use strict';
 
+function loadAll(userId){
+    loadCalendars(userId);
+    loadSettingListeners();
+    loadNotifications();
+}
 
+function loadSettingListeners(){
+
+}
+
+function loadNotifications(){
+    // close event listener
+    // load each notification
+    // make each notification load the correct table, pull up details?
+}
 
 /**
  * Load all of the user's subscription calendars
@@ -13,7 +27,7 @@ function loadCalendars(userId){
             name:'CS 221', 
             admin:false,
             items: [
-                {name: 'Zoom meeting', date:'11/3/2020', type:'event', status:"Not Started"},
+                {name: 'Zoom meeting', date:'11/3/2020', type:'event', status:"N/A"},
                 {name: 'Milestone 2', date:'11/6/2020', type:'action',status : "In Progress"}, 
                 {name:'Homework 9', date: '11/2/2020', type:'action', status:"In Progress"}
             ]
@@ -24,8 +38,8 @@ function loadCalendars(userId){
             name:'Greek 200', 
             admin:true,
             items: [
-                {name:'Agape Test', date:'10/31/2020', type:'event',status:"Not Started"},
-                {name:'Alpha', date:'11/5/2020', type:'event', status:"Not Started"},
+                {name:'Agape Test', date:'10/31/2020', type:'event',status:"N/A"},
+                {name:'Alpha', date:'11/5/2020', type:'event', status:"N/A"},
                 {name: 'Reading', date:'11/7/2020', type:'action', status:"In Progress"}
             ],
           
@@ -73,9 +87,9 @@ function loadTable(calId){
             name:'CS 221', 
             admin:false,
             items: [
-                {name: 'Zoom meeting', date:'11/3/2020', type:'event', status:"Not Started"},
-                {name: 'Milestone 2', date:'11/6/2020', type:'action',status : "In Progress"}, 
-                {name:'Homework 9', date: '11/2/2020', type:'action', status:"In Progress"}
+                {name: 'Zoom meeting', start:'11/3/2020', all_day:true, type:'event', status:"N/A"},
+                {name: 'Milestone 2', dueDate:'11/6/2020', type:'action',status : "In Progress"}, 
+                {name:'Homework 9', dueDate: '11/2/2020', type:'action', status:"In Progress"}
             ]
             
         },
@@ -84,9 +98,9 @@ function loadTable(calId){
             name:'Greek 200', 
             admin:true,
             items: [
-                {name:'Agape Test', date:'10/31/2020', type:'event',status:"Not Started"},
-                {name:'Alpha', date:'11/5/2020', type:'event', status:"Not Started"},
-                {name: 'Reading', date:'11/7/2020', type:'action', status:"In Progress"}
+                {name:'Agape Test', start:'10/31/2020',  end: "11/5/2020",all_day:false,  type:'event',status:"N/A"},
+                {name:'Alpha', start:'11/5/2020', all_day:true, type:'event', status:"N/A"},
+                {name: 'Reading', dueDate:'11/7/2020', type:'action', status:"In Progress"}
             ],
           
         }
@@ -121,42 +135,71 @@ function loadTable(calId){
         check.appendChild(box)
         anItem.appendChild(check);
 
+        //load name
         let name= document.createElement('td');
         name.innerHTML = item.name;
         anItem.appendChild(name);
 
+        //load duedate/start date
         let date = document.createElement('td');
-        date.innerHTML = item.date;
+        if(item.dueDate !== undefined){
+            date.innerHTML = item.dueDate;
+        } else if(item.start !== undefined){
+            date.innerHTML = item.start;
+        }
         anItem.appendChild(date);
 
+        //load type of event
         let type = document.createElement('td');
         type.innerHTML = (item.type === 'event' ? 'Event':'Action Item');
         anItem.appendChild(type);
 
-        //creates the progress marker
+        //creates status indicator
         let status = document.createElement('td');
         let prog = document.createElement("button");
         prog.classList.add("btn","btn-sm", "disabled");
-        prog.classList.add( (item.status === "In Progress" ? "btn-warning":"btn-danger"));
+        if(item.status === "In Progress"){
+            prog.classList.add("btn-warning");
+        } else if (item.status === "Not Started"){
+            prog.classList.add("btn-danger");
+        } else if(item.status === "Completed"){
+            prog.classList.add("btn-success");
+        }else{
+            prog.classList.add("btn-light");
+        }
         prog.innerHTML=item.status;
         status.appendChild(prog);
         anItem.appendChild(status);
 
 
+        //creates detail
+        let info = document.createElement("td");
+        let infoBtn = document.createElement ("button");
+        infoBtn.classList.add("btn", "btn-sm", "btn-outline-info");
+        infoBtn.innerText = "Details"
+        infoBtn.addEventListener("click", () =>{
+            //pop up modal with any details, non-editable TODO 
+        })
+        info.appendChild(infoBtn);
+        anItem.appendChild(info);
+
+        
         if(thisCal.admin){
+            //make cell and button
             let editable = document.createElement('td');
             let editBtn = document.createElement("button");
+            //button activates modal
             editBtn.setAttribute("data-toggle", "modal");
             editBtn.setAttribute("data-target", "#itemEditCenter");
             editBtn.setAttribute("type", "button");
             editBtn.classList.add("btn", "btn-outline-primary", "btn-sm");
             editBtn.innerHTML = "Edit";
-            editBtn.addEventListener("click", ()=> loadModal(item));
-            document.getElementById("saveChanges").addEventListener("click", () =>{
-                commitChanges();
-            });
-            editable.appendChild(editBtn);
 
+            editBtn.addEventListener("click", ()=> {
+                loadModal(item)});
+            
+
+            editable.appendChild(editBtn);
             anItem.appendChild(editable);
 
         }
@@ -178,20 +221,112 @@ function loadModal(item){
     document.getElementById("itemName").value = item.name;
     document.getElementById("statusModal").value = item.status;
     document.getElementById("typeItem").value = item.type;
-    document.getElementById("due").value = item.date;
+    document.getElementById('currCal').value = document.getElementById('cal-name').innerHTML;
+
+
+    //update the date within the form
+    setUpdateForm(item);
+    //check for details and links to prefill
     if(item.details !== undefined){
         document.getElementById("detailsText").value = item.details;
     }
     if(item.links !== undefined){
         document.getElementById("itemLinks").value = item.links;
     }
+    //listener to save
+    let confirmBtn = document.getElementById("saveChanges");
 
+    confirmBtn.addEventListener("click", () =>{
+        loadCommit();
+        $("#itemEditCenter").modal('hide');
+        commitChanges();
+    });
+    //make the save button a toggle for the confirmation modal? TODO check if this works
+    //If it doesn't go back to using event listener
+    // confirmBtn.setAttribute("data-toggle", "modal");
+    // confirmBtn.setAttribute("data-target", "#editConfirmation");
+
+    //event listener to toggle between event and action inputs
+    let toggleType = document.getElementById("typeItem");
+    toggleType.addEventListener('change', () =>{setUpdateForm(item)});
+    
+
+}
+
+
+function newItem(){
+    //initialize as an action item
+    document.getElementById('typeItem').value = "Action Item";
+    //Make sure it is all empty values TODO
+
+}
+
+/**
+ * Function to switch between date settings in the edit modal
+ */
+function setUpdateForm(item) {
+    let currentType = document.getElementById('typeItem');
+    let itemStatus = document.getElementById('statusModal');
+    let dueDateShow = document.getElementById('showDueDate');
+    let startTimeShow = document.getElementById('showStartTime');
+    let endTimeShow = document.getElementById('showEndTime');
+    if(currentType.value === 'action') {
+        itemStatus.style.display = 'inline-block';
+        dueDateShow.style.display = 'inline-block';
+        startTimeShow.style.display = 'none';
+        endTimeShow.style.display = 'none';
+        if(item.dueDate !== undefined){
+            document.getElementById('dueDate').value = item.dueDate;
+        }else{
+            document.getElementById('dueDate').value = "";
+        }
+
+    } else if (currentType.value === 'event') {
+        itemStatus.style.display = 'none';
+        dueDateShow.style.display = 'none';
+        startTimeShow.style.display = 'inline-block';
+        endTimeShow.style.display = 'inline-block';
+        //TODO this is loading another item's times if it is undefined. I think it is just 
+//being written somewhere else and not getting overridden TODO CHECK
+        if(item.start !==undefined){
+            document.getElementById("startTime").value = item.start;
+        } else{
+            //if there is not a defined value, the html value will 
+            //still be the value it was last set to
+            document.getElementById("startTime").value = "";
+        }
+        if(item.end !== undefined){
+            document.getElementById("endTime").value = item.end;
+        } else{
+            document.getElementById("endTime").value ="";
+        }
+    }
+}
+
+function loadCommit(){
+    let changeList = document.createElement("ul");
+    changeList.classList.add("list-group");
+
+    let name = document.createElement("li");
+    name.classList.add("list-group-item");
+    name.innerHTML = document.getElementById("itemName").value;
+    changeList.appendChild(name);
+
+
+
+
+    document.getElementById("fillEdits").appendChild(changeList);
 }
 
 /**
  * Closes editing modal and opens a new confirmation modal.
  */
 function commitChanges(){
+    //fill confirmation modal with information values from the edit modal
+    
+    //opens the confirmation modal
+    $("#editConfirmation").modal('show');
+
     //close modal and open confirmation modal
 }
 
