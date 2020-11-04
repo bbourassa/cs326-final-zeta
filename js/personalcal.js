@@ -14,17 +14,28 @@ function switchDate(day, month, year) {
 	let lastDate;
 	if (lastDay !== 0) {
 		lastDate = document.getElementById(lastDay);
-		lastDate.classList.remove('btn-secondary');
+        lastDate.classList.remove('btn-secondary');
+        if(parseInt(lastDate.textContent) !== currentDay.getDate()) {
+            if(parseInt(lastDate.textContent) % 2 === 1) {
+                lastDate.classList.add('btn-outline-secondary');
+            }
+        }
 	}
     dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[month] + ' ' + day + ' ' + year;
-    console.log(month);
-    console.log(currentMonth);
 	if(day === currentDay.getDate() && month === currentMonth && parseInt(year) === currentYear) {
 		lastDay = day;
 	} else {
-        currentDate.classList.add('btn-secondary');
-		lastDay = day;
+        if(lastDate !== currentDay.getDate()) {
+            currentDate.className = 'btn-secondary';
+            currentDate.classList.add('btn', 'date');
+		    lastDay = day;
+        }
     }
+}
+
+async function getCalendarItems() {
+    console.log('enter');
+    return true;
 }
 
 /*
@@ -36,8 +47,6 @@ FOR NOW: -sets calendar body based on the current day
 FUTURE:  -will associate appropriate item data with each 
           day on calendar
 */
-    
-	//let currentMonthAndYear = document.getElementById('currentMonthAndYear');
 function setUpCalendar(month, year) {
     let firstDay = (new Date(year, month)).getDay();
     console.log(firstDay);
@@ -46,7 +55,10 @@ function setUpCalendar(month, year) {
     //currentMonthAndYear.innerHTML += ' ' + months[month] + ' ' + year;
     
 	let days = document.getElementById('days');
-	let totalDays = daysInMonth(month, year);
+    let totalDays = daysInMonth(month, year);
+    
+    let calData = getCalendarItems();
+
 	for(let i = 1; i < firstDay+1; i++) {
 		let newDateItem = document.createElement('li');
 		let newDateDiv = document.createElement('div');
@@ -65,9 +77,11 @@ function setUpCalendar(month, year) {
 		newDateDiv.addEventListener('click', () => switchDate(i, month, year));
 		newDateItem.appendChild(newDateDiv);
 		days.appendChild(newDateItem);
-		if(i == currentDay.getDate()) {
+		if(i === currentDay.getDate()) {
 			newDateDiv.classList.add('btn-danger');
-		}
+		} else if(i % 2 === 1 && i !== currentDay.getDate()) {
+            newDateDiv.classList.add('btn-outline-secondary');
+        }
 	}
     
 }
@@ -169,7 +183,9 @@ function switchCalendar(selectedMonth, selectedYear) {
         days.appendChild(newDateItem);
         if(i === currentDay.getDate() && months.indexOf(selectedMonth) === currentMonth && parseInt(selectedYear) === currentYear) {
 			newDateDiv.classList.add('btn-danger');
-		}
+		} else if(i % 2 === 1 && i !== currentDay.getDate()) {
+            newDateDiv.classList.add('btn-outline-secondary');
+        }
 	}
 }
 
@@ -187,11 +203,15 @@ function updateCalendar() {
     }
 }
 
-function switchToDoLocation(toDo) {
-    //toDo.checked = true;
-    console.log(toDo.checked);
+/*function switchToDoLocation(toDo) {
+    let itemNum = toDo.id;
     console.log(toDo);
-}
+    let divForToDo = document.getElementById('toDo'+itemNum);
+    divForToDo.remove();
+    console.log(divForToDo);
+    if(toDo.checked === true) {
+    }
+}*/
 
 function setUpdateForm() {
     let currentType = document.getElementById('itemType');
@@ -271,12 +291,6 @@ for (let item of calSelections) {
     item.addEventListener('change', updateCalendar);
 }
 
-const toDoActions = document.getElementsByClassName('to-dos');
-
-for (let item of toDoActions) {
-    item.addEventListener('click', () => switchToDoLocation(item.innerHTML));
-}
-
 let dueDateInput = document.getElementById('itemType');
 
 dueDateInput.addEventListener('change', setUpdateForm);
@@ -284,3 +298,9 @@ dueDateInput.addEventListener('change', setUpdateForm);
 let addToDoItem = document.getElementById('addToDo');
 
 addToDoItem.addEventListener('click', setNewToDo);
+
+let toDoItems = document.getElementsByClassName('to-do-item');
+
+for (let item of toDoItems) {
+    item.addEventListener('change', () => switchToDoLocation(item));
+}
