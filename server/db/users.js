@@ -7,6 +7,8 @@ const faker = require('faker');
 faker.seed(579);
 
 const users = [];
+let lastId = 0;
+
 users.push({
     id: 0,
     username: 'LifeOnTrack',
@@ -16,7 +18,7 @@ users.push({
     password: 'password',
     calendar_id: 0
 });
-for (let i = 1; i < sizes.users; ++i) {
+/*for (let i = 1; i < sizes.users; ++i) {
     const first = faker.name.firstName();
     const last = faker.name.lastName();
     users.push({
@@ -28,7 +30,7 @@ for (let i = 1; i < sizes.users; ++i) {
         password: faker.internet.password(),
         calendar_id: i
     });
-}
+}*/
 
 exports.auth = function(req, res) {
     res.redirect('/personalcal.html');
@@ -40,6 +42,18 @@ exports.list = function(req, res) {
 
 exports.create = function(req, res) {
     res.sendStatus(201);
+    console.log(req.body);
+    lastId += 1;
+    users.push({
+        id: lastId,
+        username: req.body.username,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: req.body.password,
+        calendar_id: lastId
+    });
+    console.log(users);
 };
 
 exports.load = function(req, res, next) {
