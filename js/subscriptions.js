@@ -1,6 +1,20 @@
 'use strict';
 
+function loadAll(userId){
+    loadCalendars(userId);
+    loadSettingListeners();
+    loadNotifications();
+}
 
+function loadSettingListeners(){
+
+}
+
+function loadNotifications(){
+    // close event listener
+    // load each notification
+    // make each notification load the correct table, pull up details?
+}
 
 /**
  * Load all of the user's subscription calendars
@@ -216,9 +230,15 @@ function loadModal(item){
         document.getElementById("itemLinks").value = item.links;
     }
     //listener to save
-    document.getElementById("saveChanges").addEventListener("click", () =>{
-        commitChanges();
-    });
+    // document.getElementById("saveChanges").addEventListener("click", () =>{
+    //     commitChanges();
+    // });
+    //make the save button a toggle for the confirmation modal? TODO check if this works
+    //If it doesn't go back to using event listener
+    let confirmBtn = document.getElementById("saveChanges");
+    confirmBtn.setAttribute("data-toggle", "modal");
+    confirmBtn.setAttribute("data-target", "#editConfirmation");
+
     //event listener to toggle between event and action inputs
     let toggleType = document.getElementById("typeItem");
     toggleType.addEventListener('change', () =>{setUpdateForm(item)});
@@ -226,9 +246,11 @@ function loadModal(item){
 
 }
 
+
 function newItem(){
     //initialize as an action item
     document.getElementById('typeItem').value = "Action Item";
+    //Make sure it is all empty values TODO
 
 }
 
@@ -248,19 +270,28 @@ function setUpdateForm(item) {
         endTimeShow.style.display = 'none';
         if(item.dueDate !== undefined){
             document.getElementById('dueDate').value = item.dueDate;
+        }else{
+            document.getElementById('dueDate').value = "";
         }
-//TODO this is loading another item's times if it is undefined. I think it is just 
-//being written somewhere else and not getting overridden
+
     } else if (currentType.value === 'event') {
         itemStatus.style.display = 'none';
         dueDateShow.style.display = 'none';
         startTimeShow.style.display = 'inline-block';
         endTimeShow.style.display = 'inline-block';
+        //TODO this is loading another item's times if it is undefined. I think it is just 
+//being written somewhere else and not getting overridden TODO CHECK
         if(item.start !==undefined){
             document.getElementById("startTime").value = item.start;
+        } else{
+            //if there is not a defined value, the html value will 
+            //still be the value it was last set to
+            document.getElementById("startTime").value = "";
         }
         if(item.end !== undefined){
             document.getElementById("endTime").value = item.end;
+        } else{
+            document.getElementById("endTime").value ="";
         }
     }
 }

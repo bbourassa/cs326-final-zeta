@@ -93,6 +93,18 @@
                     </div>
                 </div>
                 <div class="col-md">
+                    <!-- Notification center -->
+                    <div class="card shadow bg-white item-table" id="notificationCenter" aria-hidden="true">
+                        <div class= "list-group">
+                            <div class="list-group-item list-group-item-dark text-uppercase font-weight-bold">Notifications
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="clearNoteCenter">Clear</button>
+                            </div>
+                            <!-- TODO I'm not sure if this will deprecate, don't want that -->
+                            <div class="list-group" id="allNotes">
+                                <!-- fill with notifications -->
+                            </div>
+                        </div>
+                    </div>
                     <div class="card shadow bg-white item-table">
                     <!-- Settings -->
                         <div class="list-group">
@@ -188,6 +200,36 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary shadow-sm" id="saveChanges">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- TODO Edit confirmation modal -->
+        <div class = "modal fade" id="editConfirmation" tabindex="-1" role="dialog" aria-labelledby="editConfirmationTitle" aria-hidden="true" >
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="card-title text-uppercase font-weight-bold">Confirm Edits</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h3 class="card-subtitle">Review your item and write a message to confirm.</h3>
+                        <!-- fill in with non-editable info -->
+                        <div id="editsToConfirm">
+
+                        </div>
+                        <div class="form-control" id="commitChanges">
+                            <lable>
+                                Message:
+                                <textarea class="form-control shadow-sm" rows="5" placeholder="Add a message to any subscribers" id="commitMessage"></textarea>
+                            </lable>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close without saving</button>
+                        <button type="button" class="btn btn-primary shadow-sm" id="confirmBtn">Confirm changes</button>
                     </div>
                 </div>
             </div>
