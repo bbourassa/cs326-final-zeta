@@ -47,10 +47,13 @@ function redirectToCal() {
     let currentPassword = document.getElementById('inputPassword');
     //let validUser = false;
     searchUsers(currentUsername.value, currentPassword.value).then((res) => {if(res === true) { window.location = '../html/personalcal.html';} else {
-        let loginError = document.createElement('p');
-        loginError.classList.add('text-uppercase');
-        loginError.innerHTML = 'Invalid Login Info';
-        document.getElementById('loginText').appendChild(loginError);
+        if(document.getElementById('loginError') === null) {
+            let loginError = document.createElement('p');
+            loginError.classList.add('text-uppercase');
+            loginError.id = 'loginError';
+            loginError.innerHTML = 'Invalid Login Info';
+            document.getElementById('loginText').appendChild(loginError);
+        }
     }});
 }
 
