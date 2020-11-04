@@ -230,14 +230,16 @@ function loadModal(item){
         document.getElementById("itemLinks").value = item.links;
     }
     //listener to save
-    // document.getElementById("saveChanges").addEventListener("click", () =>{
-    //     commitChanges();
-    // });
+    let confirmBtn = document.getElementById("saveChanges");
+
+    confirmBtn.addEventListener("click", () =>{
+        $("#itemEditCenter").modal('hide');
+        commitChanges();
+    });
     //make the save button a toggle for the confirmation modal? TODO check if this works
     //If it doesn't go back to using event listener
-    let confirmBtn = document.getElementById("saveChanges");
-    confirmBtn.setAttribute("data-toggle", "modal");
-    confirmBtn.setAttribute("data-target", "#editConfirmation");
+    // confirmBtn.setAttribute("data-toggle", "modal");
+    // confirmBtn.setAttribute("data-target", "#editConfirmation");
 
     //event listener to toggle between event and action inputs
     let toggleType = document.getElementById("typeItem");
@@ -300,6 +302,10 @@ function setUpdateForm(item) {
  * Closes editing modal and opens a new confirmation modal.
  */
 function commitChanges(){
+    //fill confirmation modal with information
+    //open confirmation modal
+    $("#editConfirmation").modal('show');
+
     //close modal and open confirmation modal
 }
 

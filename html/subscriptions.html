@@ -217,15 +217,23 @@
                     <div class="modal-body">
                         <h3 class="card-subtitle">Review your item and write a message to confirm.</h3>
                         <!-- fill in with non-editable info -->
+                        
                         <div id="editsToConfirm">
 
                         </div>
-                        <div class="form-control" id="commitChanges">
-                            <lable>
-                                Message:
-                                <textarea class="form-control shadow-sm" rows="5" placeholder="Add a message to any subscribers" id="commitMessage"></textarea>
-                            </lable>
+                        <div class="input-group input-group-lg">
+                            <div class="input-group-prepend">
+                                <!-- <lable>
+                                    Message: -->
+                                    <input type="text" class="form-control" rows="5" aria-describedby="inputGroup-sizing-default" placeholder="Add a message to any subscribers" id="commitMessage"></textarea>
+                                <!-- </lable> -->
+
+                            </div>
+
                         </div>
+                        <!-- <div class="form-control item-on-table" id="commitChanges">
+                            
+                        </div> -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close without saving</button>
