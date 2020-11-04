@@ -148,7 +148,7 @@
                                     <input type="text" class="form-control shadow-sm" id="itemName" placeholder="Milestone 1">
                                 </label>
                                 <label class="font-weight-bold">Current Calendar: 
-                                    <input class="form-control shadow-sm" type="text" placeholder="CS 326" readonly>
+                                    <input class="form-control shadow-sm" type="text" placeholder="CS 326" id="currCal" readonly>
                                 </label>
                             </div>
                             <div class="form-group">
@@ -217,23 +217,15 @@
                     <div class="modal-body">
                         <h3 class="card-subtitle">Review your item and write a message to confirm.</h3>
                         <!-- fill in with non-editable info -->
-                        
                         <div id="editsToConfirm">
-
-                        </div>
-                        <div class="input-group input-group-lg">
-                            <div class="input-group-prepend">
-                                <!-- <lable>
-                                    Message: -->
-                                    <input type="text" class="form-control" rows="5" aria-describedby="inputGroup-sizing-default" placeholder="Add a message to any subscribers" id="commitMessage"></textarea>
-                                <!-- </lable> -->
-
-                            </div>
-
-                        </div>
-                        <!-- <div class="form-control item-on-table" id="commitChanges">
+                            <input class="form-control shadow-sm" type="text" id="fillEdits" >
                             
-                        </div> -->
+                        </div>
+                        <br>
+                        <div id="commitMessage">
+                            <input class="form-control shadow-sm" type="text" id="message" placeholder="Add a message to your subscribers">
+                        </div>
+                       
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close without saving</button>

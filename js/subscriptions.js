@@ -195,7 +195,8 @@ function loadTable(calId){
             editBtn.classList.add("btn", "btn-outline-primary", "btn-sm");
             editBtn.innerHTML = "Edit";
 
-            editBtn.addEventListener("click", ()=> {loadModal(item)});
+            editBtn.addEventListener("click", ()=> {
+                loadModal(item)});
             
 
             editable.appendChild(editBtn);
@@ -220,6 +221,9 @@ function loadModal(item){
     document.getElementById("itemName").value = item.name;
     document.getElementById("statusModal").value = item.status;
     document.getElementById("typeItem").value = item.type;
+    document.getElementById('currCal').value = document.getElementById('cal-name').innerHTML;
+
+
     //update the date within the form
     setUpdateForm(item);
     //check for details and links to prefill
@@ -233,6 +237,7 @@ function loadModal(item){
     let confirmBtn = document.getElementById("saveChanges");
 
     confirmBtn.addEventListener("click", () =>{
+        loadCommit();
         $("#itemEditCenter").modal('hide');
         commitChanges();
     });
@@ -298,12 +303,28 @@ function setUpdateForm(item) {
     }
 }
 
+function loadCommit(){
+    let changeList = document.createElement("ul");
+    changeList.classList.add("list-group");
+
+    let name = document.createElement("li");
+    name.classList.add("list-group-item");
+    name.innerHTML = document.getElementById("itemName").value;
+    changeList.appendChild(name);
+
+
+
+
+    document.getElementById("fillEdits").appendChild(changeList);
+}
+
 /**
  * Closes editing modal and opens a new confirmation modal.
  */
 function commitChanges(){
-    //fill confirmation modal with information
-    //open confirmation modal
+    //fill confirmation modal with information values from the edit modal
+    
+    //opens the confirmation modal
     $("#editConfirmation").modal('show');
 
     //close modal and open confirmation modal
