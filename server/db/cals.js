@@ -74,3 +74,19 @@ exports.listSubscribed = function(req, res) {
 exports.updatePersonal = function(req, res) {
     res.sendStatus(204);
 };
+
+
+
+
+ cals.push({
+    id:01,
+    name: "CS 326",
+    owner_id: 12345,
+    personal:false
+ }, 
+ {
+    id:02,
+    name:"Greek 201",
+    owner_id:6789,
+    personal:false
+ })
