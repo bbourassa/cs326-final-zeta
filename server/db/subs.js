@@ -53,11 +53,3 @@ exports.loadCalendar = function(req, res, next) {
     req.subs = subs.filter(sub => sub.calendar_id === req.cal.id);
     next();
 };
-
-subs.push(
-    {
-        id:47,
-        user_id:12345,
-        calendar_id:01
-    }
-)
