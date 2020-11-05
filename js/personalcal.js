@@ -1,5 +1,13 @@
 'use strict';
 
+window.addEventListener('load', checkForUser());
+
+function checkForUser() {
+    if(window.localStorage.getItem('userInfo') === null) {
+        window.location = '../html/index.html';
+    }
+}
+
 /*
 FOR NOW: -this function updates the DayView Title 
           when a day is clicked on the calendar
@@ -18,6 +26,8 @@ function switchDate(day, month, year) {
         if(parseInt(lastDate.textContent) !== currentDay.getDate()) {
             if(parseInt(lastDate.textContent) % 2 === 1) {
                 lastDate.classList.add('btn-outline-secondary');
+            } else {
+                lastDate.disabled = true;
             }
         }
 	}
@@ -31,11 +41,6 @@ function switchDate(day, month, year) {
 		    lastDay = day;
         }
     }
-}
-
-async function getCalendarItems() {
-    console.log('enter');
-    return true;
 }
 
 /*
@@ -56,8 +61,6 @@ function setUpCalendar(month, year) {
     
 	let days = document.getElementById('days');
     let totalDays = daysInMonth(month, year);
-    
-    let calData = getCalendarItems();
 
 	for(let i = 1; i < firstDay+1; i++) {
 		let newDateItem = document.createElement('li');
@@ -81,6 +84,9 @@ function setUpCalendar(month, year) {
 			newDateDiv.classList.add('btn-danger');
 		} else if(i % 2 === 1 && i !== currentDay.getDate()) {
             newDateDiv.classList.add('btn-outline-secondary');
+        } else {
+            console.log(newDateDiv);
+            newDateDiv.disabled = true;
         }
 	}
     
@@ -220,7 +226,6 @@ function setUpdateForm() {
     let startTimeShow = document.getElementById('showStartTime');
     let endTimeShow = document.getElementById('showEndTime');
     if(currentType.value === 'Action Item') {
-        console.log('enter');
         itemStatus.style.display = 'inline-block';
         dueDateShow.style.display = 'inline-block';
         startTimeShow.style.display = 'none';
@@ -304,3 +309,22 @@ let toDoItems = document.getElementsByClassName('to-do-item');
 for (let item of toDoItems) {
     item.addEventListener('change', () => switchToDoLocation(item));
 }
+
+let userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
+
+async function loadPersonalCalendar() {
+    console.log(window.localStorage.getItem('userInfo'));
+    const response = await fetch('/api/calendars');
+    if (!response.ok) {
+        console.log(response.error);
+        return;
+    }
+    let calendarData = await response.json();
+    for(let i = 0; i < calendarData.length; i++) {
+        if(calendarData[i].owner_id === userInfo.id && calendarData[i].personal === true) {
+            console.log(calendarData[i]);
+        }
+    }
+}
+
+loadPersonalCalendar();

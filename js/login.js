@@ -1,5 +1,6 @@
 'use strict';
 
+window.localStorage.removeItem('userInfo');
 /*
 FOR NOW: double checks that a username and password 
          have been entered. Enables sign-in button only
@@ -31,6 +32,7 @@ async function searchUsers(currUser, currPassword) {
     for(let i = 0; i < allUsers.length; i++) {
         if(allUsers[i].username === currUser) {
             if(allUsers[i].password === currPassword) {
+                window.localStorage.setItem('userInfo', JSON.stringify({id: allUsers[i].id, username: allUsers[i].username, password: allUsers[i].password }))
                 return true;
             }
         } 
