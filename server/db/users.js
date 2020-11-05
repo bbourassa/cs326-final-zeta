@@ -17,7 +17,16 @@ users.push({
     email: 'lifeontrack@example.com',
     password: 'password',
     calendar_id: 0
-});
+}, {
+    id:12345,
+    username:"test",
+    firstName:'billy',
+    lastName:'bob',
+    email:'test@test.com',
+    password:'password',
+    calendar_id:01
+}
+);
 /*for (let i = 1; i < sizes.users; ++i) {
     const first = faker.name.firstName();
     const last = faker.name.lastName();

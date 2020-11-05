@@ -5,8 +5,38 @@ function loadAll(userId){
     loadSettingListeners();
     loadNotifications();
 }
+loadSettingListeners();
 
 function loadSettingListeners(){
+    document.getElementById("checkAll").addEventListener("change", ()=> {
+        if(document.getElementById("checkAll").checked){
+            console.log("detected");
+        }
+    });
+    document.getElementById("setAddItems").addEventListener("click", ()=>{
+        //for each selected item, add it to personal cal
+    });
+    document.getElementById("setAddAllActions").addEventListener("click", ()=>{
+        //for every action in the calendar, add it to personal
+    });
+    document.getElementById("setAddAllEvents").addEventListener("click", ()=>{
+        //for every event in cal, add it to personal
+    });
+    document.getElementById("setUpdateSelected").addEventListener("click", ()=>{
+        //for each selected item, find corresponding in personal, updare
+    });
+    document.getElementById("setCreate").addEventListener("click", ()=>{
+
+    });
+    document.getElementById("setDeleteItem").addEventListener("click", ()=>{
+
+    });
+    document.getElementById("setDeleteCal").addEventListener("click", ()=>{
+
+    });
+    document.getElementById("publicSwitch").addEventListener("toggle", ()=>{
+
+    });
 
 }
 
@@ -27,9 +57,9 @@ function loadCalendars(userId){
             name:'CS 221', 
             admin:false,
             items: [
-                {name: 'Zoom meeting', date:'11/3/2020', type:'event', status:"N/A"},
-                {name: 'Milestone 2', date:'11/6/2020', type:'action',status : "In Progress"}, 
-                {name:'Homework 9', date: '11/2/2020', type:'action', status:"In Progress"}
+                {name: 'Zoom meeting', date:'11/3/2020', type:'Event', status:"N/A"},
+                {name: 'Milestone 2', date:'11/6/2020', type:'Action Item',status : "In Progress"}, 
+                {name:'Homework 9', date: '11/2/2020', type:'Action Item', status:"In Progress"}
             ]
             
         },
@@ -38,9 +68,9 @@ function loadCalendars(userId){
             name:'Greek 200', 
             admin:true,
             items: [
-                {name:'Agape Test', date:'10/31/2020', type:'event',status:"N/A"},
-                {name:'Alpha', date:'11/5/2020', type:'event', status:"N/A"},
-                {name: 'Reading', date:'11/7/2020', type:'action', status:"In Progress"}
+                {name:'Agape Test', date:'10/31/2020', type:'Event',status:"N/A"},
+                {name:'Alpha', date:'11/5/2020', type:'Event', status:"N/A"},
+                {name: 'Reading', date:'11/7/2020', type:'Action Item', status:"In Progress"}
             ],
           
         }
@@ -87,9 +117,9 @@ function loadTable(calId){
             name:'CS 221', 
             admin:false,
             items: [
-                {name: 'Zoom meeting', start:'11/3/2020', all_day:true, type:'event', status:"N/A"},
-                {name: 'Milestone 2', dueDate:'11/6/2020', type:'action',status : "In Progress"}, 
-                {name:'Homework 9', dueDate: '11/2/2020', type:'action', status:"In Progress"}
+                {name: 'Zoom meeting', start:'11/3/2020', all_day:true, type:'Event', status:"N/A"},
+                {name: 'Milestone 2', dueDate:'11/6/2020', type:'Action Item',status : "In Progress"}, 
+                {name:'Homework 9', dueDate: '11/2/2020', type:'Action Item', status:"In Progress"}
             ]
             
         },
@@ -98,15 +128,16 @@ function loadTable(calId){
             name:'Greek 200', 
             admin:true,
             items: [
-                {name:'Agape Test', start:'10/31/2020',  end: "11/5/2020",all_day:false,  type:'event',status:"N/A"},
-                {name:'Alpha', start:'11/5/2020', all_day:true, type:'event', status:"N/A"},
-                {name: 'Reading', dueDate:'11/7/2020', type:'action', status:"In Progress"}
+                {name:'Agape Test', start:'10/31/2020',  end: "11/5/2020",all_day:false,  type:'Event',status:"N/A"},
+                {name:'Alpha', start:'11/5/2020', all_day:true, type:'Event', status:"N/A"},
+                {name: 'Reading', dueDate:'11/7/2020', type:'Action Item', status:"In Progress"}
             ],
           
         }
     ];
+    //TODO api find calendar by cal_id
     
-    // const r = await  db.any('SELECT events, actions FROM (SELECT * FROM cals WHERE id= $1)', calId)
+    // const r = await  db.any('SELECT events, Action Items FROM (SELECT * FROM cals WHERE id= $1)', calId)
     const thisCal = cals[calId]; //TODO temporary -- once i have the db set up, I can figure out how to 
         //make this work with r
 
@@ -118,12 +149,20 @@ function loadTable(calId){
             document.getElementById("table-head").removeChild(document.getElementById("table-edit"));
         }
     }
+    //if you are admin, and then edit isn't already there, add it
     else if(!document.getElementById("table-edit")){
         let edit =document.createElement("th");
         edit.setAttribute("id","table-edit")
         edit.innerHTML = 'EDIT';
         edit.classList.add("text-uppercase", "font-weight-bold");
         document.getElementById("table-head").appendChild(edit);
+    }
+
+    //if you are an admin and admin settings are not vsible
+    if(thisCal.admin){
+        document.getElementById("adminSettings").hidden = false;
+    } else{
+        document.getElementById("adminSettings").hidden =true;
     }
     //load each item in this calendar
     thisCal.items.forEach((item) => {
@@ -149,9 +188,10 @@ function loadTable(calId){
         }
         anItem.appendChild(date);
 
-        //load type of event
+        //load type of Event
         let type = document.createElement('td');
-        type.innerHTML = (item.type === 'event' ? 'Event':'Action Item');
+        type.innerHTML = item.type;
+        //(item.type === 'Event' ? 'Event':'Action Item'); //TODO
         anItem.appendChild(type);
 
         //creates status indicator
@@ -218,10 +258,13 @@ function loadTable(calId){
  * @param {Item object} item 
  */
 function loadModal(item){
+    //make sure there are not extranous values by clearing modal
+    clearModals();
+
     document.getElementById("itemName").value = item.name;
     document.getElementById("statusModal").value = item.status;
     document.getElementById("typeItem").value = item.type;
-    document.getElementById('currCal').value = document.getElementById('cal-name').innerHTML;
+    document.getElementById('currCal').value = document.getElementById('cal-name').childNodes[0].data;
 
 
     //update the date within the form
@@ -236,15 +279,11 @@ function loadModal(item){
     //listener to save
     let confirmBtn = document.getElementById("saveChanges");
 
+    //save button should load the commit screen and close the edit modal
     confirmBtn.addEventListener("click", () =>{
-        loadCommit();
         $("#itemEditCenter").modal('hide');
         commitChanges();
-    });
-    //make the save button a toggle for the confirmation modal? TODO check if this works
-    //If it doesn't go back to using event listener
-    // confirmBtn.setAttribute("data-toggle", "modal");
-    // confirmBtn.setAttribute("data-target", "#editConfirmation");
+    });    
 
     //event listener to toggle between event and action inputs
     let toggleType = document.getElementById("typeItem");
@@ -255,6 +294,7 @@ function loadModal(item){
 
 
 function newItem(){
+    clearModals();
     //initialize as an action item
     document.getElementById('typeItem').value = "Action Item";
     //Make sure it is all empty values TODO
@@ -270,7 +310,7 @@ function setUpdateForm(item) {
     let dueDateShow = document.getElementById('showDueDate');
     let startTimeShow = document.getElementById('showStartTime');
     let endTimeShow = document.getElementById('showEndTime');
-    if(currentType.value === 'action') {
+    if(currentType.value === 'Action Item') {
         itemStatus.style.display = 'inline-block';
         dueDateShow.style.display = 'inline-block';
         startTimeShow.style.display = 'none';
@@ -281,18 +321,17 @@ function setUpdateForm(item) {
             document.getElementById('dueDate').value = "";
         }
 
-    } else if (currentType.value === 'event') {
+    } else if (currentType.value === 'Event') {
         itemStatus.style.display = 'none';
         dueDateShow.style.display = 'none';
         startTimeShow.style.display = 'inline-block';
         endTimeShow.style.display = 'inline-block';
-        //TODO this is loading another item's times if it is undefined. I think it is just 
-//being written somewhere else and not getting overridden TODO CHECK
-        if(item.start !==undefined){
+        
+        //if start time is not a defined value, the html value will 
+        //still be the value it was last set to
+        if(item.start !== undefined){
             document.getElementById("startTime").value = item.start;
         } else{
-            //if there is not a defined value, the html value will 
-            //still be the value it was last set to
             document.getElementById("startTime").value = "";
         }
         if(item.end !== undefined){
@@ -303,44 +342,132 @@ function setUpdateForm(item) {
     }
 }
 
+/**
+ * Load the information you are about to commit
+ * This will reference the information that was just inserted into the 
+ * edit modal. The database has not been updated, so it has to reference the html
+ */
 function loadCommit(){
-    let changeList = document.createElement("ul");
+    //clear out any current list
+    if(document.getElementById("listOfInfo")){
+        document.getElementById("listOfInfo").parentElement.removeChild(document.getElementById("listOfInfo"));
+    }
+
+    //make it a list
+    let changeList = document.createElement("div");
     changeList.classList.add("list-group");
+    changeList.setAttribute("id", "listOfInfo");
 
-    let name = document.createElement("li");
-    name.classList.add("list-group-item");
-    name.innerHTML = document.getElementById("itemName").value;
-    changeList.appendChild(name);
+    let listField = document.getElementsByClassName("modal-editable-area");
 
+    //for each field, make a new list item
+    for(let i=0; i<listField.length; i++){
+        if(listField[i].value !== ""){
+            let li = document.createElement("li");
+            li.classList.add("list-group-item");
+            //the parent's text content is the category name
+            let category = (listField[i].parentElement.textContent);
+            //end it at the new line char. The select objects would otherwise
+            //print every optionss
+            category =category.substr(0, category.search("\n") );
+            // For unknown reasons, MUST be textContent, not innerText or innerHTML
+            li.textContent = category + " " + listField[i].value;
+            changeList.appendChild(li);
+        }
+    }
+    document.getElementById("editsToConfirm").appendChild(changeList);
 
-
-
-    document.getElementById("fillEdits").appendChild(changeList);
 }
 
 /**
  * Closes editing modal and opens a new confirmation modal.
  */
-function commitChanges(){
+function commitChanges(item){
     //fill confirmation modal with information values from the edit modal
-    
+    loadCommit();
     //opens the confirmation modal
     $("#editConfirmation").modal('show');
+    document.getElementById("confirmBtn").addEventListener("click", ()=> {
+        $("#editConfirmation").modal('hide');
 
-    //close modal and open confirmation modal
+    })
+
+    //check if item.id already exists. If so, update. Otherwise, push item TODO
 }
 
-loadCalendars(0);
-/**
- * {
-            id:'1',
-            name:'Greek 200', 
-            admin:true,
-            items: [
-                {name:'Agape Test', date:'10/31/2020', type:'event',status:"Not Started"},
-                {name:'Alpha', date:'11/5/2020', type:'event', status:"Not Started"},
-                {name: 'Reading', date:'11/7/2020', type:'action', status:"In Progress"}
-            ],
-          
+function clearModals(){
+    let editFields = document.getElementsByClassName("modal-editable-area");
+    for(let i=0; i<editFields.length; i++){
+        if(editFields[i].value !== ""){
+            editFields[i].value= "";
         }
+    }
+
+}
+
+
+async function checkForItem(user, item){
+    
+    //not sure which end point to use
+    // app.get('/api/calendars/:cal/items/:item', items.find);
+    // app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
+
+    // const response = await fetch('/api/');
+    // //Will it return ok if it doesn't exist?
+    // if(!response.ok){
+    //     console.log(reponse.error);
+    //     return;
+    // }
+
+
+}
+
+async function saveItem(item){
+
+}
+
+/**
+ * Get every calendar that the user is subscribed to
+ * @param {} user 
  */
+async function getCals(user){
+    const response = await fetch(`/api/users/${user}`);
+    if(!response.ok){
+        console.log(response.error);
+        return;
+    }
+    let allSubCals = await resposnse.json();
+    for(let i=0; i<allSubCals.length; i++){
+        console.log(JSON.parse(allSubCals[i]));
+    }
+
+}
+
+async function searchUsers(currUser, currPassword) {
+    const response = await fetch('/api/users');
+    if (!response.ok) {
+        console.log(response.error);
+        return;
+    }
+    let allUsers = await response.json();
+    for(let i = 0; i < allUsers.length; i++) {
+        if(allUsers[i].username === currUser) {
+            if(allUsers[i].password === currPassword) {
+                return true;
+            }
+        } 
+    }
+    return false;
+}
+// async function addNewUser() {
+//     fetch('/api/users', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({username: document.getElementById('username').value, firstName: document.getElementById('firstName').value, lastName: document.getElementById('lastName').value, email: document.getElementById('email').value, password: document.getElementById('password').value})
+//     });
+// }
+
+loadCalendars(0);
+getCals(12345);
