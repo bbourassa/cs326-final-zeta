@@ -8,8 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"node server/app.js",
-    "lint": "eslint"
+    "start": "node server/app.js",
+    "lint": "eslint js/ server/ "
   },
   "repository": {
     "type": "git",
