@@ -61,6 +61,8 @@ function loadSettingListeners(){
 
     //for each selected item, find corresponding in personal, updare
     document.getElementById("setUpdateSelected").addEventListener("click", ()=>{
+        const checkedItemIds = getCheckedItems();
+
 
     });
 
