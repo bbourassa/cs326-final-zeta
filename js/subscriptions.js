@@ -8,23 +8,62 @@ function loadAll(userId){
 loadSettingListeners();
 
 function loadSettingListeners(){
+    //  the header checkbox will cause all other check oxes to check/uncheck
     document.getElementById("checkAll").addEventListener("change", ()=> {
-        if(document.getElementById("checkAll").checked){
-            console.log("detected");
+        let rows = document.getElementById("eventTable").childNodes;
+        for(let i =0; i<rows.length; i++){
+            let checkbox = document.getElementById("eventTable").childNodes[i].childNodes[0].childNodes[0];
+            checkbox.checked = checkbox.checked ? false:true;
         }
+        
     });
-    document.getElementById("setAddItems").addEventListener("click", ()=>{
-        //for each selected item, add it to personal cal
+    //for each selected item, add it to personal cal
+    document.getElementById("setAddItems").addEventListener("click", async ()=>{
+        const cal_id = parseInt(document.getElementById("cal-name").getAttribute("calID"));
+        //get an array of every itemID that has been checked
+        const checkedItemIds = getCheckedItems();
+
+        checkedItemIds.forEach((itemID), async ()=>{
+            //GET the particular item
+            //TODO if we are going to pass in the item in the api pull,
+            //will need this fetch. Otherwise, just need the contents of the else
+            const response = await fetch(`/api/calendars/${cal_id}/items/${itemID}`);
+            if(!response.ok){
+                alert("Error: Unable to add specified item(s) to your personal calendar.");
+                return;
+            }
+            else{ //TODO are we passing item in as item object or item id?
+                const item = response.json();
+                const item_id = item.id;
+                //add that item to personal calendar
+                fetch(`/api/users/${user_id}/calendar/pull`, {
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body:item
+                });
+            }
+        });
     });
+
+    //for every action in the calendar, add it to personal
     document.getElementById("setAddAllActions").addEventListener("click", ()=>{
-        //for every action in the calendar, add it to personal
+        const cal_id = parseInt(document.getElementById("cal-name").getAttribute("calID"));
+
     });
+
+    //for every event in cal, add it to personal
     document.getElementById("setAddAllEvents").addEventListener("click", ()=>{
-        //for every event in cal, add it to personal
+        const cal_id = parseInt(document.getElementById("cal-name").getAttribute("calID"));
+        
     });
+
+    //for each selected item, find corresponding in personal, updare
     document.getElementById("setUpdateSelected").addEventListener("click", ()=>{
-        //for each selected item, find corresponding in personal, updare
+
     });
+
     document.getElementById("setCreate").addEventListener("click", ()=>{
 
     });
@@ -38,6 +77,22 @@ function loadSettingListeners(){
 
     });
 
+}
+
+/**
+ * Returns an array of every item id that has been checked
+ */
+function getCheckedItems(){
+    let checkedBoxes = [];
+    let allBoxes = document.getElementsByClassName("itemCheck");
+    for (let i=0; i<allBoxes.length; i++){
+        if(allBoxes[i].checked){
+            const itemID = parseInt(allBoxes[i].parentElement.parentElement.getAttribute("itemid"));
+
+            checkedBoxes.push(itemID);
+        }
+    }
+    return checkedBoxes;
 }
 
 function loadNotifications(){
@@ -117,9 +172,9 @@ function loadTable(calId){
             name:'CS 221', 
             admin:false,
             items: [
-                {name: 'Zoom meeting', start:'11/3/2020', all_day:true, type:'Event', status:"N/A"},
-                {name: 'Milestone 2', dueDate:'11/6/2020', type:'Action Item',status : "In Progress"}, 
-                {name:'Homework 9', dueDate: '11/2/2020', type:'Action Item', status:"In Progress"}
+                {id : "001", name: 'Zoom meeting', start:'11/3/2020', all_day:true, type:'Event', status:"N/A"},
+                {id : "002", name: 'Milestone 2', dueDate:'11/6/2020', type:'Action Item',status : "In Progress"}, 
+                {id : "003", name:'Homework 9', dueDate: '11/2/2020', type:'Action Item', status:"In Progress"}
             ]
             
         },
@@ -128,9 +183,9 @@ function loadTable(calId){
             name:'Greek 200', 
             admin:true,
             items: [
-                {name:'Agape Test', start:'10/31/2020',  end: "11/5/2020",all_day:false,  type:'Event',status:"N/A"},
-                {name:'Alpha', start:'11/5/2020', all_day:true, type:'Event', status:"N/A"},
-                {name: 'Reading', dueDate:'11/7/2020', type:'Action Item', status:"In Progress"}
+                {id : "004", name:'Agape Test', start:'10/31/2020',  end: "11/5/2020",all_day:false,  type:'Event',status:"N/A"},
+                {id : "005", name:'Alpha', start:'11/5/2020', all_day:true, type:'Event', status:"N/A"},
+                {id : "006", name: 'Reading', dueDate:'11/7/2020', type:'Action Item', status:"In Progress"}
             ],
           
         }
@@ -140,8 +195,9 @@ function loadTable(calId){
     // const r = await  db.any('SELECT events, Action Items FROM (SELECT * FROM cals WHERE id= $1)', calId)
     const thisCal = cals[calId]; //TODO temporary -- once i have the db set up, I can figure out how to 
         //make this work with r
-
+    
     document.getElementById("cal-name").innerHTML = thisCal.name;
+    document.getElementById("cal-name").setAttribute("calID", calId);
 
     //Add or remove the edit column based on whether you are an admin
     if(!thisCal.admin){
@@ -168,9 +224,13 @@ function loadTable(calId){
     thisCal.items.forEach((item) => {
         let anItem = document.createElement('tr');
 
+        anItem.setAttribute('itemID', item.id);
+
         let check = document.createElement('td');
         let box = document.createElement('input');
         box.type ='checkbox';
+        box.classList.add("itemCheck");
+        // box.setAttribute('name', 'itemCheck');
         check.appendChild(box)
         anItem.appendChild(check);
 
@@ -217,8 +277,16 @@ function loadTable(calId){
         let infoBtn = document.createElement ("button");
         infoBtn.classList.add("btn", "btn-sm", "btn-outline-info");
         infoBtn.innerText = "Details"
+        infoBtn.setAttribute("data-toggle", "modal");
+        infoBtn.setAttribute("data-target", "#editConfirmation");
         infoBtn.addEventListener("click", () =>{
             //pop up modal with any details, non-editable TODO 
+            loadCommit();
+            document.getElementById("commitMessage").setAttribute("hidden", true);
+            document.getElementById("confEditHeader").innerText = "Details";
+            document.getElementById("reviewMessage").setAttribute("hidden", true);
+
+
         })
         info.appendChild(infoBtn);
         anItem.appendChild(info);
@@ -236,8 +304,8 @@ function loadTable(calId){
             editBtn.innerHTML = "Edit";
 
             editBtn.addEventListener("click", ()=> {
-                loadModal(item)});
-            
+                loadModal(item)
+            });
 
             editable.appendChild(editBtn);
             anItem.appendChild(editable);
@@ -258,6 +326,10 @@ function loadTable(calId){
  * @param {Item object} item 
  */
 function loadModal(item){
+    //set it to confirmation card values
+    document.getElementById("confEditHeader").innerText = "Confirm Edits";
+    document.getElementById("reviewMessage").removeAttribute("hidden");
+
     //make sure there are not extranous values by clearing modal
     clearModals();
 
@@ -283,6 +355,8 @@ function loadModal(item){
     confirmBtn.addEventListener("click", () =>{
         $("#itemEditCenter").modal('hide');
         commitChanges();
+        //make sure the commit message input is visible
+        document.getElementById("commitMessage").removeAttribute("hidden");
     });    
 
     //event listener to toggle between event and action inputs
@@ -348,6 +422,7 @@ function setUpdateForm(item) {
  * edit modal. The database has not been updated, so it has to reference the html
  */
 function loadCommit(){
+    
     //clear out any current list
     if(document.getElementById("listOfInfo")){
         document.getElementById("listOfInfo").parentElement.removeChild(document.getElementById("listOfInfo"));
@@ -470,4 +545,4 @@ async function searchUsers(currUser, currPassword) {
 // }
 
 loadCalendars(0);
-getCals(12345);
+// getCals(12345);
