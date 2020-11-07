@@ -1,0 +1,6 @@
+{
+    "host": "localHost",
+    "port": 5432,
+    "database": "life-on-track",
+    "user": "postgres"
+}
