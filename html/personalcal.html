@@ -35,11 +35,23 @@
                 <!--START: Calendar HTML Section-->
                 <div class="col-sm">
                     <br>
+                    
                     <div class="calendar shadow bg-white p-2">
-                        <div class=" align-items-center">
-                            <h2 class="month font-weight-bold mb-0 text-uppercase" id="currentMonthAndYear"><svg width="1em" height="0.75em" viewBox="0 0 16 16" fill="currentColor">
-                                <path fill-rule="evenodd" d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v1h16V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4V.5zM16 14V5H0v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2zm-6.664-1.21c-1.11 0-1.656-.767-1.703-1.407h.683c.043.37.387.82 1.051.82.844 0 1.301-.848 1.305-2.164h-.027c-.153.414-.637.79-1.383.79-.852 0-1.676-.61-1.676-1.77 0-1.137.871-1.809 1.797-1.809 1.172 0 1.953.734 1.953 2.668 0 1.805-.742 2.871-2 2.871zm.066-2.544c.625 0 1.184-.484 1.184-1.18 0-.832-.527-1.23-1.16-1.23-.586 0-1.168.387-1.168 1.21 0 .817.543 1.2 1.144 1.2zm-2.957-2.89v5.332H5.77v-4.61h-.012c-.29.156-.883.52-1.258.777V8.16a12.6 12.6 0 0 1 1.313-.805h.632z"/>
-                                </svg></h2>
+                        <div>
+                            <div class="form-group">
+                                <label>
+                                    <h2 class="font-weight-bold text-uppercase calendar" id="currentMonth"></h2>
+                                    <select class="custom-select shadow-sm calendar-selection" id="monthSelection">
+                                    </select>
+                                </label>
+                                <label>
+                                    <h2 class="font-weight-bold text-uppercase calendar" id="currentYear"></h2>
+                                    <select class="custom-select shadow-sm calendar-selection" id="yearSelection">
+                                    </select>
+                                </label>
+                            </div>
+                            <h2 class="month font-weight-bold mb-0 text-uppercase" id="currentMonthAndYear">
+                            </h2>
                         </div>
                         <ol class="weekdays list-unstyled">
                             <li class="font-weight-bold text-uppercase">Sun</li>
@@ -62,17 +74,26 @@
 
                     <!--START: To-Do List Card HTML Section-->
                     <div class="card shadow bg-white" id="todoList">
-                        <h3 class="card-header text-uppercase font-weight-bold" id="toDoList">To-Do List</h3>
+                        <div class="card-header" id="toDoList">
+                            <h3 class="text-uppercase font-weight-bold" id="toDoList">To-Do List</h3>
+                        </div>
                         <div class="list-group">
-                            <div class="list-group-item">
-                                <div class="form-check"><label class="form-check-label"> <input class="checkbox" type="checkbox"> To-do Item 1 <i class="input-helper"></i></label> </div>
+                            <div id="toDoItems">
+                                <div class="list-group-item list-group-item-action">
+                                    <div class="form-check" id="toDo1"><label class="form-check-label"> <input class="checkbox to-do-item" type="checkbox" id="1"> To-do Item 1 <i class="input-helper"></i></label> </div>
+                                </div>
+                                <div class="list-group-item list-group-item-action to-dos">
+                                    <div class="form-check" id="toDo2"><label class="form-check-label"> <input class="checkbox to-do-item" type="checkbox" id="2"> To-do Item 2<i class="input-helper"></i></label> </div>
+                                </div>
+                                <div class="list-group-item list-group-item-action to-dos">
+                                    <div class="form-check" id="toDo3"><label class="form-check-label"> <input class="checkbox to-do-item" type="checkbox" id="3"> To-do Item 3 <i class="input-helper"></i></label> </div>
+                                </div>
                             </div>
-                            <div class="list-group-item">
-                                <div class="form-check"><label class="form-check-label"> <input class="checkbox" type="checkbox"> To-do Item 2<i class="input-helper"></i></label> </div>
-                            </div>
-                            <div class="list-group-item">
-                                <div class="form-check"><label class="form-check-label"> <input class="checkbox" type="checkbox"> To-do Item 3 <i class="input-helper"></i></label> </div>
-                            </div>
+                            <a href="" class="list-group-item list-group-item-action text-muted" data-toggle="modal" data-target="#addToDoItem">
+                                <svg width="1em" height="1em" viewBox="0 0 17 17" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                  </svg> Add To-Do Item
+                            </a>
                             <a href="" class="list-group-item list-group-item-action text-muted" data-toggle="modal" data-target="#archivedItemsCenter">
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-archive-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
@@ -137,12 +158,12 @@
                             </div>
                             <div class="form-group">
                                 <label class="font-weight-bold">Item Type:
-                                    <select class="custom-select shadow-sm">
-                                        <option selected value="Action Item">Action Item</option>
+                                    <select class="custom-select shadow-sm" id="itemType">
+                                        <option value="Action Item">Action Item</option>
                                         <option value="Event">Event</option>
                                       </select>
                                 </label>
-                                <label class="font-weight-bold">Item Status:
+                                <label class="font-weight-bold" id="showStatus">Item Status:
                                     <select class="custom-select shadow-sm">
                                         <option selected value="Not Started">
                                             Not Started
@@ -156,9 +177,15 @@
                                       </select>
                                 </label>
                             </div>
-                            <div class="form-group ">
-                                <label class="font-weight-bold">Due Date:
-                                    <input class="form-control shadow-sm" type="datetime-local" placeholder="When is this event or activity?">
+                            <div class="form-group" id="dueDateSet">
+                                <label class="font-weight-bold" id="showDueDate">Due Date:
+                                    <input class="form-control shadow-sm" type="datetime-local"> 
+                                </label>
+                                <label class="font-weight-bold" id="showStartTime">Start Time:
+                                    <input class="form-control shadow-sm" type="datetime-local">
+                                </label>
+                                <label class="font-weight-bold" id="showEndTime">End Time:
+                                    <input class="form-control shadow-sm" type="datetime-local">
                                 </label>
                             </div>
                             
@@ -178,30 +205,57 @@
         </div>
         <!--END: Modal HTML for Items-->
 
+        <div class="modal fade" id="addToDoItem" tabindex="-1" role="dialog" aria-labelledby="addToDoItemTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="card-title text-uppercase font-weight-bold">Add To-Do Item</h2>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form>
+                        <label class="font-weight-bold">To-Do Item Name:
+                            <input type="text" class="form-control shadow-sm" id="toDoName" placeholder="Add To-Do Item Here">
+                        </label>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="addToDo">Add Item</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         <!--START: Modal HTML for Archived To-Do Items-->
         <div class="modal fade" id="archivedItemsCenter" tabindex="-1" role="dialog" aria-labelledby="archivedItemsTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h2 class="card-title text-uppercase font-weight-bold">
+                            
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-archive-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
                             </svg>
-                            Archived To-Do List (Removed After 24 Hrs)</h2>
+                            Archived To-Do List (Removed After 24 Hrs)
+                        </h2>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
+                        <p class="text-muted font-weight-bold">Uncheck items to remove them from archived folder and added back to your to-do list</p>
                         <div class="list-group">
                             <div class="list-group-item">
-                                <div class="form-check"><label class="form-check-label item-checked text-muted"> <input class="checkbox" type="checkbox" checked> To-do Item 4<i class="input-helper"></i></label> </div>
+                                <div class="form-check" id="toDo4"><label class="form-check-label item-checked text-muted"> <input class="checkbox to-do-item" id="4" type="checkbox" checked> To-do Item 4<i class="input-helper"></i></label> </div>
                             </div>
                             <div class="list-group-item">
-                                <div class="form-check"><label class="form-check-label item-checked text-muted"> <input class="checkbox" type="checkbox" checked> To-do Item 5<i class="input-helper"></i></label> </div>
+                                <div class="form-check" id="toDo5"><label class="form-check-label item-checked text-muted"> <input class="checkbox to-do-item" id="5" type="checkbox" checked> To-do Item 5<i class="input-helper"></i></label> </div>
                             </div>
                             <div class="list-group-item">
-                                <div class="form-check"><label class="form-check-label item-checked text-muted"> <input class="checkbox" type="checkbox" checked> To-do Item 6<i class="input-helper"></i></label> </div>
+                                <div class="form-check" id="toDo6"><label class="form-check-label item-checked text-muted"> <input class="checkbox to-do-item" id="6" type="checkbox" checked> To-do Item 6<i class="input-helper"></i></label> </div>
                             </div>
                     </div>
                     <div class="modal-footer">
