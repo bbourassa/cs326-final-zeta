@@ -38,3 +38,5 @@ class CalendarsRepository {
         return this.db.one(sql.total, [], a => +a.count);
     }
 }
+
+module.exports = CalendarsRepository;

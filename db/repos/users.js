@@ -59,4 +59,4 @@ class UsersRepository {
     }
 }
 
-modules.exports = UsersRepository;
+module.exports = UsersRepository;
