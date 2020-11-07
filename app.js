@@ -62,23 +62,5 @@ app.use('/api', router);
 
 const port = process.env.port || 3000; 
 app.listen(port, () => {
-	console.log('Listening on http://localhost:' + port);
+    console.log('Listening on http://localhost:' + port);
 });
-
-// Generic GET handler;
-function GET(url, handler) {
-    router.get(url, async (req, res) => {
-        try {
-            const data = await handler(req);
-            res.json({
-                success: true,
-                data
-            });
-        } catch (error) {
-            res.json({
-                success: false,
-                error: error.message || error
-            });
-        }
-    });
-}
