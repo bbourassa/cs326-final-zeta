@@ -26,32 +26,27 @@ function loadSettingListeners(){
 	});
 	//for each selected item, add it to personal cal
 	document.getElementById('setAddItems').addEventListener('click', async ()=>{
-		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 		//get an array of every itemID that has been checked
 		const checkedItemIds = getCheckedItems();
 
 		for(let i=0; i<checkedItemIds.length; i++){
-			let itemID=  checkedItemIds[0];
-			//GET the particular item
-			//TODO if we are going to pass in the item in the api pull,
-			//will need this fetch. Otherwise, just need the contents of the else
-			const response = await fetch(`/api/calendars/${cal_id}/items/${itemID}`);
+			//for each checked item, get the item id
+			let itemID=  checkedItemIds[i];
+
+			//pull that item into your cal
+			const response = await fetch(`/api/users/${user_id}/calendar/pull`, {  
+				method: 'POST',
+				headers:{
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(itemID)
+			});
+			
 			if(!response.ok){
 				alert('Error: Unable to add specified item(s) to your personal calendar.');
 				return;
 			}
-			else{ //TODO are we passing item in as item object or item id?
-				const item = response.json();
-				// const item_id = item.id;
-				//add that item to personal calendar
-				fetch(`/api/users/${user_id}/calendar/pull`, {  //TODO find user
-					method: 'POST',
-					headers:{
-						'Content-Type': 'application/json'
-					},
-					body:item
-				});
-			}
+			
 		}
 	});
 
@@ -102,9 +97,9 @@ function loadSettingListeners(){
 					const addResp = await fetch(`/api/calendars/${cal_id}/items`, {
 						method: 'POST', 
 						headers: {
-							'Contenct-Type': 'application/json'
+							'Content-Type': 'application/json'
 						},
-						body: itemList[i]
+						body: JSON.stringify(itemList[i])
 					} );
 					if(!addResp.ok){
 						alert('Unable to add selected item(s) to your calendar at this time.');
@@ -116,21 +111,36 @@ function loadSettingListeners(){
         
 	});
 
-	/**  TODO update everything but status
 	//for each selected item, find corresponding in personal, updare
-	document.getElementById('setUpdateSelected').addEventListener('click', ()=>{
+	document.getElementById('setUpdateSelected').addEventListener('click',async ()=>{
 		const checkedItemIds = getCheckedItems();
-		checkedItemIds.forEach((ID) => {
-			//get from subscription cal
-		});
+		// TODO ADD POPUP
+		for(let i=0; i<checkedItemIds.length; i++){
+			//Send in the item ids to be pulled across. If any don't resolve, stop trying
+			const response = await  fetch(`api/users/${user_id}/calendar/pull`, {
+				method: 'PUT',
+				headers: {'Content-type':'application/json'},
+				body:checkedItemIds[i]
+			});
+			if(!response.ok){
+				alert('Unable to update item(s) at this time.');
+				//don't then try to do the rest!
+				return;
+			}
+			
+		}
 	});
-	*/
+	
 
 	//make a new event
 	document.getElementById('setCreate').addEventListener('click', ()=>{
 		clearModals();
 		$('#itemEditCenter').modal('show');
+		//DO NOT call LoadModal; that requires an existing item
+		//instead, set document.getElementById('modalBodyItemId').setAttribute('item-id', to a new value
+		
 		let confirmBtn = document.getElementById('saveChanges');
+
 
 		//save button should load the commit screen and close the edit modal
 		confirmBtn.addEventListener('click', () =>{
@@ -139,6 +149,7 @@ function loadSettingListeners(){
 			//make sure the commit message input is visible
 			document.getElementById('commitMessage').removeAttribute('hidden');
 		}); 
+		//now you are in the commit modal
 		
 
 	});
@@ -152,6 +163,43 @@ function loadSettingListeners(){
 
 	});
 
+}
+
+/**
+ * Checks to see if an item id is already in the database
+ * @param {Integer} item_id 
+ */
+function getItemExists(item_id){
+	try {
+		(fetch(`ap/items/${item_id}`));
+	} catch(e){
+		return false;
+	}
+	return true;
+}
+
+/** @britney do you need this in personal cal?
+ * Generates a new random set of digits, ensures that it does not already exist
+ * 
+ * @param {String} field to generate an id for
+ */
+function generateNewId(field){
+	let id = 0;
+	//Calendar id's should have 5 digits, for now
+	if(field === 'cal'){ 
+		id = Math.floor(Math.random() * (99999 - 10000) + 10000);
+		while(getItemExists(id)){
+			id = Math.floor(Math.random() * (99999 - 10000) + 10000);
+		}
+
+	} //item id's should have 7 digits, for now
+	else if(field === 'item'){
+		id = Math.floor(Math.random() * (9999999 - 1000000) + 1000000);
+		while(getItemExists(id)){
+			id = Math.floor(Math.random() * (9999999 - 1000000) + 1000000);
+		}
+	}
+	return id;
 }
 
 /**
@@ -214,7 +262,6 @@ async function loadCalendars(){
 	} else{
 		const cals1 = response.json(); //TODO remove the 1 once I take out data from here.
 	}
-
 	//make the button for each calendar, adding admin button where applicalbe
 	//if you click that clanedar, it will load into the item table
 	cals.forEach((cal) =>{
@@ -276,12 +323,14 @@ function loadTable(calId){
     
 	const thisCal = cals[calId]; //TODO temporary -- once i have the db set up, I can figure out how to 
 	//make this work with r
-    
+	const admin = (thisCal.owner_id === user_id);
+
+	
 	document.getElementById('cal-name').innerHTML = thisCal.name;
 	document.getElementById('cal-name').setAttribute('calID', calId);
 
 	//Add or remove the edit column based on whether you are an admin
-	if(!thisCal.admin){
+	if(!admin){
 		if(document.getElementById('table-edit')){
 			document.getElementById('table-head').removeChild(document.getElementById('table-edit'));
 		}
@@ -296,7 +345,7 @@ function loadTable(calId){
 	}
 
 	//if you are an admin and admin settings are not vsible
-	if(thisCal.admin){
+	if(admin){
 		document.getElementById('adminSettings').hidden = false;
 	} else{
 		document.getElementById('adminSettings').hidden =true;
@@ -373,7 +422,7 @@ function loadTable(calId){
 		anItem.appendChild(info);
 
         
-		if(thisCal.admin){
+		if(admin){
 			//make cell and button
 			let editable = document.createElement('td');
 			let editBtn = document.createElement('button');
@@ -402,7 +451,7 @@ function loadTable(calId){
 }
 
 /**
- * Fills the modal with the appropriate information
+ * Fills the Edit center modal with the appropriate information
 
  * @param {Item object} item 
  */
@@ -508,7 +557,7 @@ function setUpdateForm(item) {
 	}
 }
 
-/** TODO needs to be added to personal cal
+/** TODO needs to be added to personal cal @britney
  * Load the information you are about to commit
  * This will reference the information that was just inserted into the 
  * edit modal. The database has not been updated, so it has to reference the html
@@ -547,6 +596,7 @@ function loadCommit(){
 }
 
 /**
+ * TODO add to personal cal @britney
  * Closes editing modal and opens a new confirmation modal.
  */
 async function commitChanges(){
@@ -563,7 +613,7 @@ async function commitChanges(){
 	// setAttribute('item-id', item.id);
 
 	let bodyInfo = getInfo();
-	console.log(item_id);
+	// console.log(item_id);
 	//check if item.id already exists. If so, update. Otherwise, push item TODO
 	let itemResp = await fetch(`/api/items/${item_id}`);
 	//if it does not already exist, make it

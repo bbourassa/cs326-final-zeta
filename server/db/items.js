@@ -21,6 +21,7 @@ for (let i = 0; i < sizes.items; ++i) {
 		desc = faker.lorem.sentence(),
 		cal = faker.random.number(sizes.cals - 1);
 
+
 	if (all_day) {
 		start.setHours(0, 0, 0);
 	}
@@ -47,6 +48,7 @@ for (let i = 0; i < sizes.items; ++i) {
 		description: desc,
 		status: status,
 		calendar_id: cal
+
 	});
 }
 
