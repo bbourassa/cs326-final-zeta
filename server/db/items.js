@@ -14,7 +14,7 @@ const items = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : 
 
 for (let i = 0; i < sizes.items; ++i) {
 	const name = faker.lorem.words(),
-		type = faker.random.boolean() ? 'event' : 'action',
+		type = faker.random.boolean() ? 'Event' : 'Action Item',
 		all_day = faker.random.boolean(),
 		start = faker.random.boolean() ? faker.date.recent(30, refDate) : faker.date.soon(30, refDate),
 		end = (all_day || type === 'action') ? null : faker.date.soon(.2, start),
@@ -28,13 +28,13 @@ for (let i = 0; i < sizes.items; ++i) {
 	let status = '';
 	switch (faker.random.number(2)) {
 	case 0:
-		status = 'not started';
+		status = 'Not Started';
 		break;
 	case 1:
-		status = 'in progress';
+		status = 'In Progress';
 		break;
 	case 2:
-		status = 'completed';
+		status = 'Completed';
 	}
 
 	items.push({

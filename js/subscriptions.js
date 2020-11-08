@@ -1,5 +1,7 @@
 'use strict';
 
+const user_id  =0;
+
 function loadAll(userId){
 	loadCalendars(userId);
 	loadSettingListeners();
@@ -7,8 +9,10 @@ function loadAll(userId){
 
 }
 
-//TODO make user id global!!!!
-const user_id = window.localStorage.getItem('userId');
+loadAll(0);
+
+
+// const user_id = window.localStorage.getItem('userInfo').id;
 
 function loadSettingListeners(){
 	//  the header checkbox will cause all other check oxes to check/uncheck
@@ -112,7 +116,7 @@ function loadSettingListeners(){
         
 	});
 
-	/**  TODO Might be removing this setting
+	/**  TODO update everything but status
 	//for each selected item, find corresponding in personal, updare
 	document.getElementById('setUpdateSelected').addEventListener('click', ()=>{
 		const checkedItemIds = getCheckedItems();
@@ -176,12 +180,12 @@ function loadNotifications(){
  * Load all of the user's subscription calendars
  * @param {int} userId 
  */
-async function loadCalendars(userId){
+async function loadCalendars(){
 	const cals = [
 		{
 			id:'0',
 			name:'CS 221', 
-			admin:false,
+			owner_id : 3,
 			items: [
 				{name: 'Zoom meeting', date:'11/3/2020', type:'Event', status:'N/A'},
 				{name: 'Milestone 2', date:'11/6/2020', type:'Action Item',status : 'In Progress'}, 
@@ -192,7 +196,7 @@ async function loadCalendars(userId){
 		{
 			id:'1',
 			name:'Greek 200', 
-			admin:true,
+			owner_id:0,
 			items: [
 				{name:'Agape Test', date:'10/31/2020', type:'Event',status:'N/A'},
 				{name:'Alpha', date:'11/5/2020', type:'Event', status:'N/A'},
@@ -201,13 +205,21 @@ async function loadCalendars(userId){
           
 		}
 	];
+
+	//load all the calendars you have a subscription relationship with
+	//make the response into the cal list
 	const response = await fetch(`/api/users/${user_id}/subscriptions/calendars`);
 	if(!response.ok){
 		alert('Unable to load your subscriptions');
+	} else{
+		const cals1 = response.json(); //TODO remove the 1 once I take out data from here.
 	}
-	//make the response into the cal list
-   
+
+	//make the button for each calendar, adding admin button where applicalbe
+	//if you click that clanedar, it will load into the item table
 	cals.forEach((cal) =>{
+		const admin = (cal.owner_id === user_id);
+		
 		//makke the button for the calendar
 		let aCal = document.createElement('button');
 		aCal.innerHTML=cal.name;
@@ -219,6 +231,13 @@ async function loadCalendars(userId){
 			}
 			loadTable(cal.id);
 		});
+		if(admin){
+			let adminIndic = document.createElement('btn'); //btn btn-outline-secondary btn-sm float-right
+			adminIndic.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'float-right', 'disabled');
+			adminIndic.innerText = 'ADMIN';
+			aCal.appendChild(adminIndic);
+		}
+
 		document.getElementById('subscribed-cals').appendChild(aCal);
 
 	});
@@ -233,7 +252,7 @@ function loadTable(calId){
 		{
 			id:'0',
 			name:'CS 221', 
-			admin:false,
+			owner_id:0,
 			items: [
 				{id : '001', name: 'Zoom meeting', start:'11/3/2020', all_day:true, type:'Event', status:'N/A'},
 				{id : '002', name: 'Milestone 2', dueDate:'11/6/2020', type:'Action Item',status : 'In Progress'}, 
@@ -244,7 +263,7 @@ function loadTable(calId){
 		{
 			id:'1',
 			name:'Greek 200', 
-			admin:true,
+			owner_id:0,
 			items: [
 				{id : '004', name:'Agape Test', start:'10/31/2020',  end: '11/5/2020',all_day:false,  type:'Event',status:'N/A'},
 				{id : '005', name:'Alpha', start:'11/5/2020', all_day:true, type:'Event', status:'N/A'},
@@ -255,7 +274,6 @@ function loadTable(calId){
 	];
 	//TODO api find calendar by cal_id
     
-	// const r = await  db.any('SELECT events, Action Items FROM (SELECT * FROM cals WHERE id= $1)', calId)
 	const thisCal = cals[calId]; //TODO temporary -- once i have the db set up, I can figure out how to 
 	//make this work with r
     
@@ -490,7 +508,7 @@ function setUpdateForm(item) {
 	}
 }
 
-/**
+/** TODO needs to be added to personal cal
  * Load the information you are about to commit
  * This will reference the information that was just inserted into the 
  * edit modal. The database has not been updated, so it has to reference the html
@@ -581,25 +599,3 @@ function clearModals(){
 
 }
 
-
-
-// /**
-//  * Get every calendar that the user is subscribed to
-//  * @param {} user 
-//  */
-// async function getCals(user){
-// 	const response = await fetch(`/api/users/${user}`);
-// 	if(!response.ok){
-// 		console.log(response.error);
-// 		return;
-// 	}
-// 	let allSubCals = await response.json();
-// 	for(let i=0; i<allSubCals.length; i++){
-// 		console.log(JSON.parse(allSubCals[i]));
-// 	}
-
-// }
-
-
-loadAll(0);
-// getCals(12345);
