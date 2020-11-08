@@ -30,6 +30,7 @@ async function searchUsers(currUser, currPassword) {
         return;
     }
     let allUsers = await response.json();
+    console.log(allUsers);
     for(let i = 0; i < allUsers.length; i++) {
         if(allUsers[i].username === currUser) {
             if(allUsers[i].password === currPassword) {

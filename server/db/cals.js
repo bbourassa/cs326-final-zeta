@@ -38,7 +38,11 @@ exports.create = function(req, res) {
 
 exports.load = function(req, res, next) {
     const id = parseInt(req.params.cal, 10);
-    req.cal = cals[id];
+    for(let i = 0; i < cals.length; i++) {
+        if (cals[i].id === id) {
+            req.cal = cals[i];
+        }
+    }
     if (req.cal) {
         next();
     } else {

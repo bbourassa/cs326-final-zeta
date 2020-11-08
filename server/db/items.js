@@ -19,7 +19,9 @@ for (let i = 0; i < sizes.items; ++i) {
         start = faker.random.boolean() ? faker.date.recent(30, refDate) : faker.date.soon(30, refDate),
         end = (all_day || type === 'action') ? null : faker.date.soon(.2, start),
         desc = faker.lorem.sentence(),
-        cal = faker.random.number(sizes.cals - 1);
+        cal = faker.random.number(sizes.cals - 1),
+        cal_title = faker.lorem.words(),
+        rel_links = faker.lorem.sentence();
 
     if (all_day) {
         start.setHours(0, 0, 0);
@@ -46,7 +48,9 @@ for (let i = 0; i < sizes.items; ++i) {
         end: end,
         description: desc,
         status: status,
-        calendar_id: cal
+        calendar_id: cal,
+        calendar_title: cal_title,
+        related_links: rel_links,
     });
 }
 
@@ -55,7 +59,9 @@ exports.listAll = function(req, res) {
 };
 
 exports.list = function(req, res) {
+    console.log(req);
     let result = items.filter(item => item.calendar_id === req.cal.id);
+    //console.log(result);
     const values = Object.values(req.query);
     if (values.length === 0) {
         res.json(result);

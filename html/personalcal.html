@@ -107,19 +107,27 @@
         
                     <!--START: Daily Items View HTML Section-->
                     <div class="card shadow bg-white" id="dayView">
-                        <h3 class="card-header text-uppercase font-weight-bold" id="dayViewTitle">The Day at a Glance: </h3>
+                        <h3 class="card-header text-uppercase font-weight-bold" id="dayViewTitle"></h3>
                         <div class="list-group">
-                            <div class="list-group-item text-uppercase font-weight-bold bg-light">Today's Schedule</div>
-                            <div class="list-group-item list-group-item-action day-item" data-toggle="modal" data-target="#itemEditCenter">CS 311: 11:30am-12:45pm</div>
-                            <div class="list-group-item list-group-item-action day-item" data-toggle="modal" data-target="#itemEditCenter">CS 326: 1:00pm-2:30pm</div>
-                            <div class="list-group-item text-uppercase font-weight-bold bg-danger">Not Started</div>
-                            <div class="list-group-item list-group-item-action day-item" data-toggle="modal" data-target="#itemEditCenter">Econ 203H: Weekly Problem Set Due</div>
-                            <div class="list-group-item list-group-item-action day-item" data-toggle="modal" data-target="#itemEditCenter">Song of the Day: HELLO by Allie X</div>
-                            <div class="list-group-item text-uppercase font-weight-bold bg-warning">In Progress</div>
-                            <div class="list-group-item list-group-item-action day-item" data-toggle="modal" data-target="#itemEditCenter">CS 326: Milestone 1 Due</div>
-                            <div class="list-group-item text-uppercase font-weight-bold bg-success">Completed</div>
-                            <div data-toggle="modal" data-target="#itemEditCenter" class="list-group-item list-group-item-action day-item">Daily Mantra: "The same beauty that I behold in others I will start to see in myself."</div>
-                            <div class="list-group-item list-group-item-action day-item">CS 311: Homework 4</div>
+                            <div id="todaysSchedule">
+                                <div class="list-group-item text-uppercase font-weight-bold bg-light">Today's Schedule</div>
+                                <!--<div class="list-group-item list-group-item-action day-item" data-toggle="modal" data-target="#itemEditCenter">CS 311: 11:30am-12:45pm</div>
+                                <div class="list-group-item list-group-item-action day-item" data-toggle="modal" data-target="#itemEditCenter">CS 326: 1:00pm-2:30pm</div>-->
+                            </div>
+                            <div id="notStarted">
+                                <div class="list-group-item text-uppercase font-weight-bold bg-danger">Not Started</div>
+                                <!--<div class="list-group-item list-group-item-action day-item" data-toggle="modal" data-target="#itemEditCenter">Econ 203H: Weekly Problem Set Due</div>
+                                <div class="list-group-item list-group-item-action day-item" data-toggle="modal" data-target="#itemEditCenter">Song of the Day: HELLO by Allie X</div>-->
+                            </div>
+                            <div id="inProgress">
+                                <div class="list-group-item text-uppercase font-weight-bold bg-warning">In Progress</div>
+                                <!--<div class="list-group-item list-group-item-action day-item" data-toggle="modal" data-target="#itemEditCenter">CS 326: Milestone 1 Due</div>-->
+                            </div>
+                            <div id="completed">
+                                <div class="list-group-item text-uppercase font-weight-bold bg-success">Completed</div>
+                                <!--<div data-toggle="modal" data-target="#itemEditCenter" class="list-group-item list-group-item-action day-item">Daily Mantra: "The same beauty that I behold in others I will start to see in myself."</div>
+                                <div class="list-group-item list-group-item-action day-item">CS 311: Homework 4</div>-->
+                            </div>
                         </div>
                     </div>
                     <!--END: Daily Items View HTML Section-->

@@ -1,6 +1,7 @@
 'use strict';
 
 window.addEventListener('load', checkForUser());
+//console.log(window.localStorage.getItem('userInfo'));
 
 function checkForUser() {
     if(window.localStorage.getItem('userInfo') === null) {
@@ -17,27 +18,25 @@ FUTURE:  -will update ALL card date for daily view on date
           button click
 */
 function switchDate(day, month, year) {
-	let dayViewTitle = document.getElementById('dayViewTitle');
-	let currentDate = document.getElementById(day);
+	//let dayViewTitle = document.getElementById('dayViewTitle');
+    let currentDate = document.getElementById(day);
 	let lastDate;
 	if (lastDay !== 0) {
-		lastDate = document.getElementById(lastDay);
-        lastDate.classList.remove('btn-secondary');
-        if(parseInt(lastDate.textContent) !== currentDay.getDate()) {
-            if(parseInt(lastDate.textContent) % 2 === 1) {
-                lastDate.classList.add('btn-outline-secondary');
-            } else {
-                lastDate.disabled = true;
-            }
+        lastDate = document.getElementById(lastDay);
+        if(lastDay !== currentDay.getDate()) {
+            lastDate.classList.remove('btn-secondary');
+            lastDate.style.color = 'black';
         }
 	}
-    dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[month] + ' ' + day + ' ' + year;
+    setUpDayCard(day, month+1, year);
 	if(day === currentDay.getDate() && month === currentMonth && parseInt(year) === currentYear) {
 		lastDay = day;
 	} else {
         if(lastDate !== currentDay.getDate()) {
-            currentDate.className = 'btn-secondary';
-            currentDate.classList.add('btn', 'date');
+            currentDate.classList.add('btn-secondary');
+            currentDate.style.color = 'white';
+            /*currentDate.className = 'btn-secondary';
+            currentDate.classList.add('btn', 'date');*/
 		    lastDay = day;
         }
     }
@@ -54,11 +53,6 @@ FUTURE:  -will associate appropriate item data with each
 */
 function setUpCalendar(month, year) {
     let firstDay = (new Date(year, month)).getDay();
-    let listOfItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
-    console.log(listOfItems);
-    
-	let currentMonthAndYear = document.getElementById('currentMonthAndYear');
-    //currentMonthAndYear.innerHTML += ' ' + months[month] + ' ' + year;
     
 	let days = document.getElementById('days');
     let totalDays = daysInMonth(month, year);
@@ -82,22 +76,30 @@ function setUpCalendar(month, year) {
 		newDateItem.appendChild(newDateDiv);
 		days.appendChild(newDateItem);
 		if(i === currentDay.getDate()) {
-			newDateDiv.classList.add('btn-danger');
+            newDateDiv.classList.add('btn-danger');
+            newDateDiv.style.color = 'white';
 		}  else {
             newDateDiv.disabled = true;
         }
     }
+    checkForItems(month, year);
+}
+
+function checkForItems(month, year) {
+    let listOfItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
     for(let i = 1; i < listOfItems.length; i++) {
         let startTime = listOfItems[i].start;
         let itemYear = parseInt(startTime.slice(0, 4));
         let itemMonth = parseInt(startTime.slice(5, 7));
         let itemDay = parseInt(startTime.slice(8, 10));
-        console.log(itemDay);
+        //console.log(itemDay);
         if(itemYear === year && itemMonth === month+1) {
-            let dateItem = document.getElementById(itemDay.toString(10));
-            dateItem.classList.add('btn-outline-secondary');
+            if(parseInt(itemDay) !== currentDay.getDate()) {
+                let dateItem = document.getElementById(itemDay.toString(10));
+                dateItem.classList.add('btn-outline-secondary');
+            }
         }
-    }  
+    } 
 }
 
 /*
@@ -129,10 +131,76 @@ FUTURE:  will update item information based on status in
          order to demonstrate the correct information
          for what is due on which day
 */
-function setUpDayCard() {
+function setUpDayCard(day, month, year) {
+    console.log(day);
+    console.log(month);
+    console.log(year);
 	let dayViewTitle = document.getElementById('dayViewTitle');
-	let today = currentDay.getDate();
-	dayViewTitle.innerHTML += ' ' + months[currentMonth] + ' ' + today + ' ' + currentYear;
+    dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[month-1] + ' ' + day + ' ' + year;
+    let calendarItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
+    let dayEvents = [];
+    resetDayCard();
+    for(let i = 0; i < calendarItems.length; i++) {
+        let thisYear = parseInt(calendarItems[i].start.slice(0, 4));
+        let thisMonth = parseInt(calendarItems[i].start.slice(5, 7));
+        let thisDay = parseInt(calendarItems[i].start.slice(8, 10));
+        console.log(thisMonth === month);
+        if(thisYear === year && thisMonth === month && thisDay === day) {
+            dayEvents.push(calendarItems[i]);
+            console.log(calendarItems[i]);
+            let newDayItem = document.createElement('div');
+            newDayItem.classList.add('list-group-item', 'list-group-item-action', 'day-item');
+            newDayItem.innerHTML = calendarItems[i].name;
+            let thisStatus = calendarItems[i].status;
+            let thisType = calendarItems[i].type;
+            if(thisType === 'event') {
+                let scheduleDiv = document.getElementById('todaysSchedule');
+                scheduleDiv.removeChild()
+                scheduleDiv.append(newDayItem);
+            } else {
+                if(thisStatus === 'not started') {
+                    let statusDiv = document.getElementById('notStarted');
+                    statusDiv.append(newDayItem);
+                } else if (thisStatus === 'in progress') {
+                    let statusDiv = document.getElementById('inProgress');
+                    statusDiv.append(newDayItem);
+                } else if (thisStatus === 'completed') {
+                    let statusDiv = document.getElementById('completed');
+                    statusDiv.append(newDayItem);
+                } 
+            }
+        }
+    }
+}
+
+function resetDayCard() {
+    let scheduleDiv = document.getElementById('todaysSchedule');
+    scheduleDiv.innerHTML = '';
+    let scheduleHeader = document.createElement('div');
+    scheduleHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-light');
+    schedulerHeader.innerHTML = 'Today\'s Schedule';
+    scheduleDiv.appendChild(scheduleHeader);
+    
+    let notStartedDiv = document.getElementById('notStarted');
+    notStartedDiv.innerHTML = '';
+    let notStartedHeader = document.createElement('div');
+    notStartedHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-danger');
+    notStartedHeader.innerHTML = 'Not Started';
+    notStartedDiv.appendChild(notStartedHeader);
+
+    let inProgressDiv = document.getElementById('inProgress');
+    inProgressDiv.innerHTML = '';
+    let inProgressHeader = document.createElement('div');
+    inPorgressHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-warning');
+    inProgressHeader.innerHTML = 'In Progress';
+    inProgressDiv.appendChild(inProgressHeader);
+
+    let completedDiv = document.getElementById('completed');
+    completedDiv.innerHTML = '';
+    let completedHeader = document.createElement('div');
+    completedHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-success');
+    completedHeader.innerHTML = 'In Progress';
+    completedDiv.appendChild(inProgressHeader);
 }
 
 /*
@@ -142,7 +210,7 @@ FUTURE:  will update all modal information to reflect
 */
 function switchItem(itemName) {
 	let itemTitle = document.getElementById('modalTitle');
-	itemTitle.innerHTML = itemName;
+    itemTitle.innerHTML = itemName;
 }
 
 function setUpCalendarSelection() {
@@ -173,8 +241,6 @@ function setUpCalendarSelection() {
 }
 
 function switchCalendar(selectedMonth, selectedYear) {
-    let listOfItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
-    console.log(listOfItems);
     let firstDay = (new Date(selectedYear, months.indexOf(selectedMonth))).getDay();
     let days = document.getElementById('days');
     days.innerHTML = '';
@@ -201,20 +267,7 @@ function switchCalendar(selectedMonth, selectedYear) {
 			newDateDiv.classList.add('btn-danger');
 		}
     }
-    for(let i = 1; i < listOfItems.length; i++) {
-        let startTime = listOfItems[i].start;
-        let itemYear = parseInt(startTime.slice(0, 4));
-        let itemMonth = parseInt(startTime.slice(5, 7));
-        let itemDay = parseInt(startTime.slice(8, 10));
-        console.log(itemMonth);
-        console.log(months.indexOf(selectedMonth)+1);
-        if(itemYear === parseInt(selectedYear) && itemMonth === months.indexOf(selectedMonth)+1) {
-            console.log('enter');
-            let dateItem = document.getElementById(itemDay.toString(10));
-            console.log(dateItem);
-            dateItem.classList.add('btn-outline-secondary');
-        }
-    } 
+    checkForItems(months.indexOf(selectedMonth), parseInt(selectedYear));
 }
 
 function updateCalendar() {
@@ -302,7 +355,7 @@ let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'A
 daily view
 */
 setUpCalendar(currentMonth, currentYear);
-setUpDayCard();
+setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
 setUpCalendarSelection();
 setUpdateForm();
 
@@ -350,19 +403,14 @@ async function loadPersonalCalendar() {
 
 async function searchForCalendarItems() {
     let personalCalId = window.localStorage.getItem('personalCalId');
-    const response = await fetch('/api/items'); 
+    console.log(personalCalId);
+    const response = await fetch('/api/calendars/0/items'); 
     if(!response.ok) {
         console.log(response.error);
         return;
     }
     let itemData = await response.json();
-    let calendarItems = [];
-    for(let i = 0; i < itemData.length; i++) {
-        if(itemData[i].calendar_id === parseInt(personalCalId)) {
-            calendarItems.push(itemData[i]);
-        }
-    }
-    window.localStorage.setItem('personalCalItems', JSON.stringify(calendarItems));
+    window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
 }
 
 loadPersonalCalendar();
