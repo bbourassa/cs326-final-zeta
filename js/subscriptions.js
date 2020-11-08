@@ -230,14 +230,41 @@ function loadNotifications(){
  */
 async function loadCalendars(){
 	const cals = [
+		
 		{
 			id:'0',
 			name:'CS 221', 
 			owner_id : 3,
 			items: [
-				{name: 'Zoom meeting', date:'11/3/2020', type:'Event', status:'N/A'},
-				{name: 'Milestone 2', date:'11/6/2020', type:'Action Item',status : 'In Progress'}, 
-				{name:'Homework 9', date: '11/2/2020', type:'Action Item', status:'In Progress'}
+				{id: 120,
+					name: 'Zoom meeting',
+					type: 'Event',
+					all_day: false,
+					start:  '11/3/2020T13:30',
+					end:  '11/3/2020T15:00',
+					status: 'N/A',
+					calendar_id: 0,
+					calendar_title: 'CS 221'
+				},
+				{id: 123,
+					name: 'Milestone 2',
+					type: 'Action Item',
+					all_day: false,
+					start: '11/6/2020',
+					description: 'Us, trying not to fail',
+					status: 'In Progress',
+					calendar_id: 0,
+					calendar_title: 'CS 221',
+					related_links: 'help_us',},
+				{id: 125,
+					name: 'Homework 9',
+					type: 'Action Item',
+					all_day: true,
+					start:  '11/9/2020T13:30',
+					status: 'N/A',
+					calendar_id: 0,
+					calendar_title: 'CS 221',
+				}
 			]
             
 		},
@@ -246,9 +273,34 @@ async function loadCalendars(){
 			name:'Greek 200', 
 			owner_id:0,
 			items: [
-				{name:'Agape Test', date:'10/31/2020', type:'Event',status:'N/A'},
-				{name:'Alpha', date:'11/5/2020', type:'Event', status:'N/A'},
-				{name: 'Reading', date:'11/7/2020', type:'Action Item', status:'In Progress'}
+				{id: 395,
+					name: 'Agape Test',
+					type: 'Event',
+					all_day: false,
+					start: '11/30/2020T13:30',
+					end: '11/30/2020T15:00',
+					status: 'N/A',
+					calendar_id: 1,
+					calendar_title: 'Greek 200',
+				},
+				{id: 472,
+					name: 'Alpha',
+					type: 'Event',
+					all_day: true,
+					start:  '11/3/2020',
+					status: 'N/A',
+					calendar_id: 1,
+					calendar_title: 'Greek 200',
+				},	
+				{id: 120,
+					name: 'Reading',
+					type: 'Action Item',
+					all_day: true,
+					start:  '11/25/2020',
+					status: 'In Progress',
+					calendar_id: 1,
+					calendar_title: 'Greek 200',
+				}
 			],
           
 		}
@@ -296,14 +348,45 @@ async function loadCalendars(){
  */
 function loadTable(calId){
 	const cals = [
+		
 		{
 			id:'0',
 			name:'CS 221', 
-			owner_id:0,
+			owner_id : 3,
 			items: [
-				{id : '001', name: 'Zoom meeting', start:'11/3/2020', all_day:true, type:'Event', status:'N/A'},
-				{id : '002', name: 'Milestone 2', dueDate:'11/6/2020', type:'Action Item',status : 'In Progress'}, 
-				{id : '003', name:'Homework 9', dueDate: '11/2/2020', type:'Action Item', status:'In Progress'}
+				{id: 120,
+					name: 'Zoom meeting',
+					type: 'Event',
+					all_day: false,
+					start:  '11/3/2020',
+					end:  '11/3/2020',
+					description: '',
+					status: 'N/A',
+					calendar_id: 0,
+					calendar_title: 'CS 221',
+					related_links: '',},
+				{id: 123,
+					name: 'Milestone 2',
+					type: 'Action Item',
+					all_day: false,
+					start: '',
+					end:  '11/6/2020',
+					description: 'Us, trying not to fail',
+					status: 'In Progress',
+					calendar_id: 0,
+					calendar_title: 'CS 221',
+					related_links: 'help_us',},
+				{id: 125,
+					name: 'Homework 9',
+					type: 'Action Item',
+					all_day: true,
+					start:  '11/9/2020',
+					end: '',
+					description: '',
+					status: 'N/A',
+					calendar_id: 0,
+					calendar_title: 'CS 221',
+					related_links: ''}
 			]
             
 		},
@@ -312,9 +395,39 @@ function loadTable(calId){
 			name:'Greek 200', 
 			owner_id:0,
 			items: [
-				{id : '004', name:'Agape Test', start:'10/31/2020',  end: '11/5/2020',all_day:false,  type:'Event',status:'N/A'},
-				{id : '005', name:'Alpha', start:'11/5/2020', all_day:true, type:'Event', status:'N/A'},
-				{id : '006', name: 'Reading', dueDate:'11/7/2020', type:'Action Item', status:'In Progress'}
+				{id: 395,
+					name: 'Agape Test',
+					type: 'Event',
+					all_day: false,
+					start:  '11/30/2020',
+					end:  '11/30/2020',
+					description: '',
+					status: 'N/A',
+					calendar_id: 1,
+					calendar_title: 'Greek 200',
+					related_links: '',},
+				{id: 472,
+					name: 'Alpha',
+					type: 'Event',
+					all_day: true,
+					start:  '11/3/2020',
+					end: '',
+					description: '',
+					status: 'N/A',
+					calendar_id: 1,
+					calendar_title: 'Greek 200',
+					related_links: '',},	
+				{id: 120,
+					name: 'Reading',
+					type: 'Action Item',
+					all_day: true,
+					start:  '11/25/2020',
+					end: '',
+					description: '',
+					status: 'In Progress',
+					calendar_id: 1,
+					calendar_title: 'Greek 200',
+					related_links: '',}
 			],
           
 		}
@@ -371,10 +484,10 @@ function loadTable(calId){
 
 		//load duedate/start date
 		let date = document.createElement('td');
-		if(item.dueDate !== undefined){
-			date.innerHTML = item.dueDate;
-		} else if(item.start !== undefined){
+		if(item.start !== ''){
 			date.innerHTML = item.start;
+		} else if(item.end !== ''){
+			date.innerHTML = item.end;
 		}
 		anItem.appendChild(date);
 
@@ -410,8 +523,10 @@ function loadTable(calId){
 		infoBtn.setAttribute('data-toggle', 'modal');
 		infoBtn.setAttribute('data-target', '#editConfirmation');
 		infoBtn.addEventListener('click', () =>{
-			//pop up modal with any details, non-editable TODO 
+			//pop up modal with any details, non-editable
+			loadModal(item);
 			loadCommit();
+			document.getElementById('btnsForEdits').setAttribute('hidden', true);
 			document.getElementById('commitMessage').setAttribute('hidden', true);
 			document.getElementById('confEditHeader').innerText = 'Details';
 			document.getElementById('reviewMessage').setAttribute('hidden', true);
@@ -500,20 +615,48 @@ function loadModal(item){
 /**
  * Gets all of the information currently in the edit center, 
  * formats it into item JSON, returns
+ * to be sent as the body of a request.
  */
 function getInfo(){
 	let listField = document.getElementsByClassName('modal-editable-area');
-	let body ='';
+	let i, name, type, all_day, start, end, desc, status, cal, cal_title, rel_links;
+	let itemInfo = {
+		id: i,
+		name: name,
+		type: type,
+		all_day: all_day,
+		start: start,
+		end: end,
+		description: desc,
+		status: status,
+		calendar_id: cal,
+		calendar_title: cal_title,
+		related_links: rel_links,
+	};
+	//name should match the name of the current calendar
+	name = document.getElementById('cal-name').childNodes[0].data;
 	for(let i=0; i<listField.length; i++){
 		if(listField[i].value !== ''){
+			let category = listField[i].parentElement.textContent;
+			if(category === 'Item Name:'){
+				name = listField[i].value;
+			}  else if(category === 'Item Description:'){
+				desc = listField[i].value;
+			} else if(category === 'Item Type:'){
+				type = listField[i].value;
+			} else if(category === 'Item Status:'){
+				status = listField[i].value;
+			} else if(category === 'Start Time:'){
+				start = listField[i].value;
+			} else if(category === 'End Time:'){
+				end = listField[i].value;
+			}else if(category === 'Related Links:'){
+				rel_links = listField[i].value;
+			}
 			//each non-empty field will be added to the body
-			//the parent's text content is the category name
-			let line = listField[i].parentElement.textContent + ':' + listField[i].value + '\n' ;
-			body = body+line;
-
 		}
 	}
-	return JSON.stringify(body);
+	return JSON.stringify(itemInfo);
 }
 
 /**
@@ -530,10 +673,13 @@ function setUpdateForm(item) {
 		dueDateShow.style.display = 'inline-block';
 		startTimeShow.style.display = 'none';
 		endTimeShow.style.display = 'none';
-		if(item.dueDate !== undefined){
-			document.getElementById('dueDate').value = item.dueDate;
-		}else{
-			document.getElementById('dueDate').value = '';
+		//when we decide whether we are storing duedate in start or end, do that one
+		if(item.start !== undefined){
+			document.getElementById('dueDate').value = item.start;
+		} else if(item.end !== undefined){
+			document.getElementById('dueDate').value = item.end;
+		} else{
+			document.getElementById('dueDate').value = '';	
 		}
 
 	} else if (currentType.value === 'Event') {
@@ -543,7 +689,7 @@ function setUpdateForm(item) {
 		endTimeShow.style.display = 'inline-block';
         
 		//if start time is not a defined value, the html value will 
-		//still be the value it was last set to
+		//still be the value it was last set to; this clears it out
 		if(item.start !== undefined){
 			document.getElementById('startTime').value = item.start;
 		} else{
@@ -601,6 +747,8 @@ function loadCommit(){
  */
 async function commitChanges(){
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+	document.getElementById('btnsForEdits').setAttribute('hidden', true);
+
 	//fill confirmation modal with information values from the edit modal
 	loadCommit();
 	//opens the confirmation modal
