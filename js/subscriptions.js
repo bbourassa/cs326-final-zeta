@@ -4,8 +4,11 @@ function loadAll(userId){
 	loadCalendars(userId);
 	loadSettingListeners();
 	loadNotifications();
+
 }
-loadSettingListeners();
+
+//TODO make user id global!!!!
+const user_id = window.localStorage.getItem('userId');
 
 function loadSettingListeners(){
 	//  the header checkbox will cause all other check oxes to check/uncheck
@@ -173,7 +176,7 @@ function loadNotifications(){
  * Load all of the user's subscription calendars
  * @param {int} userId 
  */
-function loadCalendars(userId){
+async function loadCalendars(userId){
 	const cals = [
 		{
 			id:'0',
@@ -198,18 +201,11 @@ function loadCalendars(userId){
           
 		}
 	];
-    
-	//get all of the calendars that the user has
-	// renders them into the list
-	//SQL request for the user's subscriptions
-	// try{
-	//     const t = await db.any('SELECT calendar_id FROM subs WHERE user_id = $1', userId);
-	// }
-	// catch(err){
-	//     //TODO
-	// }
-	//SELECT calendar_id FROM subscriptions WHERE usere_id = userId
-	//Some hard coded data, for now
+	const response = await fetch(`/api/users/${user_id}/subscriptions/calendars`);
+	if(!response.ok){
+		alert('Unable to load your subscriptions');
+	}
+	//make the response into the cal list
    
 	cals.forEach((cal) =>{
 		//makke the button for the calendar
@@ -587,24 +583,23 @@ function clearModals(){
 
 
 
-/**
- * Get every calendar that the user is subscribed to
- * @param {} user 
- */
-async function getCals(user){
-	const response = await fetch(`/api/users/${user}`);
-	if(!response.ok){
-		console.log(response.error);
-		return;
-	}
-	let allSubCals = await response.json();
-	for(let i=0; i<allSubCals.length; i++){
-		console.log(JSON.parse(allSubCals[i]));
-	}
+// /**
+//  * Get every calendar that the user is subscribed to
+//  * @param {} user 
+//  */
+// async function getCals(user){
+// 	const response = await fetch(`/api/users/${user}`);
+// 	if(!response.ok){
+// 		console.log(response.error);
+// 		return;
+// 	}
+// 	let allSubCals = await response.json();
+// 	for(let i=0; i<allSubCals.length; i++){
+// 		console.log(JSON.parse(allSubCals[i]));
+// 	}
 
-}
+// }
 
 
-
-loadCalendars(0);
+loadAll(0);
 // getCals(12345);
