@@ -13,41 +13,45 @@ const filename = path.resolve(__dirname, './ours/ouritems.json');
 const items = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : [];
 
 for (let i = 0; i < sizes.items; ++i) {
-	const name = faker.lorem.words(),
-		type = faker.random.boolean() ? 'Event' : 'Action Item',
-		all_day = faker.random.boolean(),
-		start = faker.random.boolean() ? faker.date.recent(30, refDate) : faker.date.soon(30, refDate),
-		end = (all_day || type === 'action') ? null : faker.date.soon(.2, start),
-		desc = faker.lorem.sentence(),
-		cal = faker.random.number(sizes.cals - 1);
+    const name = faker.lorem.words(),
+        type = faker.random.boolean() ? 'event' : 'action',
+        all_day = faker.random.boolean(),
+        start = faker.random.boolean() ? faker.date.recent(30, refDate) : faker.date.soon(30, refDate),
+        end = (all_day || type === 'action') ? null : faker.date.soon(.2, start),
+        desc = faker.lorem.sentence(),
+        cal = faker.random.number(sizes.cals - 1),
+        cal_title = faker.lorem.words(),
+        rel_links = faker.lorem.sentence();
 
-	if (all_day) {
-		start.setHours(0, 0, 0);
-	}
+    if (all_day) {
+        start.setHours(0, 0, 0);
+    }
 
-	let status = '';
-	switch (faker.random.number(2)) {
-	case 0:
-		status = 'Not Started';
-		break;
-	case 1:
-		status = 'In Progress';
-		break;
-	case 2:
-		status = 'Completed';
-	}
+    let status = '';
+    switch (faker.random.number(2)) {
+        case 0:
+            status = 'not started';
+            break;
+        case 1:
+            status = 'in progress';
+            break;
+        case 2:
+            status = 'completed';
+    }
 
-	items.push({
-		id: i,
-		name: name,
-		type: type,
-		all_day: all_day,
-		start: start,
-		end: end,
-		description: desc,
-		status: status,
-		calendar_id: cal
-	});
+    items.push({
+        id: i,
+        name: name,
+        type: type,
+        all_day: all_day,
+        start: start,
+        end: end,
+        description: desc,
+        status: status,
+        calendar_id: cal,
+        calendar_title: cal_title,
+        related_links: rel_links,
+    });
 }
 
 exports.listAll = function(req, res) {
