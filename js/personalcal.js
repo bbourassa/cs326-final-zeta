@@ -25,7 +25,11 @@ function switchDate(day, month, year) {
         lastDate = document.getElementById(lastDay);
         if(lastDay !== currentDay.getDate()) {
             lastDate.classList.remove('btn-secondary');
-            lastDate.style.color = 'black';
+            if (lastDate.classList.contains('btn-outline-secondary')) {
+                lastDate.style.color = 'grey';
+            } else {
+                lastDate.style.color = 'black';
+            }
         }
 	}
     setUpDayCard(day, month+1, year);
@@ -92,7 +96,6 @@ function checkForItems(month, year) {
         let itemYear = parseInt(startTime.slice(0, 4));
         let itemMonth = parseInt(startTime.slice(5, 7));
         let itemDay = parseInt(startTime.slice(8, 10));
-        //console.log(itemDay);
         if(itemYear === year && itemMonth === month+1) {
             if(parseInt(itemDay) !== currentDay.getDate()) {
                 let dateItem = document.getElementById(itemDay.toString(10));
@@ -132,9 +135,6 @@ FUTURE:  will update item information based on status in
          for what is due on which day
 */
 function setUpDayCard(day, month, year) {
-    console.log(day);
-    console.log(month);
-    console.log(year);
 	let dayViewTitle = document.getElementById('dayViewTitle');
     dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[month-1] + ' ' + day + ' ' + year;
     let calendarItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
@@ -144,18 +144,19 @@ function setUpDayCard(day, month, year) {
         let thisYear = parseInt(calendarItems[i].start.slice(0, 4));
         let thisMonth = parseInt(calendarItems[i].start.slice(5, 7));
         let thisDay = parseInt(calendarItems[i].start.slice(8, 10));
-        console.log(thisMonth === month);
-        if(thisYear === year && thisMonth === month && thisDay === day) {
-            dayEvents.push(calendarItems[i]);
+        if(thisYear === parseInt(year) && thisMonth === month && thisDay === day) {
             console.log(calendarItems[i]);
+            dayEvents.push(calendarItems[i]);
             let newDayItem = document.createElement('div');
             newDayItem.classList.add('list-group-item', 'list-group-item-action', 'day-item');
-            newDayItem.innerHTML = calendarItems[i].name;
+            newDayItem.setAttribute('data-toggle', 'modal');
+            newDayItem.setAttribute('data-target', '#itemEditCenter');
+            newDayItem.innerHTML = calendarItems[i].calendar_title + ': ';
+            newDayItem.innerHTML += calendarItems[i].name;
             let thisStatus = calendarItems[i].status;
             let thisType = calendarItems[i].type;
             if(thisType === 'event') {
                 let scheduleDiv = document.getElementById('todaysSchedule');
-                scheduleDiv.removeChild()
                 scheduleDiv.append(newDayItem);
             } else {
                 if(thisStatus === 'not started') {
@@ -171,6 +172,8 @@ function setUpDayCard(day, month, year) {
             }
         }
     }
+    window.localStorage.setItem('currentDayItemInfo', JSON.stringify(dayEvents));
+    console.log(JSON.parse(window.localStorage.getItem('currentDayItemInfo')));
 }
 
 function resetDayCard() {
@@ -178,7 +181,7 @@ function resetDayCard() {
     scheduleDiv.innerHTML = '';
     let scheduleHeader = document.createElement('div');
     scheduleHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-light');
-    schedulerHeader.innerHTML = 'Today\'s Schedule';
+    scheduleHeader.innerHTML = 'Today\'s Schedule';
     scheduleDiv.appendChild(scheduleHeader);
     
     let notStartedDiv = document.getElementById('notStarted');
@@ -191,7 +194,7 @@ function resetDayCard() {
     let inProgressDiv = document.getElementById('inProgress');
     inProgressDiv.innerHTML = '';
     let inProgressHeader = document.createElement('div');
-    inPorgressHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-warning');
+    inProgressHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-warning');
     inProgressHeader.innerHTML = 'In Progress';
     inProgressDiv.appendChild(inProgressHeader);
 
@@ -199,8 +202,8 @@ function resetDayCard() {
     completedDiv.innerHTML = '';
     let completedHeader = document.createElement('div');
     completedHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-success');
-    completedHeader.innerHTML = 'In Progress';
-    completedDiv.appendChild(inProgressHeader);
+    completedHeader.innerHTML = 'Complete';
+    completedDiv.appendChild(completedHeader);
 }
 
 /*
