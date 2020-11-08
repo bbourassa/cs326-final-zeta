@@ -14,13 +14,12 @@ const items = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : 
 
 for (let i = 0; i < sizes.items; ++i) {
 	const name = faker.lorem.words(),
-		type = faker.random.boolean() ? 'Event' : 'Action Item',
+		type = faker.random.boolean() ? 'Event' : 'Action',
 		all_day = faker.random.boolean(),
 		start = faker.random.boolean() ? faker.date.recent(30, refDate) : faker.date.soon(30, refDate),
 		end = (all_day || type === 'action') ? null : faker.date.soon(.2, start),
 		desc = faker.lorem.sentence(),
 		cal = faker.random.number(sizes.cals - 1);
-
 
 	if (all_day) {
 		start.setHours(0, 0, 0);
@@ -48,7 +47,6 @@ for (let i = 0; i < sizes.items; ++i) {
 		description: desc,
 		status: status,
 		calendar_id: cal
-
 	});
 }
 
