@@ -1,6 +1,7 @@
 'use strict';
 
-window.localStorage.removeItem('userInfo');
+//window.localStorage.removeItem('userInfo');
+
 /*
 FOR NOW: double checks that a username and password 
          have been entered. Enables sign-in button only
