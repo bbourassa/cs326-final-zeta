@@ -54,7 +54,8 @@ FUTURE:  -will associate appropriate item data with each
 */
 function setUpCalendar(month, year) {
     let firstDay = (new Date(year, month)).getDay();
-    console.log(firstDay);
+    let listOfItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
+    console.log(listOfItems);
     
 	let currentMonthAndYear = document.getElementById('currentMonthAndYear');
     //currentMonthAndYear.innerHTML += ' ' + months[month] + ' ' + year;
@@ -82,14 +83,21 @@ function setUpCalendar(month, year) {
 		days.appendChild(newDateItem);
 		if(i === currentDay.getDate()) {
 			newDateDiv.classList.add('btn-danger');
-		} else if(i % 2 === 1 && i !== currentDay.getDate()) {
-            newDateDiv.classList.add('btn-outline-secondary');
-        } else {
-            console.log(newDateDiv);
+		}  else {
             newDateDiv.disabled = true;
         }
-	}
-    
+    }
+    for(let i = 1; i < listOfItems.length; i++) {
+        let startTime = listOfItems[i].start;
+        let itemYear = parseInt(startTime.slice(0, 4));
+        let itemMonth = parseInt(startTime.slice(5, 7));
+        let itemDay = parseInt(startTime.slice(8, 10));
+        console.log(itemDay);
+        if(itemYear === year && itemMonth === month+1) {
+            let dateItem = document.getElementById(itemDay.toString(10));
+            dateItem.classList.add('btn-outline-secondary');
+        }
+    }  
 }
 
 /*
@@ -165,6 +173,8 @@ function setUpCalendarSelection() {
 }
 
 function switchCalendar(selectedMonth, selectedYear) {
+    let listOfItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
+    console.log(listOfItems);
     let firstDay = (new Date(selectedYear, months.indexOf(selectedMonth))).getDay();
     let days = document.getElementById('days');
     days.innerHTML = '';
@@ -189,10 +199,22 @@ function switchCalendar(selectedMonth, selectedYear) {
         days.appendChild(newDateItem);
         if(i === currentDay.getDate() && months.indexOf(selectedMonth) === currentMonth && parseInt(selectedYear) === currentYear) {
 			newDateDiv.classList.add('btn-danger');
-		} else if(i % 2 === 1 && i !== currentDay.getDate()) {
-            newDateDiv.classList.add('btn-outline-secondary');
+		}
+    }
+    for(let i = 1; i < listOfItems.length; i++) {
+        let startTime = listOfItems[i].start;
+        let itemYear = parseInt(startTime.slice(0, 4));
+        let itemMonth = parseInt(startTime.slice(5, 7));
+        let itemDay = parseInt(startTime.slice(8, 10));
+        console.log(itemMonth);
+        console.log(months.indexOf(selectedMonth)+1);
+        if(itemYear === parseInt(selectedYear) && itemMonth === months.indexOf(selectedMonth)+1) {
+            console.log('enter');
+            let dateItem = document.getElementById(itemDay.toString(10));
+            console.log(dateItem);
+            dateItem.classList.add('btn-outline-secondary');
         }
-	}
+    } 
 }
 
 function updateCalendar() {
@@ -313,7 +335,6 @@ for (let item of toDoItems) {
 let userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
 
 async function loadPersonalCalendar() {
-    console.log(window.localStorage.getItem('userInfo'));
     const response = await fetch('/api/calendars');
     if (!response.ok) {
         console.log(response.error);
@@ -322,9 +343,27 @@ async function loadPersonalCalendar() {
     let calendarData = await response.json();
     for(let i = 0; i < calendarData.length; i++) {
         if(calendarData[i].owner_id === userInfo.id && calendarData[i].personal === true) {
-            console.log(calendarData[i]);
+            window.localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
         }
     }
 }
 
+async function searchForCalendarItems() {
+    let personalCalId = window.localStorage.getItem('personalCalId');
+    const response = await fetch('/api/items'); 
+    if(!response.ok) {
+        console.log(response.error);
+        return;
+    }
+    let itemData = await response.json();
+    let calendarItems = [];
+    for(let i = 0; i < itemData.length; i++) {
+        if(itemData[i].calendar_id === parseInt(personalCalId)) {
+            calendarItems.push(itemData[i]);
+        }
+    }
+    window.localStorage.setItem('personalCalItems', JSON.stringify(calendarItems));
+}
+
 loadPersonalCalendar();
+searchForCalendarItems();
