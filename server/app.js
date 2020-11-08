@@ -69,6 +69,7 @@ app.delete('/api/calendars/:cal/items/:item', items.remove);
 app.get('/api/todos', todos.listAll);
 app.get('/api/subscriptions', subs.listAll);
 app.get('/api/items', items.listAll);
+app.get('api/items/:item', items.findUnlinked);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

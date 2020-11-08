@@ -55,70 +55,79 @@ for (let i = 0; i < sizes.items; ++i) {
 }
 
 exports.listAll = function(req, res) {
-    res.json(items);
+	res.json(items);
 };
 
 exports.list = function(req, res) {
-    console.log(req);
-    let result = items.filter(item => item.calendar_id === req.cal.id);
-    //console.log(result);
-    const values = Object.values(req.query);
-    if (values.length === 0) {
-        res.json(result);
-    } else if (values.every(v => typeof v === 'string')) {
-        const y = req.query.year ? parseInt(req.query.year, 10) : NaN;
-        let m = req.query.month ? parseInt(req.query.month, 10) : NaN;
-        if (isNaN(y) || isNaN(m)) {
-            res.sendStatus(400);
-        } else {
-            m -= 1;
-            const inYear = item => item.start.getFullYear() === y || (item.end && item.end.getFullYear() === y);
-            const inMonth = item => item.start.getMonth() === m || (item.end && item.end.getMonth() === m);
+	let result = items.filter(item => item.calendar_id === req.cal.id);
+	const values = Object.values(req.query);
+	if (values.length === 0) {
+		res.json(result);
+	} else if (values.every(v => typeof v === 'string')) {
+		const y = req.query.year ? parseInt(req.query.year, 10) : NaN;
+		let m = req.query.month ? parseInt(req.query.month, 10) : NaN;
+		if (isNaN(y) || isNaN(m)) {
+			res.sendStatus(400);
+		} else {
+			m -= 1;
+			const inYear = item => item.start.getFullYear() === y || (item.end && item.end.getFullYear() === y);
+			const inMonth = item => item.start.getMonth() === m || (item.end && item.end.getMonth() === m);
 
-            result = result.filter(item => inYear(item) && inMonth(item));
+			result = result.filter(item => inYear(item) && inMonth(item));
 
-            const d = req.query.day ? parseInt(req.query.day, 10) : NaN;
-            if (!isNaN(d)) {
-                const inDay = item => item.start.getDate() === d || (item.end && item.end.getDate() === d);
-                result = result.filter(item => inDay(item));
-            }
-            res.json(result);
-        }
-    } else {
-        res.sendStatus(400);
-    }
+			const d = req.query.day ? parseInt(req.query.day, 10) : NaN;
+			if (!isNaN(d)) {
+				const inDay = item => item.start.getDate() === d || (item.end && item.end.getDate() === d);
+				result = result.filter(item => inDay(item));
+			}
+			res.json(result);
+		}
+	} else {
+		res.sendStatus(400);
+	}
 };
 
 exports.create = function(req, res) {
-    res.sendStatus(201);
+	res.sendStatus(201);
 };
 
 exports.find = function(req, res) {
-    const id = parseInt(req.params.item, 10);
-    if (items[id] && items[id].calendar_id === req.cal.id) {
-        res.json(items[id]);
-    } else {
-        res.status(404).send('Item Not Found');
-    }
+	const id = parseInt(req.params.item, 10);
+	if (items[id] && items[id].calendar_id === req.cal.id) {
+		res.json(items[id]);
+	} else {
+		res.status(404).send('Item Not Found');
+	}
+};
+
+exports.findUnlinked = function(req, res){
+	//get item id from the request
+	const id = parseInt(req.params.item, 10);
+	//if that item id exists in the array of items, send back item
+	if(items[id]){
+		res.json(items[id]);
+	} else{
+		res.status(404).send('Item Not Found');
+	}
 };
 
 exports.edit = function(req, res) {
-    res.sendStatus(204);
+	res.sendStatus(204);
 };
 
 exports.remove = function(req, res) {
-    res.sendStatus(204);
+	res.sendStatus(204);
 };
 
 exports.listSubscribed = function(req, res) {
-    res.json(req.cals.map(cal => {
-        const itemList = items.filter(item => item.calendar_id === cal.id);
-        const obj = {
-            id: cal.id,
-            name: cal.name,
-            owner: cal.owner_id,
-            items: itemList
-        };
-        return obj;
-    }));
+	res.json(req.cals.map(cal => {
+		const itemList = items.filter(item => item.calendar_id === cal.id);
+		const obj = {
+			id: cal.id,
+			name: cal.name,
+			owner: cal.owner_id,
+			items: itemList
+		};
+		return obj;
+	}));
 };
