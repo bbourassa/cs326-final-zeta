@@ -357,7 +357,7 @@ function setUpdateForm() {
 	}
 }
 
-function setNewToDo() {
+async function setNewToDo() {
 	let newToDo = document.getElementById('toDoName');
 	let currentToDoList = document.getElementById('toDoItems');
 	let listGroupItem = document.createElement('div');
@@ -376,8 +376,15 @@ function setNewToDo() {
 	formCheckLabel.appendChild(inputHelper);
 	addedToDo.appendChild(formCheckLabel);
 	listGroupItem.appendChild(addedToDo);
-	currentToDoList.appendChild(listGroupItem);
-
+    currentToDoList.appendChild(listGroupItem);
+    fetch('/api/users/'+userInfo.id+'/todos', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({content: newToDo.value, userId: userInfo.id, archived: false})
+	});
+    $('#addToDoItem').modal('hide');
 }
 
 /*
@@ -467,7 +474,8 @@ async function updateItemChanges(itemId) {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(updatedItem)
-	});
+    });
+    $('#itemEditCenter').modal('hide');
 }
 
 async function loadPersonalCalendar() {

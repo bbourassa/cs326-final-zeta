@@ -5,6 +5,7 @@
 const sizes = require('./fakeSizes');
 const faker = require('faker');
 faker.seed(123);
+let lastId = 0;
 
 const todos = [];
 for (let i = 0; i < sizes.todos; ++i) {
@@ -26,6 +27,14 @@ exports.list = function(req, res) {
 
 exports.create = function(req, res) {
     res.sendStatus(201);
+    lastId += 1;
+    todos.push({
+        id: lastId,
+        content: req.content,
+        user_id: req.userId,
+        archived: req.archived
+    })
+    console.log(req.body);
 };
 
 exports.find = function(req, res) {
