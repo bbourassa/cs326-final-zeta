@@ -12,7 +12,6 @@ function loadAll(userId){
 
 loadAll(0);
 
-//Should default to your personal calendar
 
 function loadSettingListeners(){
 	//  the header checkbox will cause all other check oxes to check/uncheck
@@ -831,6 +830,7 @@ function loadCommit(){
  */
 async function commitChanges(){
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+	const cal_nam = document.getElementById('cal-name').childNodes[0].data;
 	document.getElementById('btnsForEdits').removeAttribute('hidden');
 	const item_id = document.getElementById('modalBodyItemId').getAttribute('item-id');
 
@@ -841,6 +841,8 @@ async function commitChanges(){
 	document.getElementById('confirmBtn').addEventListener('click', async ()=> {
 		$('#editConfirmation').modal('hide');
 		let bodyInfo = getInfo();
+		let notMess = document.getElementById('message').value;
+		let notification = JSON.stringify({id:user_id, cal_name: cal_nam, notification: notMess});
 		//PUT will update or add an item; don't need to check first
 		try{
 			await fetch(`/api/calendars/${cal_id}/items/${item_id}/`, {
@@ -849,6 +851,13 @@ async function commitChanges(){
 					'Content-Type':'application/json'
 				},
 				body: bodyInfo
+			});
+			await fetch(`/api/users/${user_id}/notifications`, {
+				method: 'POST',
+				headers: {
+					'Content':'application/json'
+				},
+				body: notification
 			});
 		} catch(e){
 			console.log(e);

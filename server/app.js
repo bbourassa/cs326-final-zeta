@@ -31,6 +31,9 @@ app.use('/api/users/:user', users.load);
 app.get('/api/users/:user', users.find);
 app.delete('/api/users/:user', users.remove);
 
+app.get('/api/users/:user/notifications', users.notifications);
+app.post('/api/users/:user/notifications', users.notify);
+
 app.get('/api/users/:user/todos', todos.list);
 app.post('/api/users/:user/todos', todos.create);
 app.get('/api/users/:user/todos/:todo', todos.find);
