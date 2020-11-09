@@ -41,6 +41,7 @@ exports.listAll = function(req, res) {
 };
 
 exports.create = function(req, res) {
+
 	res.sendStatus(201);
 };
 
@@ -80,7 +81,8 @@ exports.loadSubscribed = function(req, res, next) {
 };
 
 exports.listSubscribed = function(req, res) {
-	res.json(req.cals);
+	res.json(cals);
+	res.end();
 };
 
 exports.updatePersonal = function(req, res) {

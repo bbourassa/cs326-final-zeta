@@ -17,7 +17,9 @@ users.push({
 	email: 'lifeontrack@example.com',
 	password: 'password',
 	calendar_id: 0,
-	notifcations: ['Change made to: CS 326 \n "Added milestone 2"']
+	notifcations: [ 
+		{cal:0, message: 'Added milestone 2'}
+	]
 });
 /*for (let i = 1; i < sizes.users; ++i) {
     const first = faker.name.firstName();
@@ -73,10 +75,13 @@ exports.load = function(req, res, next) {
 };
 
 exports.find = function(req, res) {
-	res.json(req.user);
+	let user = users.find( ({id}) => id === req.body.id);
+	res.json(user);
 };
 
 exports.remove = function(req, res) {
+	let userIndex = users.findIndex( ({id}) => id === req.body.id);
+	users.pop(userIndex);
 	res.sendStatus(204);
 };
 
@@ -95,7 +100,8 @@ exports.notify = function(req, res){
 //GET notifications
 exports.notifications = function(req, res){
 	//find the correct user
-	//get that user's notifications
+    //get that user's notifications
+    console.log(req.body);
 	let user = users.find( ({id}) => id === req.body.id);
 	let notifs = user.notifcations;
 	res.json(notifs);
