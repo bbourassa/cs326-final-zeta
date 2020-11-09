@@ -4,9 +4,7 @@ window.addEventListener('load', checkForUser());
 //console.log(window.localStorage.getItem('userInfo'));
 
 function checkForUser() {
-    if(window.localStorage.getItem('userInfo') === null) {
-        window.location = '../html/index.html';
-    }
+    console.log(window.localStorage.getItem('userInfo'));
 }
 
 /*
