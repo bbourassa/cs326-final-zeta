@@ -91,6 +91,7 @@ function setUpCalendar(month, year) {
 
 function checkForItems(month, year) {
     let listOfItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
+    console.log(listOfItems);
     for(let i = 1; i < listOfItems.length; i++) {
         let startTime = listOfItems[i].start;
         let itemYear = parseInt(startTime.slice(0, 4));
