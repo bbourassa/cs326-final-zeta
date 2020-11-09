@@ -19,8 +19,16 @@ async function redirectOnSubscription() {
         return;
     }
     let newCalData = await response.json();
+    let userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
+    fetch('/api/users/'+userInfo.id+'/subscriptions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({userId: userInfo.id, calId: newCalData.id})
+    });
     window.localStorage.setItem('newSubscription', JSON.stringify(newCalData));
     window.location = '../html/subscriptions.html';
-    console.log(newCalData);
+    
 
 }
