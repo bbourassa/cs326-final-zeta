@@ -73,10 +73,13 @@ exports.load = function(req, res, next) {
 };
 
 exports.find = function(req, res) {
-	res.json(req.user);
+	let user = users.find( ({id}) => id === req.body.id);
+	res.json(user);
 };
 
 exports.remove = function(req, res) {
+	let userIndex = users.findIndex( ({id}) => id === req.body.id);
+	users.pop(userIndex);
 	res.sendStatus(204);
 };
 

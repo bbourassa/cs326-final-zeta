@@ -215,17 +215,9 @@ function loadSettingListeners(){
 
 			}else {
 				//therwise, check for an existing code
-				try{
-					let response = await fetch(`/api/calendars/${cal_id}/`); //TODO change to a new endpoint that checkes
-					//for an existing share code
-					if(response.ok){
-						shareCode = response.json();
-					}
-				} catch (e) { //if it does not have that attribute, make it
-					shareCode = generateNewId('shareCode');
-					//save the share code to the calendar
-	
-				}
+				//share code = mapping of ca_id, constant
+				shareCode = generateNewId('shareCode');
+				
 				//make a list element for the code to live in
 				let code = document.createElement('li');
 				code.innerText = 'Your sharable code:' + shareCode;
@@ -248,6 +240,8 @@ function loadSettingListeners(){
  * @param {String} field to generate an id for
  */
 function generateNewId(field){
+	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+
 	let id = 0;
 	//Calendar id's should have 5 digits, for now
 	if(field === 'cal'){ 
@@ -277,8 +271,24 @@ function generateNewId(field){
 			unique = true;
 		}
 	} else if(field === 'shareCode'){
-		id = Math.floor(Math.random() * (9999999 - 1000000) + 1000000);
-		//
+		let letterMap = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 0};
+		let mappedString ='';
+		console.log(cal_id, JSON.stringify(cal_id).length);
+		for(let i=0; i<JSON.stringify(cal_id).length; i++){
+			let digit = parseInt(JSON.stringify(cal_id)[i]);
+
+			let enLetter = Object.keys(letterMap).find(key => letterMap[key] === digit);	
+			// function getKeyByValue(object, value) {
+			// 	return Object.keys(object).find(key => object[key] === value);
+			// }
+			console.log(cal_id[i], letterMap['a'], digit);
+			// let allLetters = Object.keys(letterMap); 
+			// let enLetter = getKeyByValue(letterMap, cal_id[i]);
+			// console.log("here",enLetter);
+			mappedString = mappedString+ enLetter;
+		}
+		
+		id=mappedString;
 	}
 	return id;
 }
@@ -825,7 +835,7 @@ function loadCommit(){
 }
 
 /**
- * TODO add to personal cal @britney
+ * 
  * Closes editing modal and opens a new confirmation modal.
  */
 async function commitChanges(){
