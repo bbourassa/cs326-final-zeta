@@ -13,45 +13,39 @@ const filename = path.resolve(__dirname, './ours/ouritems.json');
 const items = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : [];
 
 for (let i = 0; i < sizes.items; ++i) {
-	const name = faker.lorem.words(),
-		type = faker.random.boolean() ? 'event' : 'action',
-		all_day = faker.random.boolean(),
-		start = faker.random.boolean() ? faker.date.recent(30, refDate) : faker.date.soon(30, refDate),
-		end = (all_day || type === 'action') ? null : faker.date.soon(.2, start),
-		desc = faker.lorem.sentence(),
-		cal = faker.random.number(sizes.cals - 1),
-		cal_title = faker.lorem.words(),
-		rel_links = faker.lorem.sentence();
+    const name = faker.lorem.words(),
+        type = faker.random.boolean() ? 'event' : 'action',
+        start = faker.random.boolean() ? faker.date.recent(30, refDate) : faker.date.soon(30, refDate),
+        end = (type === 'action') ? null : faker.date.soon(.2, start),
+        desc = faker.lorem.sentence(),
+        cal = faker.random.number(sizes.cals - 1),
+        cal_title = faker.lorem.words(),
+        rel_links = faker.lorem.sentence();
 
-	if (all_day) {
-		start.setHours(0, 0, 0);
-	}
+    let status = '';
+    switch (faker.random.number(2)) {
+        case 0:
+            status = 'not started';
+            break;
+        case 1:
+            status = 'in progress';
+            break;
+        case 2:
+            status = 'completed';
+    }
 
-	let status = '';
-	switch (faker.random.number(2)) {
-	case 0:
-		status = 'not started';
-		break;
-	case 1:
-		status = 'in progress';
-		break;
-	case 2:
-		status = 'completed';
-	}
-
-	items.push({
-		id: i,
-		name: name,
-		type: type,
-		all_day: all_day,
-		start: start,
-		end: end,
-		description: desc,
-		status: status,
-		calendar_id: cal,
-		calendar_title: cal_title,
-		related_links: rel_links,
-	});
+    items.push({
+        id: i,
+        name: name,
+        type: type,
+        start: start,
+        end: end,
+        description: desc,
+        status: status,
+        calendar_id: cal,
+        calendar_title: cal_title,
+        related_links: rel_links,
+    });
 }
 
 exports.listAll = function(req, res) {
@@ -92,9 +86,15 @@ exports.create = function(req, res) {
 };
 
 exports.find = function(req, res) {
-	const id = parseInt(req.params.item, 10);
-	if (items[id] && items[id].calendar_id === req.cal.id) {
-		res.json(items[id]);
+    const id = parseInt(req.params.item, 10);
+    let thisItem;
+    for(let i = 0; i < items.length; i++) {
+        if(items[i].id === id) {
+            thisItem = items[i];
+        }
+    }
+	if (thisItem.calendar_id === req.cal.id) {
+		res.json(thisItem);
 	} else {
 		res.status(404).send('Item Not Found');
 	}
@@ -112,7 +112,21 @@ exports.findUnlinked = function(req, res){
 };
 
 exports.edit = function(req, res) {
-	res.sendStatus(204);
+    res.sendStatus(201);
+    for(let i = 0; i < items.length; i++) {
+        if(items[i].id === req.id) {
+            items[i].id = req.id;
+            items[i].name = req.name;
+            items[i].type = req.type;
+            items[i].start = req.start;
+            items[i].end = req.end;
+            items[i].description = req.description;
+            items[i].status = req.status;
+            items[i].calendar_id = req.calendar_id;
+            items[i].calendar_title = req.calendar_title;
+            items[i].related_links = req.related_links;
+        }
+    }
 };
 
 exports.remove = function(req, res) {

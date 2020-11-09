@@ -145,14 +145,14 @@ function setUpDayCard(day, month, year) {
         let thisMonth = parseInt(calendarItems[i].start.slice(5, 7));
         let thisDay = parseInt(calendarItems[i].start.slice(8, 10));
         if(thisYear === parseInt(year) && thisMonth === month && thisDay === day) {
-            console.log(calendarItems[i]);
-            dayEvents.push(calendarItems[i]);
+            dayEvents.push(calendarItems[i].id);
             let newDayItem = document.createElement('div');
             newDayItem.classList.add('list-group-item', 'list-group-item-action', 'day-item');
             newDayItem.setAttribute('data-toggle', 'modal');
             newDayItem.setAttribute('data-target', '#itemEditCenter');
             newDayItem.innerHTML = calendarItems[i].calendar_title + ': ';
             newDayItem.innerHTML += calendarItems[i].name;
+            newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id));
             let thisStatus = calendarItems[i].status;
             let thisType = calendarItems[i].type;
             if(thisType === 'event') {
@@ -172,8 +172,49 @@ function setUpDayCard(day, month, year) {
             }
         }
     }
-    window.localStorage.setItem('currentDayItemInfo', JSON.stringify(dayEvents));
-    console.log(JSON.parse(window.localStorage.getItem('currentDayItemInfo')));
+    /*window.localStorage.setItem('currentDayItemInfo', JSON.stringify(dayEvents));
+    console.log(JSON.parse(window.localStorage.getItem('currentDayItemInfo')));*/
+}
+
+async function fillModalInfo(itemId) {
+    tempId = itemId;
+    let personalCalId = window.localStorage.getItem('personalCalId');
+    const response = await fetch('/api/calendars/'+personalCalId+'/items/'+itemId);
+    if (!response.ok) {
+        console.log(response.error);
+        return;
+    }
+    let itemData = await response.json();
+    let itemName = document.getElementById('itemName');
+    itemName.value = itemData.name;
+    let calendarName = document.getElementById('calendarName');
+    calendarName.setAttribute('placeholder', itemData.calendar_title);
+    let itemDescription = document.getElementById('itemDescription');
+    itemDescription.value = itemData.description;
+    let itemType = document.getElementById('itemType');
+    if(itemData.type === 'action') {
+        itemType.value = 'Action Item';
+        setUpdateForm();
+        let itemStatus = document.getElementById('itemStatus');
+        if(itemData.status === 'not started') {
+            itemStatus.value = 'Not Started';
+        } else if(itemData.status === 'in progress') {
+            itemStatus.value = 'In Progress';
+        } else if (itemData.status === 'completed') {
+            itemStatus.value = 'Completed';
+        }
+        let itemDueDate = document.getElementById('itemDueDate');
+        itemDueDate.value = itemData.start.slice(0, 16);
+    } else {
+        itemType.value = 'Event';
+        setUpdateForm();
+        let itemStartTime = document.getElementById('startTime');
+        itemStartTime.value = itemData.start.slice(0, 16);
+        let itemEndTime = document.getElementById('endTime');
+        itemEndTime.value = itemData.end.slice(0, 16);
+    }
+    let itemLinks = document.getElementById('itemLinks');
+    itemLinks.value = itemData.related_links;
 }
 
 function resetDayCard() {
@@ -390,6 +431,45 @@ for (let item of toDoItems) {
 
 let userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
 
+let saveItemChanges = document.getElementById('saveItemChanges');
+
+let tempId = 0;
+
+saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
+
+async function updateItemChanges(itemId) {
+    let personalCalId = window.localStorage.getItem('personalCalId');
+    let updatedItem = {id: itemId, name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: personalCalId, calendar_title: null, related_links: null};
+    updatedItem.name = document.getElementById('itemName').value;
+    updatedItem.calendar_title = document.getElementById('calendarName').placeholder;
+    updatedItem.description = document.getElementById('itemDescription').value;
+    let itemType = document.getElementById('itemType');
+    if(itemType.value === 'Action Item') {
+        updatedItem.type = 'action';
+        let itemStatus = document.getElementById('itemStatus');
+        if(itemStatus.value === 'Not Started') {
+            updatedItem.status = 'not started';
+        } else if(itemStatus.value === 'In Progress') {
+            updatedItem.status = 'in progress';
+        } else if (itemStatus.value === 'Completed') {
+            updatedItem.status = 'completed';
+        }
+        updatedItem.start = document.getElementById('itemDueDate').value;
+    } else {
+        updatedItem.type = 'event';
+        updatedItem.start = document.getElementById('startTime').value;
+        updatedItem.end = document.getElementById('endTime').value;
+    }
+    updatedItem.related_links = document.getElementById('itemLinks').value;
+    fetch('/api/calendars/'+personalCalId+'/items/'+itemId, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedItem)
+    });
+}
+
 async function loadPersonalCalendar() {
     const response = await fetch('/api/calendars');
     if (!response.ok) {
@@ -406,7 +486,6 @@ async function loadPersonalCalendar() {
 
 async function searchForCalendarItems() {
     let personalCalId = window.localStorage.getItem('personalCalId');
-    console.log(personalCalId);
     const response = await fetch('/api/calendars/0/items'); 
     if(!response.ok) {
         console.log(response.error);
