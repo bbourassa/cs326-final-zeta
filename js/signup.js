@@ -67,13 +67,13 @@ function checkValidation() {
 }
 
 async function addNewUser() {
-    fetch('/api/users', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({username: document.getElementById('username').value, firstName: document.getElementById('firstName').value, lastName: document.getElementById('lastName').value, email: document.getElementById('email').value, password: document.getElementById('password').value})
-    });
+	fetch('/api/users', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({username: document.getElementById('username').value, firstName: document.getElementById('firstName').value, lastName: document.getElementById('lastName').value, email: document.getElementById('email').value, password: document.getElementById('password').value})
+	});
 }
 
 /*
@@ -81,7 +81,7 @@ redirect function on sign in to
 personal calendar page
 */
 function redirectToCal() {
-    addNewUser();
+	addNewUser();
 	window.location = '../html/personalcal.html';
 }
 
