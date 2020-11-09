@@ -6,10 +6,12 @@ const fs = require('fs');
 const path = require('path');
 const sizes = require('./fakeSizes');
 const faker = require('faker');
+const { users } = require('./fakeSizes');
 faker.seed(194);
 const filename = path.resolve(__dirname, './ours/oursubs.json');
 
 const subs = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : [];
+let lastId = 0;
 
 for (let i = 0; i < sizes.subs; ++i) {
 	subs.push({
@@ -39,7 +41,14 @@ exports.list = function(req, res) {
 };
 
 exports.create = function(req, res) {
-	res.sendStatus(201);
+    res.sendStatus(201);
+    console.log(lastId);
+    lastId += 1;
+    subs.push({
+        id: lastId,
+        user_id: req.userId,
+        calendar_id: req.calId
+    })
 };
 
 exports.find = function(req, res) {
