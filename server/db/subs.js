@@ -42,7 +42,6 @@ exports.list = function(req, res) {
 
 exports.create = function(req, res) {
     res.sendStatus(201);
-    console.log(lastId);
     lastId += 1;
     subs.push({
         id: lastId,
