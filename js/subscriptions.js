@@ -855,7 +855,7 @@ async function commitChanges(){
 			await fetch(`/api/users/${user_id}/notifications`, {
 				method: 'POST',
 				headers: {
-					'Content':'application/json'
+					'Content-Type':'application/json'
 				},
 				body: notification
 			});

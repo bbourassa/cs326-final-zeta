@@ -86,10 +86,7 @@ exports.listSubscribed = function(req, res) {
 
 //POST notification
 exports.notify = function(req, res){
-	console.log('id',req.body);
 	let user = users.find( ({id}) => id === req.body.id);
-    
-	console.log(user);
 	user.notifcations.push(req.notification);
 	res.sendStatus(204);
 
@@ -100,8 +97,6 @@ exports.notifications = function(req, res){
 	//find the correct user
 	//get that user's notifications
 	let user = users.find( ({id}) => id === req.body.id);
-	// console.log(user);
 	let notifs = user.notifcations;
-	// console.log(notifs);
 	res.json(notifs);
 };
