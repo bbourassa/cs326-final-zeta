@@ -493,6 +493,7 @@ async function searchForCalendarItems() {
         return;
     }
     let itemData = await response.json();
+    console.log('run');
     window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
 }
 
