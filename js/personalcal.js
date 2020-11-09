@@ -486,14 +486,14 @@ async function loadPersonalCalendar() {
 }
 
 async function searchForCalendarItems() {
+    console.log('run');
     let personalCalId = window.localStorage.getItem('personalCalId');
-    const response = await fetch('/api/calendars/0/items'); 
+    const response = await fetch('/api/calendars/'+personalCalId+'/items'); 
     if(!response.ok) {
         console.log(response.error);
         return;
     }
     let itemData = await response.json();
-    console.log('run');
     window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
 }
 
