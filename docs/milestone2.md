@@ -1,27 +1,22 @@
 
-<title>Zeta Group: Milestone 2</title>
+<h1>Zeta Group: Milestone 2</h1>
 <br>
-<h1>Contributions</h1>
+<h2>Contributions</h2>
 <p>Britney Bourussa: Personal Cal implementation, login & sign up, api functionality </p>
 <p>Meghan Arnold: Subscriptions page, calendar and item creation, api functionailty</p>
 <p>Sara Whitlock: Api stubs, api functionality, faker stubs</p>
 
 <br>
 
-<h1>Front-End Information</h1>
+<h2>Front-End Information</h2>
 <p>User interface for: Personal Calendar</p>
 <p>User interface for: Creating a calendar</p>
 <p>User interface for: Subscrptions Page</p>
 
 <br>
 
-<h1>API</h1>
-<ul>
-    <li>
-        <meta charset="utf-8">
-    </li>
-    <li dir="ltr" style="line-height:1.38;margin-top:0pt;margin-bottom:0pt;">API Endpoints:</li>
-</ul>
+<h2>API Endpoints</h2>
+
 <ul style="margin-top:0;margin-bottom:0;">
     <li>
         <p>/api/login</p>
