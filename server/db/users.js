@@ -53,7 +53,6 @@ exports.create = function(req, res) {
         password: req.body.password,
         calendar_id: lastId
     });
-    console.log(users);
 };
 
 exports.load = function(req, res, next) {
