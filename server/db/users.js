@@ -43,7 +43,6 @@ exports.list = function(req, res) {
 };
 
 exports.create = function(req, res) {
-<<<<<<< HEAD
 	res.sendStatus(201);
 	console.log(req.body);
 	lastId += 1;
@@ -58,20 +57,6 @@ exports.create = function(req, res) {
 		notifications: req.body.notifcations
 	});
 	console.log(users);
-=======
-    res.sendStatus(201);
-    console.log(req.body);
-    lastId += 1;
-    users.push({
-        id: lastId,
-        username: req.body.username,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: req.body.password,
-        calendar_id: lastId
-    });
->>>>>>> 56ea156bcda510ec7123d5ca8681f35b8c235fb2
 };
 
 exports.load = function(req, res, next) {
