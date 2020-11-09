@@ -1,16 +1,17 @@
 'use strict';
 
-// const user_id = window.localStorage.getItem('userInfo').id;
-const user_id  =0;
+const user_id = JSON.parse(window.localStorage.getItem('userInfo')).id;
+// const user_id  =0;
+window.addEventListener('load', loadAll(user_id));
 
 function loadAll(userId){
 	loadCalendars(userId);
 	loadSettingListeners();
-	loadNotifications();
+	// loadNotifications();
 
 }
 
-loadAll(0);
+// loadAll(0);
 
 
 function loadSettingListeners(){
@@ -186,7 +187,10 @@ function loadSettingListeners(){
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 		try{
 			await fetch(`/api/calendars/${cal_id}/`, {
-				method: 'DELETE'
+				method: 'DELETE', 
+				headers:{
+					'Content-Type': 'application/json'
+				}
 			});
 		} catch(e){
 			console.log('Unable to delete calendar at this time.');
@@ -199,34 +203,42 @@ function loadSettingListeners(){
 	//if there is already a share code, make it visible, set toggle to checked
 	if(document.getElementById('shareCode')){
 		document.getElementById('shareCode').setAttribute('hidden', true);
+		document.getElementById('publicSwitch').checked = true;
+
 	} else {
-		document.getElementById('publicSwitch').setAttribute('checked', false);
+		document.getElementById('publicSwitch').checked = false;
 	}
 	document.getElementById('publicSwitch').addEventListener('change', async ()=>{
-		if(document.getElementById('shareCode')){
-			document.getElementById('shareCode').removeAttribute('hidden');
-		} else {
-			const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-			let shareCode;
-			
-			//if you aleady have a code html element, display
-			if(document.getElementById(shareCode)){
-				document.getElementById(shareCode).removeAttribute('hidden');
+		//if you just turned it off, hide the share code
+		if(!document.getElementById('publicSwitch').checked){
+			document.getElementById('shareCode').setAttribute('hidden', true);
 
-			}else {
-				//therwise, check for an existing code
-				//share code = mapping of ca_id, constant
-				shareCode = generateNewId('shareCode');
+		} 
+		//otherwise, make and display it
+		else {
+			if(document.getElementById('shareCode')){
+				document.getElementById('shareCode').removeAttribute('hidden');
+			} else {
+				let shareCode;
 				
-				//make a list element for the code to live in
-				let code = document.createElement('li');
-				code.innerText = 'Your sharable code:' + shareCode;
-				code.classList.add('list-group-item', 'list-group-item-action');
-				code.setAttribute('id', 'shareCode');
-				document.getElementById('adminSettings').appendChild(code);
+				//if you aleady have a code html element, display
+				if(document.getElementById(shareCode)){
+					document.getElementById(shareCode).removeAttribute('hidden');
+
+				}else {
+					//therwise, check for an existing code
+					//share code = mapping of ca_id, constant
+					shareCode = generateNewId('shareCode');
+					
+					//make a list element for the code to live in
+					let code = document.createElement('li');
+					code.innerText = 'Your sharable code is:  ' + shareCode;
+					code.classList.add('list-group-item', 'list-group-item-action');
+					code.setAttribute('id', 'shareCode');
+					document.getElementById('adminSettings').appendChild(code);
+				}
 			}
 		}
-
 		
 		
 	});
@@ -276,15 +288,7 @@ function generateNewId(field){
 		console.log(cal_id, JSON.stringify(cal_id).length);
 		for(let i=0; i<JSON.stringify(cal_id).length; i++){
 			let digit = parseInt(JSON.stringify(cal_id)[i]);
-
 			let enLetter = Object.keys(letterMap).find(key => letterMap[key] === digit);	
-			// function getKeyByValue(object, value) {
-			// 	return Object.keys(object).find(key => object[key] === value);
-			// }
-			console.log(cal_id[i], letterMap['a'], digit);
-			// let allLetters = Object.keys(letterMap); 
-			// let enLetter = getKeyByValue(letterMap, cal_id[i]);
-			// console.log("here",enLetter);
 			mappedString = mappedString+ enLetter;
 		}
 		
@@ -309,7 +313,15 @@ function getCheckedItems(){
 	return checkedBoxes;
 }
 
-function loadNotifications(){
+async function loadNotifications(){
+	// '/api/users/:user/notifications'
+
+	const notifs = await fetch(`/api/users/${user_id}/notifications`);
+	if(!notifs.ok){
+		console.log('Unable to load notifications');
+		return;
+	}
+	
 	// close event listener
 	// load each notification
 	// make each notification load the correct table, pull up details?
@@ -400,13 +412,15 @@ async function loadCalendars(){
 
 	//load all the calendars you have a subscription relationship with
 	//make the response into the cal list
-	console.log('load fetch');
+	// console.log('load fetch');
 	const response = await fetch(`/api/users/${user_id}/subscriptions/calendars/`);
 	if(!response.ok){
 		alert('Unable to load your subscriptions');
-	} else{
-		const cals1 = response.json(); //TODO remove the 1 once I take out data from here.
-	}
+		return;
+	} 
+	let cals1 = response.json(); 
+	console.log(cals1);
+	
 	//make the button for each calendar, adding admin button where applicalbe
 	//if you click that clanedar, it will load into the item table
 	cals.forEach((cal) =>{
