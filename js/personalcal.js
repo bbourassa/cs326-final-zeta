@@ -481,7 +481,6 @@ async function loadPersonalCalendar() {
             window.localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
         }
     }
-    console.log(window.localStorage.getItem('personalCalId'));
 }
 
 async function searchForCalendarItems() {
