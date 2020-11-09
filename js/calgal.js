@@ -19,5 +19,8 @@ async function redirectOnSubscription() {
         return;
     }
     let newCalData = await response.json();
+    window.localStorage.setItem('newSubscription', JSON.stringify(newCalData));
+    window.location = '../html/subscriptions.html';
     console.log(newCalData);
+
 }
