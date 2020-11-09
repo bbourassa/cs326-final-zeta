@@ -399,10 +399,10 @@ let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'A
 /*initial page setup for calendar and
 daily view
 */
-setUpCalendar(currentMonth, currentYear);
-setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
-setUpCalendarSelection();
-setUpdateForm();
+window.addEventListener('load', () => setUpCalendar(currentMonth, currentYear));
+window.addEventListener('load', () => setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear));
+window.addEventListener('load', setUpCalendarSelection);
+window.addEventListener('load', setUpdateForm);
 
 const dayItems = document.getElementsByClassName('day-item');
 
@@ -497,5 +497,5 @@ async function searchForCalendarItems() {
     window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
 }
 
-loadPersonalCalendar();
-searchForCalendarItems();
+window.addEventListener('load', loadPersonalCalendar);
+window.addEventListener('load', searchForCalendarItems);
