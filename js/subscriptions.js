@@ -1,5 +1,6 @@
 'use strict';
 
+// const user_id = window.localStorage.getItem('userInfo').id;
 const user_id  =0;
 
 function loadAll(userId){
@@ -11,8 +12,7 @@ function loadAll(userId){
 
 loadAll(0);
 
-
-// const user_id = window.localStorage.getItem('userInfo').id;
+//Should default to your personal calendar
 
 function loadSettingListeners(){
 	//  the header checkbox will cause all other check oxes to check/uncheck
@@ -24,6 +24,7 @@ function loadSettingListeners(){
 		}
         
 	});
+	
 	//for each selected item, add it to personal cal
 	document.getElementById('setAddItems').addEventListener('click', async ()=>{
 		//get an array of every itemID that has been checked
@@ -34,7 +35,7 @@ function loadSettingListeners(){
 			let itemID=  checkedItemIds[i];
 
 			//pull that item into your cal
-			const response = await fetch(`/api/users/${user_id}/calendar/pull`, {  
+			const response = await fetch(`/api/users/${user_id}/calendar/pull/`, {  
 				method: 'POST',
 				headers:{
 					'Content-Type': 'application/json'
@@ -53,7 +54,7 @@ function loadSettingListeners(){
 	//for every action in the calendar, add it to personal
 	document.getElementById('setAddAllActions').addEventListener('click', async ()=>{
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-		const response = await fetch(`/api/calendars/${cal_id}/items`);
+		const response = await fetch(`/api/calendars/${cal_id}/items/`);
 		if(!response.ok){
 			alert('Unable to add selected item(s) to your calendar at this time.');
 			return;
@@ -64,7 +65,7 @@ function loadSettingListeners(){
 			//if it is an action, add to cal
 			for(let i = 0; i<itemList.length; i++){
 				if (itemList[i].type === 'Action Item'){
-					const addResp = await fetch(`/api/calendars/${cal_id}/items`, {
+					const addResp = await fetch(`/api/calendars/${cal_id}/items/`, {
 						method: 'POST', 
 						headers: {
 							'Contenct-Type': 'application/json'
@@ -83,7 +84,7 @@ function loadSettingListeners(){
 	//for every event in cal, add it to personal
 	document.getElementById('setAddAllEvents').addEventListener('click', async()=>{
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-		const response = await fetch(`/api/calendars/${cal_id}/items`);
+		const response = await fetch(`/api/calendars/${cal_id}/items/`);
 		if(!response.ok){
 			alert('Unable to add selected item(s) to your calendar at this time.');
 			return;
@@ -91,10 +92,11 @@ function loadSettingListeners(){
 		else {
 			//fetch the item
 			let itemList = response.json();
-			//if it is an action, add to cal
+			//if it is an event, add to cal
+			console.log(itemList.length);
 			for(let i = 0; i<itemList.length; i++){
 				if (itemList[i].type === 'Event'){
-					const addResp = await fetch(`/api/calendars/${cal_id}/items`, {
+					const addResp = await fetch(`/api/calendars/${cal_id}/items/`, {
 						method: 'POST', 
 						headers: {
 							'Content-Type': 'application/json'
@@ -117,7 +119,7 @@ function loadSettingListeners(){
 		// TODO ADD POPUP
 		for(let i=0; i<checkedItemIds.length; i++){
 			//Send in the item ids to be pulled across. If any don't resolve, stop trying
-			const response = await  fetch(`api/users/${user_id}/calendar/pull`, {
+			const response = await  fetch(`/api/users/${user_id}/calendar/pull`, {
 				method: 'PUT',
 				headers: {'Content-type':'application/json'},
 				body:checkedItemIds[i]
@@ -138,66 +140,146 @@ function loadSettingListeners(){
 		$('#itemEditCenter').modal('show');
 		//DO NOT call LoadModal; that requires an existing item
 		//instead, set document.getElementById('modalBodyItemId').setAttribute('item-id', to a new value
-		
-		let confirmBtn = document.getElementById('saveChanges');
+		let newID = generateNewId('item');
+		document.getElementById('modalBodyItemId').setAttribute('item-id', newID);
+		let svChanges = document.getElementById('saveChanges');
 
 
 		//save button should load the commit screen and close the edit modal
-		confirmBtn.addEventListener('click', () =>{
+		svChanges.addEventListener('click', () =>{
 			$('#itemEditCenter').modal('hide');
 			commitChanges();
 			//make sure the commit message input is visible
-			document.getElementById('commitMessage').removeAttribute('hidden');
+			document.getElementById('commitMessage').removeAttribute('hidden'); 
+			document.getElementById('btnsForEdits').removeAttribute('hidden'); 
+
+
 		}); 
 		//now you are in the commit modal
 		
 
 	});
-	document.getElementById('setDeleteItem').addEventListener('click', ()=>{
+	
+	//delete selected items
+	document.getElementById('setDeleteItem').addEventListener('click', async()=>{
+		const checkedItemIds = getCheckedItems();
+		//assumes the appropriate cal is the one you are on currently
+		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+
+		for(let i=0; i<checkedItemIds.length; i++){
+			const item_id = checkedItemIds[i];
+			try{
+				await fetch(`/api/calendars/${cal_id}/items/${item_id}/`, {
+					method: 'DELETE'
+				});
+			} catch(e){
+				console.log('Unable to delete selected item(s) at this time.');
+				return;
+			}
+		}
 
 	});
-	document.getElementById('setDeleteCal').addEventListener('click', ()=>{
+	
+	//Delete current calendar  TODO
+	document.getElementById('setDeleteCal').addEventListener('click', async ()=>{
+		//assumes the appropriate cal is the one you are on currently
+		//TODO make a confirmation screen
+		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+		try{
+			await fetch(`/api/calendars/${cal_id}/`, {
+				method: 'DELETE'
+			});
+		} catch(e){
+			console.log('Unable to delete calendar at this time.');
+			return;
+		}
+		
 
 	});
-	document.getElementById('publicSwitch').addEventListener('toggle', ()=>{
-
-	});
-
-}
-
-/**
- * Checks to see if an item id is already in the database
- * @param {Integer} item_id 
- */
-function getItemExists(item_id){
-	try {
-		(fetch(`ap/items/${item_id}`));
-	} catch(e){
-		return false;
+	
+	//if there is already a share code, make it visible, set toggle to checked
+	if(document.getElementById('shareCode')){
+		document.getElementById('shareCode').setAttribute('hidden', true);
+	} else {
+		document.getElementById('publicSwitch').setAttribute('checked', false);
 	}
-	return true;
+	document.getElementById('publicSwitch').addEventListener('change', async ()=>{
+		if(document.getElementById('shareCode')){
+			document.getElementById('shareCode').removeAttribute('hidden');
+		} else {
+			const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+			let shareCode;
+			
+			//if you aleady have a code html element, display
+			if(document.getElementById(shareCode)){
+				document.getElementById(shareCode).removeAttribute('hidden');
+
+			}else {
+				//therwise, check for an existing code
+				try{
+					let response = await fetch(`/api/calendars/${cal_id}/`); //TODO change to a new endpoint that checkes
+					//for an existing share code
+					if(response.ok){
+						shareCode = response.json();
+					}
+				} catch (e) { //if it does not have that attribute, make it
+					shareCode = generateNewId('shareCode');
+					//save the share code to the calendar
+	
+				}
+				//make a list element for the code to live in
+				let code = document.createElement('li');
+				code.innerText = 'Your sharable code:' + shareCode;
+				code.classList.add('list-group-item', 'list-group-item-action');
+				code.setAttribute('id', 'shareCode');
+				document.getElementById('adminSettings').appendChild(code);
+			}
+		}
+
+		
+		
+	});
+
 }
+
 
 /** @britney do you need this in personal cal?
  * Generates a new random set of digits, ensures that it does not already exist
- * 
+ * TODO the cal shareCode is currently a nummber instead of string
  * @param {String} field to generate an id for
  */
 function generateNewId(field){
 	let id = 0;
 	//Calendar id's should have 5 digits, for now
 	if(field === 'cal'){ 
-		id = Math.floor(Math.random() * (99999 - 10000) + 10000);
-		while(getItemExists(id)){
-			id = Math.floor(Math.random() * (99999 - 10000) + 10000);
+		// id = Math.floor(Math.random() * (99999 - 10000) + 10000);
+		let unique = false;
+		while(!unique){
+			try {
+				id = Math.floor(Math.random() * (99999 - 10000) + 10000);
+				fetch(`/api/items/${id}/`);
+			} catch(e){
+				unique = false;
+			}
+			unique = true;
+			
 		}
 
 	} //item id's should have 7 digits, for now
 	else if(field === 'item'){
-		id = Math.floor(Math.random() * (9999999 - 1000000) + 1000000);
-		while(getItemExists(id)){
-			id = Math.floor(Math.random() * (9999999 - 1000000) + 1000000);
+		let unique = false;
+		while(!unique){
+			try {
+				id = Math.floor(Math.random() * (9999999 - 1000000) + 1000000);
+				fetch(`/api/items/${id}/`);
+			} catch(e){
+				unique = false;
+			}
+			unique = true;
 		}
+	} else if(field === 'shareCode'){
+		id = Math.floor(Math.random() * (9999999 - 1000000) + 1000000);
+		//
 	}
 	return id;
 }
@@ -306,9 +388,11 @@ async function loadCalendars(){
 		}
 	];
 
+
 	//load all the calendars you have a subscription relationship with
 	//make the response into the cal list
-	const response = await fetch(`/api/users/${user_id}/subscriptions/calendars`);
+	console.log('load fetch');
+	const response = await fetch(`/api/users/${user_id}/subscriptions/calendars/`);
 	if(!response.ok){
 		alert('Unable to load your subscriptions');
 	} else{
@@ -577,7 +661,7 @@ function loadModal(item){
 
 	//make sure there are not extranous values by clearing modal
 	clearModals();
-
+	//TODO Check for null values
 	document.getElementById('modalBodyItemId').setAttribute('item-id', item.id);
 	document.getElementById('itemName').value = item.name;
 	document.getElementById('statusModal').value = item.status;
@@ -595,10 +679,10 @@ function loadModal(item){
 		document.getElementById('itemLinks').value = item.links;
 	}
 	//listener to save
-	let confirmBtn = document.getElementById('saveChanges');
+	let svChanges = document.getElementById('saveChanges');
 
 	//save button should load the commit screen and close the edit modal
-	confirmBtn.addEventListener('click', () =>{
+	svChanges.addEventListener('click', () =>{
 		$('#itemEditCenter').modal('hide');
 		commitChanges();
 		//make sure the commit message input is visible
@@ -703,7 +787,7 @@ function setUpdateForm(item) {
 	}
 }
 
-/** TODO needs to be added to personal cal @britney
+/**
  * Load the information you are about to commit
  * This will reference the information that was just inserted into the 
  * edit modal. The database has not been updated, so it has to reference the html
@@ -747,41 +831,31 @@ function loadCommit(){
  */
 async function commitChanges(){
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-	document.getElementById('btnsForEdits').setAttribute('hidden', true);
+	document.getElementById('btnsForEdits').removeAttribute('hidden');
+	const item_id = document.getElementById('modalBodyItemId').getAttribute('item-id');
 
 	//fill confirmation modal with information values from the edit modal
 	loadCommit();
 	//opens the confirmation modal
 	$('#editConfirmation').modal('show');
-	document.getElementById('confirmBtn').addEventListener('click', ()=> {
+	document.getElementById('confirmBtn').addEventListener('click', async ()=> {
 		$('#editConfirmation').modal('hide');
-
+		let bodyInfo = getInfo();
+		//PUT will update or add an item; don't need to check first
+		try{
+			await fetch(`/api/calendars/${cal_id}/items/${item_id}/`, {
+				method: 'PUT',
+				headers:{
+					'Content-Type':'application/json'
+				},
+				body: bodyInfo
+			});
+		} catch(e){
+			console.log(e);
+			return;
+		}
 	});
-	const item_id = document.getElementById('modalBodyItemId').getAttribute('item-id');
-	// setAttribute('item-id', item.id);
-
-	let bodyInfo = getInfo();
-	// console.log(item_id);
-	//check if item.id already exists. If so, update. Otherwise, push item TODO
-	let itemResp = await fetch(`/api/items/${item_id}`);
-	//if it does not already exist, make it
-	if(!itemResp.ok){
-		await fetch(`/api/calendars/${cal_id}/items`, {
-			method: 'POST', 
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: bodyInfo
-		});
-	} else {
-		await fetch(`/api/calendars/${cal_id}/items/${item_id}`, {
-			method: 'PUT',
-			headers:{
-				'Content-Type':'application/json'
-			},
-			body: bodyInfo
-		});
-	}
+	
 }
 
 // function newItem
