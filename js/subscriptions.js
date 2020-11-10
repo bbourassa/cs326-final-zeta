@@ -498,7 +498,7 @@ async function loadCalendars(){
 	} 
 	// let cals1 = response.json(); 
 	// console.log(cals1);
-	
+	const subs = document.getElementById('subscribed-cals');
 	//make the button for each calendar, adding admin button where applicalbe
 	//if you click that clanedar, it will load into the item table
 	cals.forEach((cal) =>{
@@ -523,10 +523,19 @@ async function loadCalendars(){
 			aCal.appendChild(adminIndic);
 		}
 
-		document.getElementById('subscribed-cals').appendChild(aCal);
+		subs.appendChild(aCal);
 
 	});
-	loadTable(document.getElementById('subscribed-cals').childNodes[1].getAttribute('cal_id'));
+	// If you have been redirected because you have a new subscription,
+	// it should redirect you to that events page
+	//this function assumes that the new subscription will be at the end 
+	//of your list of subscriptions
+	if(window.localStorage.getItem('newSubscription')){
+		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'));
+		window.localStorage.removeItem('newSubscription');
+	}
+
+	loadTable(subs.childNodes[1].getAttribute('cal_id'));
 
 }
 
