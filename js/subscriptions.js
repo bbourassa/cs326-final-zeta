@@ -348,20 +348,29 @@ async function loadNotifications(){
 		//currently hard coded
 		loadTable(0);
 		noti.parentElement.removeChild(noti);
+		//if that was the last notification, hide the notification card
 		if(document.getElementById('allNotes').childNodes.length===0){
 			document.getElementById('notificationCenter').setAttribute('hidden', true);
+			//remove bell notification value
+			document.getElementById('num-Notifications').innerHTML ='';
 
 		}
 
 	});
 	document.getElementById('allNotes').appendChild(noti);
 	
+	//Clear button removes all notifications without redirecting
 	document.getElementById('clearNoteCenter').addEventListener('click', ()=>{
 		while (document.getElementById('allNotes').childNodes.length>0){
 			document.getElementById('allNotes').removeChild(document.getElementById('allNotes').childNodes[0]);
+			
 		}
+		document.getElementById('num-Notifications').innerHTML ='';
+		document.getElementById('notificationCenter').setAttribute('hidden', true);
+
 	});
 
+	//if you have no notifications, hide card
 	if(document.getElementById('allNotes').childNodes.length>0){
 		document.getElementById('notificationCenter').removeAttribute('hidden');
 	}

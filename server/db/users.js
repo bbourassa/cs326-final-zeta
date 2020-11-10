@@ -103,3 +103,9 @@ exports.notifications = function(req, res){
 	//get that user's notifications
 	res.sendStatus(204);
 };
+
+exports.removeNotif = function(req, res){
+	//take a notification object in the req?
+	//notifications.pop(...)
+	res.sendStatus(204);
+};
