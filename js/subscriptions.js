@@ -2,6 +2,7 @@
 
 // const user_id = window.localStorage.getItem('userInfo').id;
 const user_id  =0;
+window.addEventListener('load', loadAll(user_id));
 
 function loadAll(userId){
 	loadCalendars(userId);
@@ -10,9 +11,11 @@ function loadAll(userId){
 
 }
 
-loadAll(0);
+// loadAll(0);
 
-
+/**
+ * Loads the event listers for each setting button
+ */
 function loadSettingListeners(){
 	//  the header checkbox will cause all other check oxes to check/uncheck
 	document.getElementById('checkAll').addEventListener('change', ()=> {
@@ -203,40 +206,36 @@ function loadSettingListeners(){
 		document.getElementById('publicSwitch').setAttribute('checked', false);
 	}
 	document.getElementById('publicSwitch').addEventListener('change', async ()=>{
-		if(document.getElementById('shareCode')){
-			document.getElementById('shareCode').removeAttribute('hidden');
-		} else {
-			const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-			let shareCode;
-			
-			//if you aleady have a code html element, display
-			if(document.getElementById(shareCode)){
-				document.getElementById(shareCode).removeAttribute('hidden');
+		//if you just turned it off, hide the share code
+		if(!document.getElementById('publicSwitch').checked){
+			document.getElementById('shareCode').setAttribute('hidden', true);
 
-			}else {
-				//therwise, check for an existing code
-				try{
-					let response = await fetch(`/api/calendars/${cal_id}/`); //TODO change to a new endpoint that checkes
-					//for an existing share code
-					if(response.ok){
-						shareCode = response.json();
-					}
-				} catch (e) { //if it does not have that attribute, make it
+		} 
+		//otherwise, make and display it
+		else {
+			if(document.getElementById('shareCode')){
+				document.getElementById('shareCode').removeAttribute('hidden');
+			} else {
+				let shareCode;
+				
+				//if you aleady have a code html element, display
+				if(document.getElementById(shareCode)){
+					document.getElementById(shareCode).removeAttribute('hidden');
+
+				}else {
+					//therwise, check for an existing code
+					//share code = mapping of ca_id, constant
 					shareCode = generateNewId('shareCode');
-					//save the share code to the calendar
-	
+					
+					//make a list element for the code to live in
+					let code = document.createElement('li');
+					code.innerText = 'Your sharable code is:  ' + shareCode;
+					code.classList.add('list-group-item', 'list-group-item-action');
+					code.setAttribute('id', 'shareCode');
+					document.getElementById('adminSettings').appendChild(code);
 				}
-				//make a list element for the code to live in
-				let code = document.createElement('li');
-				code.innerText = 'Your sharable code:' + shareCode;
-				code.classList.add('list-group-item', 'list-group-item-action');
-				code.setAttribute('id', 'shareCode');
-				document.getElementById('adminSettings').appendChild(code);
 			}
-		}
-
-		
-		
+		}	
 	});
 
 }
@@ -248,6 +247,8 @@ function loadSettingListeners(){
  * @param {String} field to generate an id for
  */
 function generateNewId(field){
+	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+
 	let id = 0;
 	//Calendar id's should have 5 digits, for now
 	if(field === 'cal'){ 
@@ -276,9 +277,18 @@ function generateNewId(field){
 			}
 			unique = true;
 		}
-	} else if(field === 'shareCode'){
-		id = Math.floor(Math.random() * (9999999 - 1000000) + 1000000);
-		//
+	} //insecure mapping of calendar id to a string
+	else if(field === 'shareCode'){
+		let letterMap = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 0};
+		let mappedString ='';
+		// console.log(cal_id, JSON.stringify(cal_id).length);
+		for(let i=0; i<JSON.stringify(cal_id).length; i++){
+			let digit = parseInt(JSON.stringify(cal_id)[i]);
+			let enLetter = Object.keys(letterMap).find(key => letterMap[key] === digit);	
+			mappedString = mappedString+ enLetter;
+		}
+		
+		id=mappedString;
 	}
 	return id;
 }
@@ -327,7 +337,8 @@ async function loadNotifications(){
 			document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
 		}
 		//currently hard coded
-		loadTable(0);
+		loadTable(1);
+		//should send you to the right cal items);
 		noti.parentElement.removeChild(noti);
 		//if that was the last notification, hide the notification card
 		if(document.getElementById('allNotes').childNodes.length===0){
