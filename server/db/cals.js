@@ -83,7 +83,7 @@ exports.loadSubscribed = function(req, res, next) {
 };
 
 exports.listSubscribed = function(req, res) {
-	res.json(cals);
+	res.json(req.cals);
 };
 
 /**

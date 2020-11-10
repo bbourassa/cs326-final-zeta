@@ -75,8 +75,8 @@ exports.load = function(req, res, next) {
 };
 
 exports.find = function(req, res) {
-	let user = users.find( ({id}) => id === req.body.id);
-	res.json(user);
+	// let user = users.find( ({id}) => id === req.body.id);
+	res.json(req.user);
 };
 
 exports.remove = function(req, res) {
