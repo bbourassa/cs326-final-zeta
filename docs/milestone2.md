@@ -244,7 +244,8 @@
 <p>The personal calendar is created based on the knowledge of whether or not you have items on a particular day - these days (minus the current day which is always red and is the default "Day at a Glance" setting) are outlined to indicate to the user there are items on that day. Clicking on a day successfully shows events under the schedule portion, and successfully shows the items by status as shown below.</p>
 <img src='personalcalwithitems.JPG'>
 <img src='personalcalshowitems.JPG'>
-<h4>Example for Update: </h4>
+<h4>Example for Update: Updating your personal calendar</h4>
+<p>The user will be able to choose whether to update their personal calendar based on updates to the calendar they are subscribed to. The user will receive a notification that a their subscription has been updated. From there, they can view the item and choose to update it within their personal calendar. Without a comprehensive database, at the moment this is an empty but resolving POST request.</p>
 <h4>Example for Delete: </h4>
 
 <br>
