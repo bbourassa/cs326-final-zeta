@@ -7,7 +7,7 @@ window.addEventListener('load', loadAll(user_id));
 function loadAll(userId){
 	loadCalendars(userId);
 	loadSettingListeners();
-	// loadNotifications();
+	loadNotifications();
 
 }
 
@@ -35,12 +35,12 @@ function loadSettingListeners(){
 			let itemID=  checkedItemIds[i];
 
 			//pull that item into your cal
-			const response = await fetch(`/api/users/${user_id}/calendar/pull/`, {  
-				method: 'POST',
+			const response = await fetch(`/api/users/${user_id}/calendar/pull`, {  
+				method: 'PUT',
 				headers:{
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(itemID)
+				body: JSON.stringify({id:itemID})
 			});
 			
 			if(!response.ok){
@@ -65,12 +65,12 @@ function loadSettingListeners(){
 			//if it is an action, add to cal
 			for(let i = 0; i<itemList.length; i++){
 				if (itemList[i].type === 'Action Item'){
-					const addResp = await fetch(`/api/calendars/${cal_id}/items/`, {
+					const addResp = await fetch(`/api/calendars/${cal_id}/items`, {
 						method: 'POST', 
 						headers: {
 							'Contenct-Type': 'application/json'
 						},
-						body: itemList[i]
+						body: JSON.stringify({id:itemList[i]})
 					} );
 					if(!addResp.ok){
 						alert('Unable to add selected item(s) to your calendar at this time.');
@@ -93,7 +93,6 @@ function loadSettingListeners(){
 			//fetch the item
 			let itemList = response.json();
 			//if it is an event, add to cal
-			console.log(itemList.length);
 			for(let i = 0; i<itemList.length; i++){
 				if (itemList[i].type === 'Event'){
 					const addResp = await fetch(`/api/calendars/${cal_id}/items/`, {
@@ -116,13 +115,14 @@ function loadSettingListeners(){
 	//for each selected item, find corresponding in personal, updare
 	document.getElementById('setUpdateSelected').addEventListener('click',async ()=>{
 		const checkedItemIds = getCheckedItems();
-		// TODO ADD POPUP
+		// @Milestone3
+		alert('This will not currently function. This alert will, in the future, be a modal with options to continue or cancel.');
 		for(let i=0; i<checkedItemIds.length; i++){
 			//Send in the item ids to be pulled across. If any don't resolve, stop trying
 			const response = await  fetch(`/api/users/${user_id}/calendar/pull`, {
 				method: 'PUT',
 				headers: {'Content-type':'application/json'},
-				body:checkedItemIds[i]
+				body: JSON.stringify( {user_id:user_id  ,item_id: checkedItemIds[i]})
 			});
 			if(!response.ok){
 				alert('Unable to update item(s) at this time.');
@@ -139,7 +139,7 @@ function loadSettingListeners(){
 		clearModals();
 		$('#itemEditCenter').modal('show');
 		//DO NOT call LoadModal; that requires an existing item
-		//instead, set document.getElementById('modalBodyItemId').setAttribute('item-id', to a new value
+		//Currently, ID generation will throw an error if the id is usable-- that is normal here!
 		let newID = generateNewId('item');
 		document.getElementById('modalBodyItemId').setAttribute('item-id', newID);
 		let svChanges = document.getElementById('saveChanges');
@@ -180,13 +180,14 @@ function loadSettingListeners(){
 
 	});
 	
-	//Delete current calendar  TODO
+	//Delete current calendar 
 	document.getElementById('setDeleteCal').addEventListener('click', async ()=>{
 		//assumes the appropriate cal is the one you are on currently
-		//TODO make a confirmation screen
+		//@Milesstone3
+		alert('This does not currently do anything. This alert will eventually be a modal with options to cancel or continue.');
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 		try{
-			await fetch(`/api/calendars/${cal_id}/`, {
+			await fetch(`/api/calendars/${cal_id}`, {
 				method: 'DELETE', 
 				headers:{
 					'Content-Type': 'application/json'
@@ -246,9 +247,8 @@ function loadSettingListeners(){
 }
 
 
-/** @britney do you need this in personal cal?
+/** 
  * Generates a new random set of digits, ensures that it does not already exist
- * TODO the cal shareCode is currently a nummber instead of string
  * @param {String} field to generate an id for
  */
 function generateNewId(field){
@@ -261,12 +261,14 @@ function generateNewId(field){
 		let unique = false;
 		while(!unique){
 			try {
+				//Try to get an id. If you fail, you have a usable ID
 				id = Math.floor(Math.random() * (99999 - 10000) + 10000);
-				fetch(`/api/items/${id}/`);
+				fetch(`/api/items/${id}`);
 			} catch(e){
-				unique = false;
+				console.log('Unique ID found');
+				unique = true;
 			}
-			unique = true;
+			unique = false;
 			
 		}
 
@@ -282,7 +284,10 @@ function generateNewId(field){
 			}
 			unique = true;
 		}
-	} else if(field === 'shareCode'){
+	} 
+	//Insecure encoding of the calendar id. 
+	//@Milestone3 make more secure?
+	else if(field === 'shareCode'){
 		let letterMap = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 0};
 		let mappedString ='';
 		console.log(cal_id, JSON.stringify(cal_id).length);
@@ -313,18 +318,81 @@ function getCheckedItems(){
 	return checkedBoxes;
 }
 
+/**
+ * This will load the notification bell
+ * It does not currently work due to API issues
+ * For now, it just makes an empty GET request
+ * Currently hardcoded with an example
+ * @Milestone3
+ */
 async function loadNotifications(){
-	// '/api/users/:user/notifications'
-
-	const notifs = await fetch(`/api/users/${user_id}/notifications`);
-	if(!notifs.ok){
+	//clear out notifications
+	while (document.getElementById('allNotes').childNodes.length>0){
+		document.getElementById('allNotes').removeChild(document.getElementById('allNotes').childNodes[0]);
+	}
+	const GNotifs = await fetch(`/api/users/${user_id}/notifications`);
+	if(!GNotifs.ok){
 		console.log('Unable to load notifications');
 		return;
 	}
+	//document.getElementById('num-Notifications').value = numNotifs;
+	//temporarily hard coded
+	document.getElementById('num-Notifications').innerHTML = 1;
+	let noti = document.createElement('button');
+	noti.innerHTML='Calendar CS 221 updated: This is an example notification';
+	noti.classList.add('subscribed', 'btn', 'btn-light');
+	noti.addEventListener('click', () =>{
+		while( document.getElementById('eventTable').childNodes.length>0){
+			document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
+		}
+		//currently hard coded
+		loadTable(0);
+		noti.parentElement.removeChild(noti);
+		if(document.getElementById('allNotes').childNodes.length===0){
+			document.getElementById('notificationCenter').setAttribute('hidden', true);
+
+		}
+
+	});
+	document.getElementById('allNotes').appendChild(noti);
 	
-	// close event listener
-	// load each notification
-	// make each notification load the correct table, pull up details?
+	document.getElementById('clearNoteCenter').addEventListener('click', ()=>{
+		while (document.getElementById('allNotes').childNodes.length>0){
+			document.getElementById('allNotes').removeChild(document.getElementById('allNotes').childNodes[0]);
+		}
+	});
+
+	if(document.getElementById('allNotes').childNodes.length>0){
+		document.getElementById('notificationCenter').removeAttribute('hidden');
+	}
+	else{
+		document.getElementById('notificationCenter').setAttribute('hidden', true);
+
+	}
+
+	/*
+	//Get all of the notifications, use the number to set the notification bell 
+	let notifs = GNotifs.json();
+	let numNotifs = notifs.length();
+	document.getElementById('num-Notifications').value = numNotifs;
+
+	//Make a list of notifications for the dropdown
+	let notList = document.createElement('ul');
+	for(let i=0; i<numNotifs; i++){
+		let noti = document.createElement('button');
+		noti.innerHTML=GNotifs[i].cal_id;
+		noti.classList.add('subscribed', 'btn', 'btn-light');
+		noti.addEventListener('click', () =>{
+			while( document.getElementById('eventTable').childNodes.length>0){
+				document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
+			}
+			loadTable(=GNotifs[i].cal_id);
+		});
+		document.getElementById('allNotes').appendChild(noti);
+	}
+
+	*/
+
 }
 
 /**
@@ -413,13 +481,14 @@ async function loadCalendars(){
 	//load all the calendars you have a subscription relationship with
 	//make the response into the cal list
 	// console.log('load fetch');
-	const response = await fetch(`/api/users/${user_id}/subscriptions/calendars/`);
+	const response = await fetch(`/api/users/${user_id}/subscriptions`);
+	// /api/users/${user_id}/subscriptions/calendars/`);
 	if(!response.ok){
 		alert('Unable to load your subscriptions');
 		return;
 	} 
-	let cals1 = response.json(); 
-	console.log(cals1);
+	// let cals1 = response.json(); 
+	// console.log(cals1);
 	
 	//make the button for each calendar, adding admin button where applicalbe
 	//if you click that clanedar, it will load into the item table
@@ -430,6 +499,7 @@ async function loadCalendars(){
 		let aCal = document.createElement('button');
 		aCal.innerHTML=cal.name;
 		aCal.classList.add('subscribed', 'btn', 'btn-light');
+		aCal.setAttribute('cal_id', cal.id);
 		//add an event listen to the button to fill in the table of eventsf
 		aCal.addEventListener('click', () =>{
 			while( document.getElementById('eventTable').childNodes.length>0){
@@ -447,13 +517,17 @@ async function loadCalendars(){
 		document.getElementById('subscribed-cals').appendChild(aCal);
 
 	});
+	loadTable(document.getElementById('subscribed-cals').childNodes[1].getAttribute('cal_id'));
+
 }
+
+
 
 /**
  * Gets and renders all events and activities in a given calendar
  * @param {int} calId the id number for the calendar
  */
-function loadTable(calId){
+async function loadTable(calId){
 	const cals = [
 		
 		{
@@ -539,8 +613,16 @@ function loadTable(calId){
           
 		}
 	];
-	//TODO api find calendar by cal_id
-    
+	
+	//GET the correct calendar
+	const response = await fetch(`/api/calendars/${calId}/`);
+	if(!response.ok){
+		alert('Unable to load this subscription');
+		return;
+	} 
+	// let cals1 = response.json(); 
+	// console.log(cals1);
+
 	const thisCal = cals[calId]; //TODO temporary -- once i have the db set up, I can figure out how to 
 	//make this work with r
 	const admin = (thisCal.owner_id === user_id);
@@ -684,7 +766,6 @@ function loadModal(item){
 
 	//make sure there are not extranous values by clearing modal
 	clearModals();
-	//TODO Check for null values
 	document.getElementById('modalBodyItemId').setAttribute('item-id', item.id);
 	document.getElementById('itemName').value = item.name;
 	document.getElementById('statusModal').value = item.status;
@@ -827,6 +908,7 @@ function loadCommit(){
 	changeList.classList.add('list-group');
 	changeList.setAttribute('id', 'listOfInfo');
 
+	//I marked all editable areas with a particualr class so they can be found
 	let listField = document.getElementsByClassName('modal-editable-area');
 
 	//for each field, make a new list item
@@ -851,6 +933,7 @@ function loadCommit(){
 /**
  * 
  * Closes editing modal and opens a new confirmation modal.
+ * This is also used for an un-editable view of details.
  */
 async function commitChanges(){
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
@@ -891,8 +974,9 @@ async function commitChanges(){
 	
 }
 
-// function newItem
-
+/**
+ * Clears out the data in the editable fields.
+ */
 function clearModals(){
 	document.getElementById('modalBodyItemId').setAttribute('item-id', '');
 	let editFields = document.getElementsByClassName('modal-editable-area');
