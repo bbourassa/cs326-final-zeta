@@ -167,8 +167,8 @@ function loadSettingListeners(){
 		const checkedItemIds = getCheckedItems();
 		//assumes the appropriate cal is the one you are on currently
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-
 		for(let i=0; i<checkedItemIds.length; i++){
+			alert('Deleting items is permanant. Are you sure that you want to delete this item?');
 			const item_id = checkedItemIds[i];
 			try{
 				await fetch(`/api/calendars/${cal_id}/items/${item_id}/`, {
@@ -182,11 +182,13 @@ function loadSettingListeners(){
 
 	});
 	
-	//Delete current calendar  TODO
+	//Delete current calendar 
 	document.getElementById('setDeleteCal').addEventListener('click', async ()=>{
 		//assumes the appropriate cal is the one you are on currently
-		//TODO make a confirmation screen
+		//@Milestone3 make a confirmation screen
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+		alert('Deleting calendars is permanant. Are you sure that you want to delete this calendar?');
+
 		try{
 			await fetch(`/api/calendars/${cal_id}/`, {
 				method: 'DELETE'
