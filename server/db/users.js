@@ -99,10 +99,7 @@ exports.notify = function(req, res){
 
 //GET notifications
 exports.notifications = function(req, res){
-	//find the correct user
-    //get that user's notifications
-    console.log(req.body);
-	let user = users.find( ({id}) => id === req.body.id);
-	let notifs = user.notifcations;
-	res.json(notifs);
+	//find the correct user req.params.id
+	//get that user's notifications
+	res.sendStatus(204);
 };
