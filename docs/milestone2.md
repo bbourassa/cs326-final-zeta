@@ -7,6 +7,11 @@
 <p>Sara Whitlock: Api stubs, api functionality, faker stubs</p>
 
 <br>
+<h2>Deployment</h2>
+
+<p>To access our hosted application, go to: https://life-on-track.herokuapp.com/</p>
+<p>To login, we have a dummy account that you can use: Username: LifeOnTrack, Password: password (these credentials are case sensitive)</p>
+<br>
 
 <h2>API Endpoints</h2>
 
@@ -245,12 +250,13 @@
 <img src='personalcalwithitems.JPG'>
 <img src='personalcalshowitems.JPG'>
 <h4>Example for Update: Updating your personal calendar</h4>
-<p>The user will be able to choose whether to update their personal calendar based on updates to the calendar they are subscribed to. The user will receive a notification that a their subscription has been updated. From there, they can view the item and choose to update it within their personal calendar. Without a comprehensive database, at the moment this is an empty but resolving POST request.</p>
-<h4>Example for Delete: </h4>
+<p>The user will be able to choose whether to update their personal calendar based on updates to the calendar they are subscribed to. The user will receive a notification that a their subscription has been updated. From there, they can view the item and choose to update it within their personal calendar. They are also able to choose to add all action or event items to their personal calendar from a subscription. Further, an administrator can update their existing items. As you can see n the images below, the administrator edits the item within the standard item creation pane. They are then asked to confirm that they would like to save changes and to write a message for subscribers to recieve in a notification.</p>
+<img src = 'userSettings.JPG'>
+<img src = 'updateAnItem.JPG'>
+<img src = 'confirmUpdate.JPG'>
 
+<h4>Example for Delete: </h4>
+<p>The user is also able to choose to delete from their calendar. The administrator of the calendar has the ability to delete items from the calendar as wel as to delete the calendar in its entirety. As with other aspects, the backend is only partially implemented. However, the basic functionality of the deletion exists. Additionally, when the delete button is clicked, the page will alert the user that it is a permenant action. Due to constraints, this currently comes up as an alert. In the future, this will be a modal that gives the user the option to confirm or cancel.</p>
+<img src = 'deleteConfirm'>
 <br>
 
-<h2>Deployment</h2>
-
-<p>To access our hosted application, go to: https://life-on-track.herokuapp.com/</p>
-<p>To login, we have a dummy account that you can use: Username: LifeOnTrack, Password: password (these credentials are case sensitive)</p>
