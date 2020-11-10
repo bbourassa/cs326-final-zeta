@@ -96,7 +96,12 @@ exports.notify = function(req, res){
 exports.notifications = function(req, res){
 	//find the correct user
 	//get that user's notifications
-	let user = users.find( ({id}) => id === req.body.id);
-	let notifs = user.notifcations;
-	res.json(notifs);
+	res.sendStatus(204);
+};
+
+exports.removeNotif = function(req, res){
+	//take a notification object in the req?
+	//notifications.pop(...)
+	res.sendStatus(204);
+
 };

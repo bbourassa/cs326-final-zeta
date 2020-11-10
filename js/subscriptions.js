@@ -299,10 +299,91 @@ function getCheckedItems(){
 	return checkedBoxes;
 }
 
-function loadNotifications(){
-	// close event listener
-	// load each notification
-	// make each notification load the correct table, pull up details?
+/**
+ * This will load the notification bell
+ * It does not currently work due to API issues
+ * For now, it just makes an empty GET request
+ * Currently hardcoded with an example
+ * @Milestone3
+ */
+async function loadNotifications(){
+	//clear out notifications
+	while (document.getElementById('allNotes').childNodes.length>0){
+		document.getElementById('allNotes').removeChild(document.getElementById('allNotes').childNodes[0]);
+	}
+	const GNotifs = await fetch(`/api/users/${user_id}/notifications`);
+	if(!GNotifs.ok){
+		console.log('Unable to load notifications');
+		return;
+	}
+	//document.getElementById('num-Notifications').value = numNotifs;
+	//temporarily hard coded
+	document.getElementById('num-Notifications').innerHTML = 1;
+	let noti = document.createElement('button');
+	noti.innerHTML='Calendar CS 221 updated: This is an example notification';
+	noti.classList.add('subscribed', 'btn', 'btn-light');
+	noti.addEventListener('click', () =>{
+		while( document.getElementById('eventTable').childNodes.length>0){
+			document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
+		}
+		//currently hard coded
+		loadTable(0);
+		noti.parentElement.removeChild(noti);
+		//if that was the last notification, hide the notification card
+		if(document.getElementById('allNotes').childNodes.length===0){
+			document.getElementById('notificationCenter').setAttribute('hidden', true);
+			//remove bell notification value
+			document.getElementById('num-Notifications').innerHTML ='';
+
+		}
+
+	});
+	document.getElementById('allNotes').appendChild(noti);
+	
+	//Clear button removes all notifications without redirecting
+	document.getElementById('clearNoteCenter').addEventListener('click', ()=>{
+		while (document.getElementById('allNotes').childNodes.length>0){
+			document.getElementById('allNotes').removeChild(document.getElementById('allNotes').childNodes[0]);
+			
+		}
+		document.getElementById('num-Notifications').innerHTML ='';
+		document.getElementById('notificationCenter').setAttribute('hidden', true);
+
+	});
+
+	//if you have no notifications, hide card
+	if(document.getElementById('allNotes').childNodes.length>0){
+		document.getElementById('notificationCenter').removeAttribute('hidden');
+	}
+	else{
+		document.getElementById('notificationCenter').setAttribute('hidden', true);
+
+	}
+
+	/*
+	//Get all of the notifications, use the number to set the notification bell 
+	let notifs = GNotifs.json();
+	let numNotifs = notifs.length();
+	document.getElementById('num-Notifications').value = numNotifs;
+
+	//Make a list of notifications for the dropdown
+	let notList = document.createElement('ul');
+	for(let i=0; i<numNotifs; i++){
+		let noti = document.createElement('button');
+		noti.innerHTML=GNotifs[i].cal_id;
+		noti.classList.add('subscribed', 'btn', 'btn-light');
+		noti.addEventListener('click', () =>{
+			while( document.getElementById('eventTable').childNodes.length>0){
+				document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
+			}
+			loadTable(=GNotifs[i].cal_id);
+		});
+		document.getElementById('allNotes').appendChild(noti);
+	}
+
+	*/
+
+
 }
 
 /**
@@ -394,9 +475,13 @@ async function loadCalendars(){
 	const response = await fetch(`/api/users/${user_id}/subscriptions/calendars/`);
 	if(!response.ok){
 		alert('Unable to load your subscriptions');
-	} else{
-		const cals1 = response.json(); //TODO remove the 1 once I take out data from here.
-	}
+		return;
+	} 
+	// let cals1 = response.json(); 
+	// console.log(cals1);
+	const subs = document.getElementById('subscribed-cals');
+
+  // let cals1 = response.json();
 	//make the button for each calendar, adding admin button where applicalbe
 	//if you click that clanedar, it will load into the item table
 	cals.forEach((cal) =>{
@@ -420,9 +505,20 @@ async function loadCalendars(){
 			aCal.appendChild(adminIndic);
 		}
 
-		document.getElementById('subscribed-cals').appendChild(aCal);
+		subs.appendChild(aCal);
 
 	});
+	// If you have been redirected because you have a new subscription,
+	// it should redirect you to that events page
+	//this function assumes that the new subscription will be at the end 
+	//of your list of subscriptions
+	if(window.localStorage.getItem('newSubscription')){
+		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'));
+		window.localStorage.removeItem('newSubscription');
+	}
+
+	loadTable(subs.childNodes[1].getAttribute('cal_id'));
+
 }
 
 /**
