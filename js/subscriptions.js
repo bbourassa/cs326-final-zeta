@@ -1,7 +1,8 @@
 'use strict';
-
-// const user_id = window.localStorage.getItem('userInfo').id;
-const user_id  =0;
+/* eslint-env jquery */ //this tag is needed so that the $in the modal 
+//calls don't throw an error
+const user_id = JSON.parse(window.localStorage.getItem('userInfo')).id;
+// const user_id  =0;
 window.addEventListener('load', loadAll(user_id));
 
 function loadAll(userId){
@@ -66,7 +67,7 @@ function loadSettingListeners(){
 			let itemList = await response.json();
 			//if it is an action, add to cal
 			for(let i = 0; i<itemList.length; i++){
-				if (itemList[i].type === 'Action Item'){
+				if (itemList[i].type === 'Action Item' || itemList[i].type ==='action' ){
 					const addResp = await fetch(`/api/calendars/${cal_id}/items/`, {
 						method: 'POST', 
 						headers: {
@@ -97,7 +98,7 @@ function loadSettingListeners(){
 			//if it is an event, add to cal
 			// console.log(itemList.length);
 			for(let i = 0; i<itemList.length; i++){
-				if (itemList[i].type === 'Event'){
+				if (itemList[i].type === 'Event' || itemList[i].type ==='event'){
 					const addResp = await fetch(`/api/calendars/${cal_id}/items/`, {
 						method: 'POST', 
 						headers: {
@@ -118,7 +119,7 @@ function loadSettingListeners(){
 	//for each selected item, find corresponding in personal, updare
 	document.getElementById('setUpdateSelected').addEventListener('click',async ()=>{
 		const checkedItemIds = getCheckedItems();
-		// TODO ADD POPUP
+		// @Milestone3 ADD POPUP
 		for(let i=0; i<checkedItemIds.length; i++){
 			//Send in the item ids to be pulled across. If any don't resolve, stop trying
 			const response = await  fetch(`/api/users/${user_id}/calendar/pull`, {
@@ -243,9 +244,8 @@ function loadSettingListeners(){
 }
 
 
-/** @britney do you need this in personal cal?
+/** 
  * Generates a new random set of digits, ensures that it does not already exist
- * TODO the cal shareCode is currently a nummber instead of string
  * @param {String} field to generate an id for
  */
 function generateNewId(field){
@@ -536,19 +536,21 @@ async function loadTable(calId){
 		//load type of Event
 		let type = document.createElement('td');
 		type.innerHTML = item.type;
-		//(item.type === 'Event' ? 'Event':'Action Item'); //TODO
 		anItem.appendChild(type);
 
 		//creates status indicator
 		let status = document.createElement('td');
 		let prog = document.createElement('button');
 		prog.classList.add('btn','btn-sm', 'disabled');
-		if(item.status === 'In Progress'){
-			prog.classList.add('btn-warning');
-		} else if (item.status === 'Not Started'){
-			prog.classList.add('btn-danger');
-		} else if(item.status === 'Completed'){
-			prog.classList.add('btn-success');
+		if(item.status!== null ){
+			let low =  (item.status).toLowerCase();
+			if(low === 'in progress'){
+				prog.classList.add('btn-warning');
+			} else if (low === 'not started'){
+				prog.classList.add('btn-danger');
+			} else if(low === 'completed'){
+				prog.classList.add('btn-success');
+			}
 		}
 		prog.innerHTML=item.status;
 		status.appendChild(prog);
@@ -617,7 +619,7 @@ function loadModal(item){
 
 	//make sure there are not extranous values by clearing modal
 	clearModals();
-	//TODO Check for null values
+	//@Milestone3 Check for null values?
 	document.getElementById('modalBodyItemId').setAttribute('item-id', item.id);
 	document.getElementById('itemName').value = item.name;
 	document.getElementById('statusModal').value = item.status;
@@ -708,7 +710,7 @@ function setUpdateForm(item) {
 	let dueDateShow = document.getElementById('showDueDate');
 	let startTimeShow = document.getElementById('showStartTime');
 	let endTimeShow = document.getElementById('showEndTime');
-	if(currentType.value === 'Action Item') {
+	if(currentType.value === 'Action Item' || currentType.value ==='action') {
 		itemStatus.style.display = 'inline-block';
 		dueDateShow.style.display = 'inline-block';
 		startTimeShow.style.display = 'none';
@@ -722,7 +724,7 @@ function setUpdateForm(item) {
 			document.getElementById('dueDate').value = '';	
 		}
 
-	} else if (currentType.value === 'Event') {
+	} else if (currentType.value === 'event'  || currentType.value ==='Event' ) {
 		itemStatus.style.display = 'none';
 		dueDateShow.style.display = 'none';
 		startTimeShow.style.display = 'inline-block';
@@ -782,7 +784,6 @@ function loadCommit(){
 }
 
 /**
- * TODO add to personal cal @britney
  * Closes editing modal and opens a new confirmation modal.
  */
 async function commitChanges(){

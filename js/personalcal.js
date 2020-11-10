@@ -1,5 +1,6 @@
 'use strict';
-
+/* eslint-env jquery */ //this tag is needed so that the $in the modal 
+//calls don't throw an error
 window.addEventListener('load', checkForUser());
 //console.log(window.localStorage.getItem('userInfo'));
 
@@ -39,7 +40,7 @@ function switchDate(day, month, year) {
 			currentDate.style.color = 'white';
 			/*currentDate.className = 'btn-secondary';
             currentDate.classList.add('btn', 'date');*/
-		    lastDay = day;
+			lastDay = day;
 		}
 	}
 }
@@ -376,15 +377,15 @@ async function setNewToDo() {
 	formCheckLabel.appendChild(inputHelper);
 	addedToDo.appendChild(formCheckLabel);
 	listGroupItem.appendChild(addedToDo);
-    currentToDoList.appendChild(listGroupItem);
-    fetch('/api/users/'+userInfo.id+'/todos', {
+	currentToDoList.appendChild(listGroupItem);
+	fetch('/api/users/'+userInfo.id+'/todos', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({content: newToDo.value, userId: userInfo.id, archived: false})
 	});
-    $('#addToDoItem').modal('hide');
+	$('#addToDoItem').modal('hide');
 }
 
 /*
@@ -474,8 +475,8 @@ async function updateItemChanges(itemId) {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(updatedItem)
-    });
-    $('#itemEditCenter').modal('hide');
+	});
+	$('#itemEditCenter').modal('hide');
 }
 
 async function loadPersonalCalendar() {
@@ -505,68 +506,68 @@ async function searchForCalendarItems() {
 }
 
 async function populateToDoList() {
-    const response = await fetch('/api/users/'+userInfo.id+'/todos'); 
+	const response = await fetch('/api/users/'+userInfo.id+'/todos'); 
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
-    let toDoData = await response.json();
-    console.log(toDoData);
-    buildCurrentToDos(toDoData);
-    buildArchivedToDos(toDoData);
+	let toDoData = await response.json();
+	console.log(toDoData);
+	buildCurrentToDos(toDoData);
+	buildArchivedToDos(toDoData);
 }
 
 function buildCurrentToDos(toDoData) {
-    let toDoItems = document.getElementById('toDoItems');
-    toDoItems.innerHTML = '';
-    for(let i = 0; i < toDoData.length; i++) {
-        if(toDoData[i].archived === false) {
-            let newToDoDiv = document.createElement('div');
-            newToDoDiv.classList.add('list-group-item', 'list-group-item-action');
-            let newToDoFormCheck = document.createElement('div');
-            newToDoFormCheck.classList.add('form-check');
-            let newToDoLabel = document.createElement('label');
-            newToDoLabel.classList.add('form-check-label');
-            let newToDoInput = document.createElement('input');
-            newToDoInput.classList.add('checkbox', 'to-do-item');
-            newToDoInput.setAttribute('type', 'checkbox');
-            let newInputHelper = document.createElement('i');
-            newInputHelper.classList.add('input-helper');
-            newToDoLabel.appendChild(newToDoInput);
-            newToDoLabel.innerHTML += ' ' + toDoData[i].content;
-            newToDoLabel.appendChild(newInputHelper);
-            newToDoFormCheck.appendChild(newToDoLabel);
-            newToDoDiv.appendChild(newToDoFormCheck);
-            toDoItems.appendChild(newToDoDiv);
-        }
-    }
+	let toDoItems = document.getElementById('toDoItems');
+	toDoItems.innerHTML = '';
+	for(let i = 0; i < toDoData.length; i++) {
+		if(toDoData[i].archived === false) {
+			let newToDoDiv = document.createElement('div');
+			newToDoDiv.classList.add('list-group-item', 'list-group-item-action');
+			let newToDoFormCheck = document.createElement('div');
+			newToDoFormCheck.classList.add('form-check');
+			let newToDoLabel = document.createElement('label');
+			newToDoLabel.classList.add('form-check-label');
+			let newToDoInput = document.createElement('input');
+			newToDoInput.classList.add('checkbox', 'to-do-item');
+			newToDoInput.setAttribute('type', 'checkbox');
+			let newInputHelper = document.createElement('i');
+			newInputHelper.classList.add('input-helper');
+			newToDoLabel.appendChild(newToDoInput);
+			newToDoLabel.innerHTML += ' ' + toDoData[i].content;
+			newToDoLabel.appendChild(newInputHelper);
+			newToDoFormCheck.appendChild(newToDoLabel);
+			newToDoDiv.appendChild(newToDoFormCheck);
+			toDoItems.appendChild(newToDoDiv);
+		}
+	}
 }
 
 function buildArchivedToDos(toDoData) {
-    let archivedToDos = document.getElementById('archivedToDos');
-    archivedToDos.innerHTML = '';
-    for(let i = 0; i < toDoData.length; i++) {
-        if(toDoData[i].archived === true) {
-            let newToDoDiv = document.createElement('div');
-            newToDoDiv.classList.add('list-group-item');
-            let newToDoFormCheck = document.createElement('div');
-            newToDoFormCheck.classList.add('form-check');
-            let newToDoLabel = document.createElement('label');
-            newToDoLabel.classList.add('form-check-label', 'item-checked', 'text-muted');
-            let newToDoInput = document.createElement('input');
-            newToDoInput.classList.add('checkbox', 'to-do-item');
-            newToDoInput.setAttribute('type', 'checkbox');
-            newToDoInput.setAttribute('checked', true);
-            let newInputHelper = document.createElement('i');
-            newInputHelper.classList.add('input-helper');
-            newToDoLabel.appendChild(newToDoInput);
-            newToDoLabel.innerHTML += ' ' + toDoData[i].content;
-            newToDoLabel.appendChild(newInputHelper);
-            newToDoFormCheck.appendChild(newToDoLabel);
-            newToDoDiv.appendChild(newToDoFormCheck);
-            archivedToDos.appendChild(newToDoDiv);
-        }
-    }
+	let archivedToDos = document.getElementById('archivedToDos');
+	archivedToDos.innerHTML = '';
+	for(let i = 0; i < toDoData.length; i++) {
+		if(toDoData[i].archived === true) {
+			let newToDoDiv = document.createElement('div');
+			newToDoDiv.classList.add('list-group-item');
+			let newToDoFormCheck = document.createElement('div');
+			newToDoFormCheck.classList.add('form-check');
+			let newToDoLabel = document.createElement('label');
+			newToDoLabel.classList.add('form-check-label', 'item-checked', 'text-muted');
+			let newToDoInput = document.createElement('input');
+			newToDoInput.classList.add('checkbox', 'to-do-item');
+			newToDoInput.setAttribute('type', 'checkbox');
+			newToDoInput.setAttribute('checked', true);
+			let newInputHelper = document.createElement('i');
+			newInputHelper.classList.add('input-helper');
+			newToDoLabel.appendChild(newToDoInput);
+			newToDoLabel.innerHTML += ' ' + toDoData[i].content;
+			newToDoLabel.appendChild(newInputHelper);
+			newToDoFormCheck.appendChild(newToDoLabel);
+			newToDoDiv.appendChild(newToDoFormCheck);
+			archivedToDos.appendChild(newToDoDiv);
+		}
+	}
 }
 
 /**

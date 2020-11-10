@@ -6,7 +6,6 @@ const fs = require('fs');
 const path = require('path');
 const sizes = require('./fakeSizes');
 const faker = require('faker');
-const { users } = require('./fakeSizes');
 faker.seed(194);
 const filename = path.resolve(__dirname, './ours/oursubs.json');
 

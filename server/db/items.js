@@ -38,7 +38,9 @@ for (let i = 0; i < sizes.items; ++i) {
 	case 2:
 		status = 'completed';
 	}
-
+	if(type === 'event'){
+		status=null;
+	}
 	items.push({
 		id: i,
 		name: name,
