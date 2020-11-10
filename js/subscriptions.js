@@ -35,11 +35,11 @@ function loadSettingListeners(){
 
 			//pull that item into your cal
 			const response = await fetch(`/api/users/${user_id}/calendar/pull/`, {  
-				method: 'POST',
+				method: 'PUT',
 				headers:{
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(itemID)
+				body: JSON.stringify({id:itemID})
 			});
 			
 			if(!response.ok){
@@ -60,7 +60,7 @@ function loadSettingListeners(){
 		} 
 		else {
 			//fetch the item
-			let itemList = response.json();
+			let itemList = await response.json();
 			//if it is an action, add to cal
 			for(let i = 0; i<itemList.length; i++){
 				if (itemList[i].type === 'Action Item'){
@@ -69,7 +69,7 @@ function loadSettingListeners(){
 						headers: {
 							'Contenct-Type': 'application/json'
 						},
-						body: itemList[i]
+						body: JSON.stringify({item_id:itemList[i]})
 					} );
 					if(!addResp.ok){
 						alert('Unable to add selected item(s) to your calendar at this time.');
@@ -90,9 +90,9 @@ function loadSettingListeners(){
 		} 
 		else {
 			//fetch the item
-			let itemList = response.json();
+			let itemList = await response.json();
 			//if it is an event, add to cal
-			console.log(itemList.length);
+			// console.log(itemList.length);
 			for(let i = 0; i<itemList.length; i++){
 				if (itemList[i].type === 'Event'){
 					const addResp = await fetch(`/api/calendars/${cal_id}/items/`, {
@@ -100,7 +100,7 @@ function loadSettingListeners(){
 						headers: {
 							'Content-Type': 'application/json'
 						},
-						body: JSON.stringify(itemList[i])
+						body: JSON.stringify({item_id:itemList[i]})
 					} );
 					if(!addResp.ok){
 						alert('Unable to add selected item(s) to your calendar at this time.');
@@ -121,7 +121,7 @@ function loadSettingListeners(){
 			const response = await  fetch(`/api/users/${user_id}/calendar/pull`, {
 				method: 'PUT',
 				headers: {'Content-type':'application/json'},
-				body:checkedItemIds[i]
+				body: JSON.stringify({item_id:checkedItemIds[i]})
 			});
 			if(!response.ok){
 				alert('Unable to update item(s) at this time.');
@@ -391,97 +391,21 @@ async function loadNotifications(){
  * @param {int} userId 
  */
 async function loadCalendars(){
-	const cals = [
-		
-		{
-			id:'0',
-			name:'CS 221', 
-			owner_id : 3,
-			items: [
-				{id: 120,
-					name: 'Zoom meeting',
-					type: 'Event',
-					all_day: false,
-					start:  '11/3/2020T13:30',
-					end:  '11/3/2020T15:00',
-					status: 'N/A',
-					calendar_id: 0,
-					calendar_title: 'CS 221'
-				},
-				{id: 123,
-					name: 'Milestone 2',
-					type: 'Action Item',
-					all_day: false,
-					start: '11/6/2020',
-					description: 'Us, trying not to fail',
-					status: 'In Progress',
-					calendar_id: 0,
-					calendar_title: 'CS 221',
-					related_links: 'help_us',},
-				{id: 125,
-					name: 'Homework 9',
-					type: 'Action Item',
-					all_day: true,
-					start:  '11/9/2020T13:30',
-					status: 'N/A',
-					calendar_id: 0,
-					calendar_title: 'CS 221',
-				}
-			]
-            
-		},
-		{
-			id:'1',
-			name:'Greek 200', 
-			owner_id:0,
-			items: [
-				{id: 395,
-					name: 'Agape Test',
-					type: 'Event',
-					all_day: false,
-					start: '11/30/2020T13:30',
-					end: '11/30/2020T15:00',
-					status: 'N/A',
-					calendar_id: 1,
-					calendar_title: 'Greek 200',
-				},
-				{id: 472,
-					name: 'Alpha',
-					type: 'Event',
-					all_day: true,
-					start:  '11/3/2020',
-					status: 'N/A',
-					calendar_id: 1,
-					calendar_title: 'Greek 200',
-				},	
-				{id: 120,
-					name: 'Reading',
-					type: 'Action Item',
-					all_day: true,
-					start:  '11/25/2020',
-					status: 'In Progress',
-					calendar_id: 1,
-					calendar_title: 'Greek 200',
-				}
-			],
-          
-		}
-	];
+	
 
 
 	//load all the calendars you have a subscription relationship with
 	//make the response into the cal list
 	console.log('load fetch');
+	//this endpoint actually just gets every calendar the user owns
 	const response = await fetch(`/api/users/${user_id}/subscriptions/calendars/`);
 	if(!response.ok){
 		alert('Unable to load your subscriptions');
 		return;
 	} 
-	// let cals1 = response.json(); 
-	// console.log(cals1);
+	let cals = await response.json(); 
 	const subs = document.getElementById('subscribed-cals');
 
-  // let cals1 = response.json();
 	//make the button for each calendar, adding admin button where applicalbe
 	//if you click that clanedar, it will load into the item table
 	cals.forEach((cal) =>{
@@ -491,6 +415,7 @@ async function loadCalendars(){
 		let aCal = document.createElement('button');
 		aCal.innerHTML=cal.name;
 		aCal.classList.add('subscribed', 'btn', 'btn-light');
+		aCal.setAttribute('cal_id', cal.id);
 		//add an event listen to the button to fill in the table of eventsf
 		aCal.addEventListener('click', () =>{
 			while( document.getElementById('eventTable').childNodes.length>0){
@@ -525,100 +450,16 @@ async function loadCalendars(){
  * Gets and renders all events and activities in a given calendar
  * @param {int} calId the id number for the calendar
  */
-function loadTable(calId){
-	const cals = [
-		
-		{
-			id:'0',
-			name:'CS 221', 
-			owner_id : 3,
-			items: [
-				{id: 120,
-					name: 'Zoom meeting',
-					type: 'Event',
-					all_day: false,
-					start:  '11/3/2020',
-					end:  '11/3/2020',
-					description: '',
-					status: 'N/A',
-					calendar_id: 0,
-					calendar_title: 'CS 221',
-					related_links: '',},
-				{id: 123,
-					name: 'Milestone 2',
-					type: 'Action Item',
-					all_day: false,
-					start: '',
-					end:  '11/6/2020',
-					description: 'Us, trying not to fail',
-					status: 'In Progress',
-					calendar_id: 0,
-					calendar_title: 'CS 221',
-					related_links: 'help_us',},
-				{id: 125,
-					name: 'Homework 9',
-					type: 'Action Item',
-					all_day: true,
-					start:  '11/9/2020',
-					end: '',
-					description: '',
-					status: 'N/A',
-					calendar_id: 0,
-					calendar_title: 'CS 221',
-					related_links: ''}
-			]
-            
-		},
-		{
-			id:'1',
-			name:'Greek 200', 
-			owner_id:0,
-			items: [
-				{id: 395,
-					name: 'Agape Test',
-					type: 'Event',
-					all_day: false,
-					start:  '11/30/2020',
-					end:  '11/30/2020',
-					description: '',
-					status: 'N/A',
-					calendar_id: 1,
-					calendar_title: 'Greek 200',
-					related_links: '',},
-				{id: 472,
-					name: 'Alpha',
-					type: 'Event',
-					all_day: true,
-					start:  '11/3/2020',
-					end: '',
-					description: '',
-					status: 'N/A',
-					calendar_id: 1,
-					calendar_title: 'Greek 200',
-					related_links: '',},	
-				{id: 120,
-					name: 'Reading',
-					type: 'Action Item',
-					all_day: true,
-					start:  '11/25/2020',
-					end: '',
-					description: '',
-					status: 'In Progress',
-					calendar_id: 1,
-					calendar_title: 'Greek 200',
-					related_links: '',}
-			],
-          
-		}
-	];
-	//TODO api find calendar by cal_id
-    
-	const thisCal = cals[calId]; //TODO temporary -- once i have the db set up, I can figure out how to 
+async function loadTable(calId){
+	
+	const response = await fetch(`/api/calendars/${calId}`);
+	let calData = await response.json();
+	// console.log(calData);
 	//make this work with r
-	const admin = (thisCal.owner_id === user_id);
+	const admin = (calData.owner_id === user_id);
 
 	
-	document.getElementById('cal-name').innerHTML = thisCal.name;
+	document.getElementById('cal-name').innerHTML = calData.name;
 	document.getElementById('cal-name').setAttribute('calID', calId);
 
 	//Add or remove the edit column based on whether you are an admin
@@ -642,8 +483,17 @@ function loadTable(calId){
 	} else{
 		document.getElementById('adminSettings').hidden =true;
 	}
+
+	//load the items associated with this calendar
+	const items = await fetch(`/api/calendars/${calId}/items`);
+	if(!items.ok){
+		console.log(items.error);
+		return;
+	}
+	let calItems = await items.json();
+
 	//load each item in this calendar
-	thisCal.items.forEach((item) => {
+	calItems.forEach((item) => {
 		let anItem = document.createElement('tr');
 
 		anItem.setAttribute('itemID', item.id);
@@ -686,8 +536,6 @@ function loadTable(calId){
 			prog.classList.add('btn-danger');
 		} else if(item.status === 'Completed'){
 			prog.classList.add('btn-success');
-		}else{
-			prog.classList.add('btn-light');
 		}
 		prog.innerHTML=item.status;
 		status.appendChild(prog);
@@ -761,7 +609,7 @@ function loadModal(item){
 	document.getElementById('itemName').value = item.name;
 	document.getElementById('statusModal').value = item.status;
 	document.getElementById('typeItem').value = item.type;
-	document.getElementById('currCal').value = document.getElementById('cal-name').childNodes[0].data;
+	document.getElementById('currCal').value = document.getElementById('cal-name').innerHTML;
 
 
 	//update the date within the form

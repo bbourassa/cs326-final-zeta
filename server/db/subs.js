@@ -12,6 +12,11 @@ const filename = path.resolve(__dirname, './ours/oursubs.json');
 
 const subs = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : [];
 let lastId = 0;
+subs.push({
+	id:3,
+	user_id: 0,
+	calendar_id:1
+});
 
 for (let i = 0; i < sizes.subs; ++i) {
 	subs.push({
@@ -21,11 +26,7 @@ for (let i = 0; i < sizes.subs; ++i) {
 	});
 }
 
-subs.push({
-    id:3,
-    user_id: 0,
-    calendar_id:1
-})
+
 
 exports.listAll = function(req, res) {
 	res.json(subs);
@@ -41,13 +42,13 @@ exports.list = function(req, res) {
 };
 
 exports.create = function(req, res) {
-    res.sendStatus(201);
-    lastId += 1;
-    subs.push({
-        id: lastId,
-        user_id: req.userId,
-        calendar_id: req.calId
-    })
+	res.sendStatus(201);
+	lastId += 1;
+	subs.push({
+		id: lastId,
+		user_id: req.userId,
+		calendar_id: req.calId
+	});
 };
 
 exports.find = function(req, res) {
@@ -66,21 +67,4 @@ exports.remove = function(req, res) {
 exports.loadCalendar = function(req, res, next) {
 	req.subs = subs.filter(sub => sub.calendar_id === req.cal.id);
 	next();
-};
-
-//returns every calendar that a given user is subscribed to
-/**
- * 
- * @param {Request} req will take a user_id
- * @param {Response} res If there is none, will return empty array
- */
-exports.listSubscribed = function(req, res){
-	const user =  parseInt(req.body.id);
-	let subscriptions = [];
-	subs.array.forEach(sub => {
-		if(sub.user_id === user){
-			subscriptions.push(sub.cal_id);
-		}
-	});
-	res.json(subscriptions);
 };
