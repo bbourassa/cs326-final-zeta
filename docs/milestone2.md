@@ -8,13 +8,6 @@
 
 <br>
 
-<h2>Front-End Information</h2>
-<p>User interface for: Personal Calendar</p>
-<p>User interface for: Creating a calendar</p>
-<p>User interface for: Subscrptions Page</p>
-
-<br>
-
 <h2>API Endpoints</h2>
 
 <ul style="margin-top:0;margin-bottom:0;">
@@ -237,3 +230,21 @@
         </ul>
     </li>
 </ul>
+
+<br> 
+
+<h2>Front-End Information</h2>
+<p>Our HTML and CSS setup are the same as that present in Milestone 1. Below are examples of how we have implemented each of the Create, Read, Update, Delete operations.
+<p>Example for Create: Adding an Item to Your To-Do List</p>
+<p>The below screenshots show the setup for adding a to-do item to your to-do list. The updated information appears properly on the to-do list after adding. However, since there is no real database yet, the post for this runs successfully, the information can be seen as logged as below. With the implementation of the database, this will be added to the database.</p>
+<p>Example for Read: Getting the Information to Build Your Personal Calendar</p>
+<p>The personal calendar is created based on the knowledge of whether or not you have items on a particular day - these days (minus the current day which is always red and is the default "Day at a Glance" setting) are outlined to indicate to the user there are items on that day. Clicking on a day successfully shows events under the schedule portion, and successfully shows the items by status as shown below.</p>
+<p>Example for Update: </p>
+<p>Example for Delte: </p>
+
+<br>
+
+<h2>Deployment</h2>
+
+<p>To access our hosted application, go to: https://life-on-track.herokuapp.com/</p>
+<p>To login, we have a dummy account that you can use: Username: LifeOnTrack, Password: password (these credentials are case sensitive)</p>
