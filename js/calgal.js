@@ -51,7 +51,7 @@ async function redirectSongOfDay() {
 		return;
 	}
 	let newCalData = await response.json();
-	const f =fetch('/api/users/'+userInfo.id+'/subscriptions', {
+	fetch('/api/users/'+userInfo.id+'/subscriptions', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'

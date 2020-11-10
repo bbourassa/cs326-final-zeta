@@ -2,7 +2,7 @@
 
 // fake user database
 
-const sizes = require('./fakeSizes');
+// const sizes = require('./fakeSizes');
 const faker = require('faker');
 faker.seed(579);
 
