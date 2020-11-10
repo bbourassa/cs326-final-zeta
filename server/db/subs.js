@@ -22,10 +22,10 @@ for (let i = 0; i < sizes.subs; ++i) {
 }
 
 subs.push({
-	id:3,
-	user_id: 0,
-	calendar_id:1
-});
+    id:3,
+    user_id: 0,
+    calendar_id:1
+})
 
 exports.listAll = function(req, res) {
 	res.json(subs);
@@ -37,18 +37,17 @@ exports.loadUser = function(req, res, next) {
 };
 
 exports.list = function(req, res) {
-	
 	res.json(req.subs);
 };
 
 exports.create = function(req, res) {
-	res.sendStatus(201);
-	lastId += 1;
-	subs.push({
-		id: lastId,
-		user_id: req.userId,
-		calendar_id: req.calId
-	});
+    res.sendStatus(201);
+    lastId += 1;
+    subs.push({
+        id: lastId,
+        user_id: req.userId,
+        calendar_id: req.calId
+    })
 };
 
 exports.find = function(req, res) {
@@ -84,7 +83,4 @@ exports.listSubscribed = function(req, res){
 		}
 	});
 	res.json(subscriptions);
-
-
-
 };

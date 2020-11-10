@@ -41,7 +41,6 @@ exports.listAll = function(req, res) {
 };
 
 exports.create = function(req, res) {
-
 	res.sendStatus(201);
 };
 
@@ -60,8 +59,6 @@ exports.load = function(req, res, next) {
 };
 
 exports.find = function(req, res) {
-	// const calID =  parseInt(req.params.cal);
-	// cals.find(calID)
 	res.json(req.cal);
 };
 
@@ -86,11 +83,6 @@ exports.listSubscribed = function(req, res) {
 	res.json(req.cals);
 };
 
-/**
- * This does not currently do anything. With our current 
- * API set up, we would need to do a call to the item database from here
- */
 exports.updatePersonal = function(req, res) {
-	
 	res.sendStatus(204);
 };
