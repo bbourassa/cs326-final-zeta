@@ -93,7 +93,6 @@ function loadSettingListeners(){
 			//fetch the item
 			let itemList = response.json();
 			//if it is an event, add to cal
-			console.log(itemList.length);
 			for(let i = 0; i<itemList.length; i++){
 				if (itemList[i].type === 'Event'){
 					const addResp = await fetch(`/api/calendars/${cal_id}/items/`, {
@@ -767,7 +766,6 @@ function loadModal(item){
 
 	//make sure there are not extranous values by clearing modal
 	clearModals();
-	//TODO Check for null values
 	document.getElementById('modalBodyItemId').setAttribute('item-id', item.id);
 	document.getElementById('itemName').value = item.name;
 	document.getElementById('statusModal').value = item.status;
@@ -910,6 +908,7 @@ function loadCommit(){
 	changeList.classList.add('list-group');
 	changeList.setAttribute('id', 'listOfInfo');
 
+	//I marked all editable areas with a particualr class so they can be found
 	let listField = document.getElementsByClassName('modal-editable-area');
 
 	//for each field, make a new list item
@@ -934,6 +933,7 @@ function loadCommit(){
 /**
  * 
  * Closes editing modal and opens a new confirmation modal.
+ * This is also used for an un-editable view of details.
  */
 async function commitChanges(){
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
@@ -974,8 +974,9 @@ async function commitChanges(){
 	
 }
 
-// function newItem
-
+/**
+ * Clears out the data in the editable fields.
+ */
 function clearModals(){
 	document.getElementById('modalBodyItemId').setAttribute('item-id', '');
 	let editFields = document.getElementsByClassName('modal-editable-area');
