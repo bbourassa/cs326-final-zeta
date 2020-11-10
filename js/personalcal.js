@@ -569,6 +569,25 @@ function buildArchivedToDos(toDoData) {
     }
 }
 
+/**
+ * This function loads the notification bell with the correct number
+ * of notifications.
+ * It is currently hard coded to be set to 1, as the GET response does 
+ * not yet hold the information we need it to.
+ */
+async function loadNotificationBell(){
+	const user_id = JSON.parse(window.localStorage.getItem('userInfo')).id;
+	const GNotifs = await fetch(`/api/users/${user_id}/notifications`);
+	if(!GNotifs.ok){
+		console.log('Unable to load notifications');
+		return;
+	}
+	//document.getElementById('num-Notifications').value = numNotifs;
+	//temporarily hard coded
+	document.getElementById('num-Notifications').innerHTML = 1;
+}
+
 window.addEventListener('load', loadPersonalCalendar);
 window.addEventListener('load', searchForCalendarItems);
 window.addEventListener('load', populateToDoList);
+window.addEventListener('load', loadNotificationBell());
