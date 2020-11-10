@@ -2,7 +2,7 @@
 <h1>Zeta Group: Milestone 2</h1>
 <br>
 <h2>Contributions</h2>
-<p>Britney Bourussa: Personal Cal implementation, login & sign up, api functionality </p>
+<p>Britney Bourassa: Personal Cal implementation, login & sign up, api functionality </p>
 <p>Meghan Arnold: Subscriptions page, calendar and item creation, api functionailty</p>
 <p>Sara Whitlock: Api stubs, api functionality, faker stubs</p>
 
