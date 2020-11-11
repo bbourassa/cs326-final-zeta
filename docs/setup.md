@@ -4,3 +4,5 @@ To set up our project and build it:
 2. Verify that node is installed
 
 3. When you are in the repo, run node server/app.js to run the project locally.
+
+4. TO VIEW THE PERSONAL CALENDAR AND SUBSCRIPTIONS PAGES WITH UPDATED DATA YOU MUST LOGIN ON THE LOGIN PAGE AS IT ONLY PULLS DATA WHEN A USER IS AVAILABLE. THE DUMMY ACCOUNT THAT IS TEMPORARY IS USERNAME: LifeOnTrack AND PASSWORD: password
