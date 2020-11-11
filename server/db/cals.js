@@ -10,6 +10,13 @@ faker.seed(329);
 const filename = path.resolve(__dirname, './ours/ourcals.json');
 
 const cals = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : [];
+//temp
+cals.push({
+	id:1, 
+	name: 'CS 211',
+	owner_id: 0,
+	personal:false
+});
 
 for (let i = 0; i < sizes.users; ++i) {
 	cals.push({
@@ -28,20 +35,13 @@ for (let i = sizes.users; i < sizes.cals; ++i) {
 	});
 }
 
-//temp
-cals.push({
-	id:1, 
-	name: 'test',
-	owner_id: 0,
-	personal:false
-});
+
 
 exports.listAll = function(req, res) {
 	res.json(cals);
 };
 
 exports.create = function(req, res) {
-
 	res.sendStatus(201);
 };
 
@@ -81,8 +81,7 @@ exports.loadSubscribed = function(req, res, next) {
 };
 
 exports.listSubscribed = function(req, res) {
-	res.json(cals);
-	res.end();
+	res.json(cals.filter(cal => cal.owner_id === 0 && !cal.personal));
 };
 
 exports.updatePersonal = function(req, res) {

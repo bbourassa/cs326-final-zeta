@@ -2,7 +2,7 @@
 	{
 		"id": 20,
 		"name": "Song of the Day",
-		"owner_id": 0,
+		"owner_id": 1,
 		"personal": false,
 		"description": "Add this calendar to your subscriptions to get a new song recommendation every day for one month"
 	},
