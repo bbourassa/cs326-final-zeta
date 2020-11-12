@@ -178,7 +178,8 @@ function setUpDayCard(day, month, year) {
 
 async function fillModalInfo(itemId) {
 	tempId = itemId;
-	let personalCalId = window.localStorage.getItem('personalCalId');
+    let personalCalId = window.localStorage.getItem('personalCalId');
+    console.log(itemId);
 	const response = await fetch('/api/calendars/'+personalCalId+'/items/'+itemId);
 	if (!response.ok) {
 		console.log(response.error);
@@ -446,7 +447,8 @@ let tempId = 0;
 saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
 
 async function updateItemChanges(itemId) {
-	let personalCalId = window.localStorage.getItem('personalCalId');
+    let personalCalId = window.localStorage.getItem('personalCalId');
+    console.log(itemId);
 	let updatedItem = {id: itemId, name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: personalCalId, calendar_title: null, related_links: null};
 	updatedItem.name = document.getElementById('itemName').value;
 	updatedItem.calendar_title = document.getElementById('calendarName').placeholder;
