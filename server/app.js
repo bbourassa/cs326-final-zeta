@@ -3,7 +3,22 @@
 const express = require('express');
 const path = require('path');
 
-// fake databases
+const dbconnection = require('./secrets.json');
+const username = dbconnection.username;
+const password = dbconnection.password;
+
+const pgp = require("pg-promise")({
+    connect(client) {
+        console.log('Connected to database:', client.connectionParameters.database);
+    },
+
+    disconnect(client) {
+        console.log('Disconnected from database:', client.connectionParameters.database);
+    }
+});
+const url = process.env.DATABASE_URL || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv`;
+const db = pgp(url);
+
 const users = require('./db/users');
 const cals = require('./db/cals');
 const subs = require('./db/subs');

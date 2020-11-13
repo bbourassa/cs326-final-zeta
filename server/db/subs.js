@@ -1,8 +1,7 @@
 'use strict';
+// fake subscription databas
 
-// fake subscription database
-
-const fs = require('fs');
+/*const fs = require('fs');
 const path = require('path');
 const sizes = require('./fakeSizes');
 const faker = require('faker');
@@ -23,7 +22,7 @@ for (let i = 0; i < sizes.subs; ++i) {
 		user_id: faker.random.number({ min: 1, max: sizes.users - 1 }),
 		calendar_id: faker.random.number({ min: sizes.users, max: sizes.cals + 3 })
 	});
-}
+}*/
 
 
 

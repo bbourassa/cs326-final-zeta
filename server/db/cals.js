@@ -1,9 +1,10 @@
 'use strict';
-
 // fake calendar database
 
-const fs = require('fs');
+
+/*const fs = require('fs');
 const path = require('path');
+
 const sizes = require('./fakeSizes');
 const faker = require('faker');
 faker.seed(329);
@@ -33,7 +34,7 @@ for (let i = sizes.users; i < sizes.cals; ++i) {
 		owner_id: faker.random.number({ min: 1, max: sizes.users - 1 }),
 		personal: false
 	});
-}
+}*/
 
 
 

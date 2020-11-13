@@ -1,8 +1,6 @@
 'use strict';
 
-// fake todo database
-
-const sizes = require('./fakeSizes');
+/*const sizes = require('./fakeSizes');
 const faker = require('faker');
 faker.seed(123);
 let lastId = 0;
@@ -15,7 +13,7 @@ for (let i = 0; i < sizes.todos; ++i) {
 		user_id: faker.random.number(sizes.users - 1),
 		archived: faker.random.boolean()
 	});
-}
+}*/
 
 exports.listAll = function(req, res) {
 	res.json(todos);

@@ -1,12 +1,10 @@
 'use strict';
 
-// fake user database
-
 // const sizes = require('./fakeSizes');
-const faker = require('faker');
+/*onst faker = require('faker');
 faker.seed(579);
 
-const users = [];
+
 let lastId = 0;
 
 users.push({
@@ -33,6 +31,8 @@ users.push({
         notifications: [faker.lorem.sentence(), faker.lorem.sentence()]
     });
 }*/
+
+const users = [];
 
 exports.auth = function(req, res) {
 	res.redirect('/personalcal.html');

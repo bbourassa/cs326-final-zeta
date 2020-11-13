@@ -1,8 +1,8 @@
 'use strict';
-
 // fake item database
 
-const fs = require('fs');
+
+/*const fs = require('fs');
 const path = require('path');
 const sizes = require('./fakeSizes');
 const faker = require('faker');
@@ -54,7 +54,7 @@ for (let i = 0; i < sizes.items; ++i) {
 		calendar_title: cal_title,
 		related_links: rel_links,
 	});
-}
+}*/
 
 exports.listAll = function(req, res) {
 	res.json(items);
