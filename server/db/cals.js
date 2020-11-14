@@ -48,7 +48,7 @@ exports.find = function(req, res) {
 
 exports.edit = function(req, res) {
     /*
-    let calendarId = req.body.id;
+    let calendarId = req.params.cal;
     let name = req.body.name;
     let ownerId = req.body.ownerId;
     let personal = req.body.personal;
@@ -60,7 +60,7 @@ exports.edit = function(req, res) {
 
 exports.remove = function(req, res) {
     /*
-    let calendarId = req.body.id;
+    let calendarId = req.params.cal;
     db.none('DELETE from public."calendars" WHERE id=$1;', [calendarId]);
     */
 	res.sendStatus(204);
@@ -86,7 +86,7 @@ exports.listSubscribed = function(req, res) {
 
 exports.updatePersonal = function(req, res) {
     /*
-    let userId = req.body.id;
+    let userId = req.params.user;
     res.end(JSON.stringify(db.any('SELECT * from public."calendars" WHERE owner_id=$1 AND personal=1;', [userId])));
     */
 	res.sendStatus(204);
