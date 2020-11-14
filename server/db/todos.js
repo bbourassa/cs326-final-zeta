@@ -1,19 +1,14 @@
 'use strict';
 
-/*const sizes = require('./fakeSizes');
-const faker = require('faker');
-faker.seed(123);
-let lastId = 0;
+const db = require('../app.js').db;
 
-const todos = [];
-for (let i = 0; i < sizes.todos; ++i) {
-	todos.push({
-		id: i,
-		content: faker.lorem.sentence(),
-		user_id: faker.random.number(sizes.users - 1),
-		archived: faker.random.boolean()
-	});
-}*/
+/*
+ENUM FOR ARCHIVED: 
+    0 corresponds to 'Not archived'
+    1 corrsponds to 'Archived'
+*/
+db.none('CREATE TABLE IF NOT EXISTS to_dos(id INTEGER PRIMARY KEY, content VARCHAR, user_id INT, archived INT);');
+//db.none('INSERT INTO public."to_dos"(id, content, user_id, archived) VALUES(0, \'example to-do\', 0, 0);');
 
 exports.listAll = function(req, res) {
 	res.json(todos);

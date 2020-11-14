@@ -1,30 +1,9 @@
 'use strict';
-// fake subscription databas
 
-/*const fs = require('fs');
-const path = require('path');
-const sizes = require('./fakeSizes');
-const faker = require('faker');
-faker.seed(194);
-const filename = path.resolve(__dirname, './ours/oursubs.json');
+const db = require('../app.js').db;
 
-const subs = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename)) : [];
-let lastId = 0;
-subs.push({
-	id:3,
-	user_id: 0,
-	calendar_id:1
-});
-
-for (let i = 0; i < sizes.subs; ++i) {
-	subs.push({
-		id: i,
-		user_id: faker.random.number({ min: 1, max: sizes.users - 1 }),
-		calendar_id: faker.random.number({ min: sizes.users, max: sizes.cals + 3 })
-	});
-}*/
-
-
+db.none('CREATE TABLE IF NOT EXISTS subscriptions(id INTEGER PRIMARY KEY, user_id INT, calendar_id INT);');
+//db.none('INSERT INTO public."subscriptions"(id, user_id, calendar_id) VALUES(0, 0 , 0);');
 
 exports.listAll = function(req, res) {
 	res.json(subs);

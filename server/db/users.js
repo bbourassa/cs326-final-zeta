@@ -1,36 +1,9 @@
 'use strict';
 
-// const sizes = require('./fakeSizes');
-/*onst faker = require('faker');
-faker.seed(579);
+const db = require('../app.js').db;
 
-
-let lastId = 0;
-
-users.push({
-	id: 0,
-	username: 'LifeOnTrack',
-	firstName: 'No',
-	lastName: 'Name',
-	email: 'lifeontrack@example.com',
-	password: 'password',
-	calendar_id: 0,
-	notifcations: ['Change made to: CS 326 \n "Added milestone 2"']
-});
-/*for (let i = 1; i < sizes.users; ++i) {
-    const first = faker.name.firstName();
-    const last = faker.name.lastName();
-    users.push({
-        id: i,
-        username: faker.internet.userName(first, last),
-        firstName: first,
-        lastName: last,
-        email: faker.internet.email(first, last),
-        password: faker.internet.password(),
-        calendar_id: i,
-        notifications: [faker.lorem.sentence(), faker.lorem.sentence()]
-    });
-}*/
+db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCHAR, firstName VARCHAR, lastName VARCHAR, email VARCHAR, password_val VARCHAR, calendar_id INTEGER UNIQUE, notifications TEXT );');
+//db.none('INSERT INTO public."users"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES(0, \'LifeOnTrack\', \'no first name\', \'no last name\', \'lifeontrack@gmail.com\', \'password\', 0, \'example notif\');');
 
 const users = [];
 

@@ -12,12 +12,15 @@ const pgp = require("pg-promise")({
         console.log('Connected to database:', client.connectionParameters.database);
     },
 
-    disconnect(client) {
+    /*disconnect(client) {
         console.log('Disconnected from database:', client.connectionParameters.database);
-    }
+    }*/
 });
-const url = process.env.DATABASE_URL || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv`;
-const db = pgp(url);
+const url = process.env.DATABASE_URL || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+
+exports.db = pgp(url);
+
+//db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCHAR, firstName VARCHAR, lastName VARCHAR, email VARCHAR, password_val VARCHAR, calendar_id INTEGER UNIQUE, notifications TEXT );');
 
 const users = require('./db/users');
 const cals = require('./db/cals');
