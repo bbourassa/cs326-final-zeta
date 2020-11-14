@@ -1,66 +1,42 @@
 'use strict';
 
-// fake user database
+const db = require('../app.js').db;
 
-// const sizes = require('./fakeSizes');
-const faker = require('faker');
-faker.seed(579);
+db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCHAR, firstName VARCHAR, lastName VARCHAR, email VARCHAR, password_val VARCHAR, calendar_id INTEGER UNIQUE, notifications TEXT );');
+//db.none('INSERT INTO public."users"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES(0, \'LifeOnTrack\', \'no first name\', \'no last name\', \'lifeontrack@gmail.com\', \'password\', 0, \'example notif\');');
 
 const users = [];
-let lastId = 0;
 
-users.push({
-	id: 0,
-	username: 'LifeOnTrack',
-	firstName: 'No',
-	lastName: 'Name',
-	email: 'lifeontrack@example.com',
-	password: 'password',
-	calendar_id: 0,
-	notifcations: ['Change made to: CS 326 \n "Added milestone 2"']
-});
-/*for (let i = 1; i < sizes.users; ++i) {
-    const first = faker.name.firstName();
-    const last = faker.name.lastName();
-    users.push({
-        id: i,
-        username: faker.internet.userName(first, last),
-        firstName: first,
-        lastName: last,
-        email: faker.internet.email(first, last),
-        password: faker.internet.password(),
-        calendar_id: i,
-        notifications: [faker.lorem.sentence(), faker.lorem.sentence()]
-    });
-}*/
-
+//MEGHAN THIS MAY BE A YOU FUNCTION
 exports.auth = function(req, res) {
 	res.redirect('/personalcal.html');
 };
 
 exports.list = function(req, res) {
-	res.json(users);
+    //res.end(JSON.stringify(db.any('SELECT * FROM public."users";')));
 };
 
 exports.create = function(req, res) {
 	res.sendStatus(201);
-	console.log(req.body);
-	lastId += 1;
-	users.push({
-		id: lastId,
-		username: req.body.username,
-		firstName: req.body.firstName,
-		lastName: req.body.lastName,
-		email: req.body.email,
-		password: req.body.password,
-		calendar_id: lastId,
-		notifications: req.body.notifcations
-	});
-	console.log(users);
+    let lastId = db.any('SELECT MAX(id) FROM public."users";');
+	let newId = lastId + 1;
+    /*
+    let username = req.body.username;
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
+    let email = req.body.email;
+    let password_val = req.body.password;
+    let calendar_id = req.body.calendar_id;
+    let notifications = req.body.notifications;
+    db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, password_val, calendar_id, notifications]);
+    */
 };
 
 exports.load = function(req, res, next) {
-	const id = parseInt(req.params.user, 10);
+    const id = parseInt(req.params.user, 10);
+    /*
+    //res.end(JSON.stringify(db.any('SELECT * FROM public."users" WHERE id=$1;', [id])));
+    */
 	req.user = users[id];
 	if (req.user) {
 		next();
@@ -72,19 +48,32 @@ exports.load = function(req, res, next) {
 	}
 };
 
+//NOT SURE WE EVEN USE THIS
 exports.find = function(req, res) {
 	res.json(req.user);
 };
 
+
 exports.remove = function(req, res) {
+    /*
+    let userId = req.params.user;
+    db.none('DELETE from public."users" WHERE id=$1;', [userId]);
+    */
 	res.sendStatus(204);
 };
 
+//NEEDS TO BE WORKED MORE - MEGHAN CAN YOU ALTER THIS TO WORK CORRECTLY?
+//I FEEL YOU PROBABLY KNOW MORE ABOUT THIS FUNCTION
 exports.listSubscribed = function(req, res) {
+    /*
+    let userId = req.body.id;
+    res.end(JSON.stringify(db.any(SELECT * FROM public."subscriptions" INNER JOIN public."calendars" ON calendars.id = subscriptions.calendar_id WHERE user_id=$1;', [userId])));
+    */
 	res.json(req.subs.map(sub => users[sub.user_id]));
 };
 
 //POST notification
+//MEGHAN FILL IN
 exports.notify = function(req, res){
 	let user = users.find( ({id}) => id === req.body.id);
 	user.notifcations.push(req.notification);
@@ -93,12 +82,14 @@ exports.notify = function(req, res){
 };
 
 //GET notifications
+//MEGHAN FILL IN
 exports.notifications = function(req, res){
 	//find the correct user
 	//get that user's notifications
 	res.sendStatus(204);
 };
 
+//MEGHAN FILL IN
 exports.removeNotif = function(req, res){
 	//take a notification object in the req?
 	//notifications.pop(...)
