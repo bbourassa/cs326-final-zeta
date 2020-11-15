@@ -7,10 +7,10 @@ db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCH
 
 const users = [];
 
-//MEGHAN THIS MAY BE A YOU FUNCTION
-exports.auth = function(req, res) {
-	res.redirect('/personalcal.html');
-};
+// //MEGHAN THIS MAY BE A YOU FUNCTION
+// exports.auth = function(req, res) {
+// 	res.redirect('/personalcal.html');
+// };
 
 exports.list = function(req, res) {
 	//res.end(JSON.stringify(db.any('SELECT * FROM public."users";')));
