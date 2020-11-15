@@ -3,9 +3,9 @@ require('dotenv').config(); //loading environmen variables; should be as high as
 const express = require('express');
 const path = require('path');
 
-const dbconnection = require('./secrets.json');
-const username = dbconnection.username;
-const password = dbconnection.password;
+// const dbconnection = require('./secrets.json');
+// const username = dbconnection.username;
+// const password = dbconnection.password;
 
 const expressSession = require('express-session');  // for managing session state
 const passport = require('passport');               // handles authentication
@@ -20,7 +20,8 @@ const pgp = require('pg-promise')({
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
-const url = process.env.DATABASE_URL || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+const url = process.env.DATABASE_URL;
+//  || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
 
 exports.db = pgp(url);
 
