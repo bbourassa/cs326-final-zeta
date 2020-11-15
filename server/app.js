@@ -59,7 +59,7 @@ app.post('/api/login', users.auth);
 app.get('/api/users', users.list);
 app.post('/api/users', users.create);
 app.use('/api/users/:user', users.load);
-app.get('/api/users/:user', users.find);
+app.get('/api/users/:username', users.find);
 app.delete('/api/users/:user', users.remove);
 
 app.get('/api/users/:user/notifications', users.notifications);
