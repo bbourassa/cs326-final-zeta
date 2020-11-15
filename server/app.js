@@ -1,5 +1,5 @@
 'use strict';
-
+require('dotenv').config(); //loading environmen variables; should be as high as possible
 const express = require('express');
 const path = require('path');
 
@@ -7,12 +7,16 @@ const dbconnection = require('./secrets.json');
 const username = dbconnection.username;
 const password = dbconnection.password;
 
-const pgp = require("pg-promise")({
-    connect(client) {
-        console.log('Connected to database:', client.connectionParameters.database);
-    },
+const expressSession = require('express-session');  // for managing session state
+const passport = require('passport');               // handles authentication
+const LocalStrategy = require('passport-local').Strategy; // username/password strategy
 
-    /*disconnect(client) {
+
+const pgp = require('pg-promise')({
+	connect(client) {
+		console.log('Connected to database:', client.connectionParameters.database);
+	},
+	/*disconnect(client) {
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
@@ -27,6 +31,7 @@ const cals = require('./db/cals');
 const subs = require('./db/subs');
 const todos = require('./db/todos');
 const items = require('./db/items');
+const auth = require('./db/authentication');
 
 const app = express();
 
@@ -39,7 +44,14 @@ app.use('/images', express.static(path.join(dir, 'images')));
 app.use('/css', express.static(path.join(dir, 'css')));
 app.use('/js', express.static(path.join(dir, 'js')));
 app.use('/html', express.static(path.join(dir, 'html')));
-app.use('/', express.static(path.join(dir, 'html')));
+// app.use('/', express.static(path.join(dir, 'html')));
+
+//When you open the first page, if not logged in, redirect
+app.get('/',
+	auth.checkLoggedIn,
+	(req, res) => {
+		res.redirect('../html/personalcal.html');
+	});
 
 app.post('/api/login', users.auth);
 
