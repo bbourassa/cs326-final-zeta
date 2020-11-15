@@ -13,14 +13,14 @@ exports.auth = function(req, res) {
 };
 
 exports.list = function(req, res) {
-    //res.end(JSON.stringify(db.any('SELECT * FROM public."users";')));
+	//res.end(JSON.stringify(db.any('SELECT * FROM public."users";')));
 };
 
 exports.create = function(req, res) {
 	res.sendStatus(201);
-    let lastId = db.any('SELECT MAX(id) FROM public."users";');
+	let lastId = db.any('SELECT MAX(id) FROM public."users";');
 	let newId = lastId + 1;
-    /*
+	/*
     let username = req.body.username;
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;
@@ -33,10 +33,10 @@ exports.create = function(req, res) {
 };
 
 exports.load = function(req, res, next) {
-    const id = parseInt(req.params.user, 10);
-    /*
-    //res.end(JSON.stringify(db.any('SELECT * FROM public."users" WHERE id=$1;', [id])));
-    */
+	const id = parseInt(req.params.user, 10);
+
+	res.end(JSON.stringify(db.any('SELECT * FROM public."users" WHERE id=$1;', [id])));
+
 	req.user = users[id];
 	if (req.user) {
 		next();
@@ -55,7 +55,7 @@ exports.find = function(req, res) {
 
 
 exports.remove = function(req, res) {
-    /*
+	/*
     let userId = req.params.user;
     db.none('DELETE from public."users" WHERE id=$1;', [userId]);
     */
@@ -65,7 +65,7 @@ exports.remove = function(req, res) {
 //NEEDS TO BE WORKED MORE - MEGHAN CAN YOU ALTER THIS TO WORK CORRECTLY?
 //I FEEL YOU PROBABLY KNOW MORE ABOUT THIS FUNCTION
 exports.listSubscribed = function(req, res) {
-    /*
+	/*
     let userId = req.body.id;
     res.end(JSON.stringify(db.any(SELECT * FROM public."subscriptions" INNER JOIN public."calendars" ON calendars.id = subscriptions.calendar_id WHERE user_id=$1;', [userId])));
     */
