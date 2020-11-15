@@ -1,13 +1,17 @@
 'use strict';
 /* eslint-env jquery */ //this tag is needed so that the $in the modal 
 //calls don't throw an error
-window.addEventListener('load', checkForUser());
+//window.addEventListener('load', checkForUser());
 //console.log(window.localStorage.getItem('userInfo'));
-
-function checkForUser() {
+// window.localStorage.clear();
+/*function checkForUser() {
 	console.log(window.localStorage.getItem('userInfo'));
-}
+}*/
 
+/*
+TEMP ID TO USE
+*/
+//let userInfo = {'id': 0};
 /*
 FOR NOW: -this function updates the DayView Title 
           when a day is clicked on the calendar
@@ -89,7 +93,7 @@ function setUpCalendar(month, year) {
 }
 
 function checkForItems(month, year) {
-	let listOfItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
+	/*let listOfItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
 	console.log(listOfItems);
 	for(let i = 1; i < listOfItems.length; i++) {
 		let startTime = listOfItems[i].start;
@@ -102,7 +106,7 @@ function checkForItems(month, year) {
 				dateItem.classList.add('btn-outline-secondary');
 			}
 		}
-	} 
+	}*/ 
 }
 
 /*
@@ -178,14 +182,15 @@ function setUpDayCard(day, month, year) {
 
 async function fillModalInfo(itemId) {
 	tempId = itemId;
-    let personalCalId = window.localStorage.getItem('personalCalId');
+    let personalCalId = 0; //placeholder
     console.log(itemId);
 	const response = await fetch('/api/calendars/'+personalCalId+'/items/'+itemId);
 	if (!response.ok) {
 		console.log(response.error);
 		return;
 	}
-	let itemData = await response.json();
+    let itemData = await response.json();
+    console.log('itemData is ' + itemData)
 	let itemName = document.getElementById('itemName');
 	itemName.value = itemData.name;
 	let calendarName = document.getElementById('calendarName');
@@ -438,7 +443,8 @@ for (let item of toDoItems) {
 	item.addEventListener('change', () => switchToDoLocation(item));
 }
 
-let userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
+let userInfo = {'id': 0, 'username': 'LifeOnTrack', 'password': 'password'}; //placeholder
+console.log(userInfo);
 
 let saveItemChanges = document.getElementById('saveItemChanges');
 
@@ -447,7 +453,7 @@ let tempId = 0;
 saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
 
 async function updateItemChanges(itemId) {
-    let personalCalId = window.localStorage.getItem('personalCalId');
+    let personalCalId = 0; //placeholder
     console.log(itemId);
 	let updatedItem = {id: itemId, name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: personalCalId, calendar_title: null, related_links: null};
 	updatedItem.name = document.getElementById('itemName').value;
@@ -482,29 +488,30 @@ async function updateItemChanges(itemId) {
 }
 
 async function loadPersonalCalendar() {
-	const response = await fetch('/api/calendars');
+	const response = await fetch('/api/calendars/'+userInfo.id);
 	if (!response.ok) {
 		console.log(response.error);
 		return;
 	}
-	let calendarData = await response.json();
+    let calendarData = await response.json();
+    console.log(calendarData);
 	for(let i = 0; i < calendarData.length; i++) {
 		if(calendarData[i].owner_id === userInfo.id && calendarData[i].personal === true) {
-			window.localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
+			//window.localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
 		}
 	}
 }
 
 async function searchForCalendarItems() {
 	console.log('run');
-	let personalCalId = window.localStorage.getItem('personalCalId');
+	let personalCalId = 0; //placeholder
 	const response = await fetch('/api/calendars/'+personalCalId+'/items'); 
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
 	let itemData = await response.json();
-	window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
+	//window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
 }
 
 async function populateToDoList() {
@@ -579,7 +586,7 @@ function buildArchivedToDos(toDoData) {
  * not yet hold the information we need it to.
  */
 async function loadNotificationBell(){
-	const user_id = JSON.parse(window.localStorage.getItem('userInfo')).id;
+	const user_id = 0; //placeholder
 	const GNotifs = await fetch(`/api/users/${user_id}/notifications`);
 	if(!GNotifs.ok){
 		console.log('Unable to load notifications');

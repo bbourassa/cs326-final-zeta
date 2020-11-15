@@ -13,25 +13,20 @@ ENUM FOR STATUS:
     3 corresponds to 'completed'
 */
 db.none('CREATE TABLE IF NOT EXISTS items_for_calendars(id INTEGER PRIMARY KEY, name VARCHAR, item_type INT, start_time VARCHAR, end_time VARCHAR, description TEXT, item_status INT, calendar_id INT, related_links TEXT);');
-/*db.none('ALTER TABLE items_for_calendars ALTER COLUMN start_time TYPE VARCHAR;');
-db.none('ALTER TABLE items_for_calendars ALTER COLUMN end_time TYPE VARCHAR;');
-db.none('INSERT INTO public."items_for_calendars"(id, name, item_type, start_time, end_time, description, item_status, calendar_id, related_links) VALUES(0, \'example item\', 1, \'example start time\', \'example end time\', \'this is an example of an item\', 1, 0, \'example for related links\');');*/
 
-exports.listAll = function(req, res) {
-    //res.end(JSON.stringify(db.any('SELECT * FROM public."items_for_calendars";')));
+exports.listAll = async function(req, res) {
+    res.json(await db.any('SELECT * FROM public."items_for_calendars";'));
 };
 
-exports.list = function(req, res) {
-    /*let calendarId = req.params.cal;
-    res.end(JSON.stringify(db.any('SELECT * FROM public."items_for_calendars" WHERE calendar_id=$1;', [calendarId])));
-    res.end(JSON.stringify(db.any('SELECT name FROM public."items_for_calendars" WHERE id=$1;', [calendarId])));
-    */
+exports.list = async function(req, res) {
+    let calendarId = req.params.cal;
+    res.json(await db.any('SELECT * FROM public."items_for_calendars" WHERE calendar_id=$1;', [calendarId]));
+    //res.end(JSON.stringify(db.any('SELECT name FROM public."items_for_calendars" WHERE id=$1;', [calendarId])));
 };
 
 exports.create = function(req, res) {
     let lastId =  db.any('SELECT MAX(id) FROM public."items_for_calendars";');
     let newId = lastId + 1; 
-    /*
     let name = req.body.name;
     let itemType = req.body.itemType;
     let startTime = req.body.startTime;
@@ -41,16 +36,13 @@ exports.create = function(req, res) {
     let calendarId = req.params.cal;
     let relatedLinks = req.body.relatedLinks;
     db.none('INSERT INTO public."items_for_calendars"(id, name, item_type, start_time, end_time, description, item_status, calendar_id, related_links) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9);', [newId, name, itemType, startTime, endTime, description, itemStatus, calendarId, relatedLinks]);
-    */
 	res.sendStatus(201);
 };
 
-exports.find = function(req, res) {
-    /*
+exports.find = async function(req, res) {
     let calendarId = req.params.cal;
     let itemId = req.params.item;
-    res.end(JSON.stringify(db.any('SELECT * FROM public."items_for_calendars" WHERE calendar_id=$1 AND id=$2;', [calendarId, itemId])));
-    */
+    res.json(await db.any('SELECT * FROM public."items_for_calendars" WHERE calendar_id=$1 AND id=$2;', [calendarId, itemId]));
 };
 
 //NOT SURE WE EVER USE THIS 
@@ -66,7 +58,6 @@ exports.findUnlinked = function(req, res){
 };
 
 exports.edit = function(req, res) {
-    /*
     let itemId = req.params.item;
     let name = req.body.name;
     let itemType = req.body.itemType;
@@ -76,17 +67,14 @@ exports.edit = function(req, res) {
     let itemStatus = req.body.itemStatus;
     let calendarId = req.params.cal;
     let relatedLinks = req.body.relatedLinks;
-    db.none('UPDATE public."items_for_calendars" SET name=$1, itemType=$2, startTime=$3, endTime=$4, description=$5, itemStatus=$6, relatedLinks=$7 WHERE id=$8 AND calendar_id=$9;', [name, itemType, startTime, endTime, description, itemStatus, relatedLinks]);
-    */
+    db.none('UPDATE public."items_for_calendars" SET name=$1, itemType=$2, startTime=$3, endTime=$4, description=$5, itemStatus=$6, relatedLinks=$7 WHERE id=$8 AND calendar_id=$9;', [name, itemType, startTime, endTime, description, itemStatus, relatedLinks, itemId, calendarId]);
 	res.sendStatus(204);
 };
 
 exports.remove = function(req, res) {
-    /*
     let calendarId = req.params.cal;
     let itemId = req.params.item;
     db.none('DELETE from public."items_for_calendars" WHERE calendar_id=$1 AND id=$2;', [calendarId, itemId]);
-    */
 	res.sendStatus(204);
 };
 
