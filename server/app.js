@@ -54,7 +54,13 @@ app.get('/',
 		res.redirect('../html/personalcal.html');
 	});
 
-app.post('/api/login', users.auth);
+// app.post('/api/login', users.auth);
+// Handle post data from the login.html form.
+app.post('/login',
+	passport.authenticate('local' , {     // use username/password authentication
+		'successRedirect' : '../html/personalcal.html',   // when we login, go to /private
+		'failureRedirect' : '../html/index.html'      // otherwise, back to login
+	}));
 
 app.get('/api/users', users.list);
 app.post('/api/users', users.create);
