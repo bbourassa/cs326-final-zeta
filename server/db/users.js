@@ -48,9 +48,15 @@ exports.load = function(req, res, next) {
 	}
 };
 
-//NOT SURE WE EVEN USE THIS
+//check if the username exists
 exports.find = function(req, res) {
-	res.json(req.user);
+	const username = req.params.username;
+	try{
+		res.end(JSON.stringify(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
+	} catch(e){
+		return false;
+	}
+	return true;
 };
 
 

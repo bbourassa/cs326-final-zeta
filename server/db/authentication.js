@@ -17,6 +17,7 @@ const db = require('../app.js').db;
 // // Creating a new database instance from the connection details:
 // const db = pgp(cn);
 // //
+const app = express();
 
 //session configuration
 const session = {
@@ -31,7 +32,7 @@ const strategy = new LocalStrategy(
 		if(!findUser(username)){
 			return done(null, false, { 'message': 'Wrong username or password'});
 		}
-		if(!validatePassword(username, password)){
+		if(!checkCreds(username, password)){
 			//creates a 2 sec delay between failed attempts
 			await new Promise((r) => setTimeout(r, 2000));
 			return done(null, false, {'message':'Wrong username or password'});
@@ -41,7 +42,6 @@ const strategy = new LocalStrategy(
 		return done(null, username);
 	}
 );
-
 //app configuration :AKA: MAGIC CODE, DO NOT CHANGE
 app.use(expressSession(session));
 passport.use(strategy);
@@ -49,18 +49,32 @@ app.use(passport.initialize());
 app.use(passport.session());
 //End of magic
 
+function findUser(username){
+	const exists = fetch(`/api/users/${username}`, {
+		methods: 'GET'
+	});
+	return exists;
+}
+
 //Produces a user identifier; puts it in req.session.passport.user = {id:''
 //ONLY saves the ID, not the user's personal cal id or anything else
 // Convert user object to a unique identifier.
-passport.serializeUseer((user, done) => {
-    let user_id = user.id;
-    req.session.passport.user = {id:user_id};
+passport.serializeUser((user, done) => {
+
+	let user_id = user.id;
+	window.session.passport.user = {id:user_id};
 	done(null, user_id);
 });
-//TODO somewhere in here, need to link up user data w/ user object
+
 //take that identifier, make it into the user object
 passport.deserializeUser((user_id, done) =>{
-    let user = fetch(`/api/users/${user_id}`);
+	let user;
+	try{ //try to get user id
+		user = fetch(`/api/users/${user_id}`);
+	} catch {
+		return done(null, false);
+	}
+
 	done(null, user);
 });
 
@@ -68,7 +82,7 @@ passport.deserializeUser((user_id, done) =>{
 async function checkCreds(username, pwd){
 	//check for user; .catch will catch any errors, no need for try/catch
 	//if there is nothing matching there, returns false
-	const userI = await db.none('SELECT * FROM userDB WHERE user_id = $1', [username]).catch((err) => { return false; });
+	const userI = await db.none('SELECT * FROM userDB WHERE user_id = $1', [username]).catch((err) => {console.log(err); return false; });
 	const user_INFO = userI.json();
 	if(user_INFO.password !== pwd){
 		return false;
