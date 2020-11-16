@@ -41,13 +41,6 @@ app.use('/js', express.static(path.join(dir, 'js')));
 app.use('/html', express.static(path.join(dir, 'html')));
 // app.use('/', express.static(path.join(dir, 'html')));
 
-const expressSession = require('express-session');  // for managing session state
-const passport = require('passport');               // handles authentication
-const LocalStrategy = require('passport-local').Strategy; // username/password strategy
-
-
-
-
 
 //session configuration
 const session = {
