@@ -1,5 +1,9 @@
 'use strict';
 
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+	fetch('/logout');
+});
+
 let letterMap = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 0};
 
 let subscribeButton = document.getElementById('subscribeButton');
@@ -27,7 +31,7 @@ async function redirectOnSubscription() {
 		let letterKey = calendarCode.charAt(i);
 		calendarId += letterMap[letterKey];
 	}
-	const response = await fetch('/api/calendars/'+calendarId); 
+	const response = await fetch('/api/calendars/'+calendarId);
 	if(!response.ok) {
 		console.log(response.error);
 		return;
@@ -119,7 +123,7 @@ async function redirectDailyPodcast() {
 /**
  * This function loads the notification bell with the correct number
  * of notifications.
- * It is currently hard coded to be set to 1, as the GET response does 
+ * It is currently hard coded to be set to 1, as the GET response does
  * not yet hold the information we need it to.
  */
 async function loadNotificationBell(){
