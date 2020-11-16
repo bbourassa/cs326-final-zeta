@@ -4,10 +4,11 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-// const dbconnection = require('./secrets.json');
-// const username = dbconnection.username;
-// const password = dbconnection.password;
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+const expressSession = require('express-session');  // for managing session state
+const passport = require('passport');               // handles authentication
+const LocalStrategy = require('passport-local').Strategy; // username/password strategy
+
 
 const pgp = require('pg-promise')({
 	connect(client) {
@@ -19,9 +20,8 @@ const pgp = require('pg-promise')({
 });
 const url = process.env.DATABASE_URL ;
 // || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
-exports.db = pgp(url);
 
-//db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCHAR, firstName VARCHAR, lastName VARCHAR, email VARCHAR, password_val VARCHAR, calendar_id INTEGER UNIQUE, notifications TEXT );');
+exports.db = pgp(url);
 
 const users = require('./db/users');
 const cals = require('./db/cals');
@@ -137,11 +137,11 @@ app.delete('/api/users/:user', users.remove);
 app.get('/api/users/:user/notifications', users.notifications);
 app.post('/api/users/:user/notifications', users.notify);
 
-app.get('/api/users/:user/todos', todos.list);
-app.post('/api/users/:user/todos', todos.create);
-app.get('/api/users/:user/todos/:todo', todos.find);
-app.put('/api/users/:user/todos/:todo', todos.edit);
-app.delete('/api/users/:user/todos/:todo', todos.remove);
+app.get('/api/todos/:user', todos.list);
+app.post('/api/todos/:user', todos.create);
+app.get('/api/todos/:user/:todo', todos.find);
+app.put('/api/todos/:user/:todo', todos.edit);
+app.delete('/api/todos/:user/:todo', todos.remove);
 
 app.use('/api/users/:user/subscriptions', subs.loadUser);
 app.get('/api/users/:user/subscriptions', subs.list);
@@ -155,6 +155,7 @@ app.delete('/api/users/:user/subscriptions/:sub', subs.remove);
 app.put('/api/users/:user/calendar/pull', cals.updatePersonal);
 
 app.get('/api/calendars', cals.listAll);
+app.get('/api/calendars/:user', cals.getUsersCals);
 app.post('/api/calendars', cals.create);
 app.get('/api/calendars/ours', cals.listOurs);
 app.use('/api/calendars/:cal', cals.load);
@@ -166,11 +167,11 @@ app.use('/api/calendars/:cal/subscriptions', subs.loadCalendar);
 app.get('/api/calendars/:cal/subscriptions', subs.list);
 app.get('/api/calendars/:cal/subscriptions/users', users.listSubscribed);
 
-app.get('/api/calendars/:cal/items', items.list);
-app.post('/api/calendars/:cal/items', items.create);
-app.get('/api/calendars/:cal/items/:item', items.find);
-app.put('/api/calendars/:cal/items/:item', items.edit);
-app.delete('/api/calendars/:cal/items/:item', items.remove);
+app.get('/api/items/:cal', items.list);
+app.post('/api/items/:cal', items.create);
+app.get('/api/items/:cal/:item', items.find);
+app.put('/api/items/:cal/:item', items.edit);
+app.delete('/api/items/:cal/:item', items.remove);
 
 app.get('/api/todos', todos.listAll);
 app.get('/api/subscriptions', subs.listAll);
