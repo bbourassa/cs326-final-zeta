@@ -11,13 +11,15 @@ function loadAll(userId){
 	loadNotifications();
 
 }
-
-// loadAll(0);
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+	fetch('/logout');
+});
 
 /**
  * Loads the event listers for each setting button
  */
 function loadSettingListeners(){
+
 	//  the header checkbox will cause all other check oxes to check/uncheck
 	document.getElementById('checkAll').addEventListener('change', ()=> {
 		let rows = document.getElementById('eventTable').childNodes;
