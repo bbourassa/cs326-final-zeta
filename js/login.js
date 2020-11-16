@@ -62,18 +62,21 @@ function checkHasInputs() {
 /**
  * posts the login data. Authentication handles the rest
  */
-function validate(){
-	() => {
-		const usern = document.getElementById('inputUsername').value;
-		const pass = document.getElementById('inputPassword').value;
-		fetch('/login', {
+async function validate(){
+	const usern = document.getElementById('inputUsername').value;
+	const pass = document.getElementById('inputPassword').value;
+	try {
+        console.log('validating');
+		await fetch('/login', {
 			method: 'POST',
 			headers:{
 				'Content-Type': 'application/json'
 			},
-			body: {username: usern, password:pass }
+			body: JSON.stringify({username: usern, password:pass })
 		});
-	};
+	} catch (e) {
+		console.log('Unable to login. ', e);
+	}
 }
 
 /*
