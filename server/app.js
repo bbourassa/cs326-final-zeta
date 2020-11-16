@@ -4,9 +4,9 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-const dbconnection = require('./secrets.json');
+/*const dbconnection = require('./secrets.json');
 const username = dbconnection.username;
-const password = dbconnection.password;
+const password = dbconnection.password;*/
 
 const expressSession = require('express-session');  // for managing session state
 const passport = require('passport');               // handles authentication
