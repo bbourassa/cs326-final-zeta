@@ -12,13 +12,13 @@ const db = require('../app.js').db;
 
 const app = express();
 
-const dbconnection = require('../secrets.json');
+// const dbconnection = require('../secrets.json');
 
 
 
 //session configuration
 const session = {
-	secret: process.env.SECRET  || dbconnection.secret,
+	secret: process.env.SECRET  ,
 	resave:false,
 	saveUninitialized : false
 };
