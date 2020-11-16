@@ -68,11 +68,11 @@ app.delete('/api/users/:user', users.remove);
 app.get('/api/users/:user/notifications', users.notifications);
 app.post('/api/users/:user/notifications', users.notify);
 
-app.get('/api/users/:user/todos', todos.list);
-app.post('/api/users/:user/todos', todos.create);
-app.get('/api/users/:user/todos/:todo', todos.find);
-app.put('/api/users/:user/todos/:todo', todos.edit);
-app.delete('/api/users/:user/todos/:todo', todos.remove);
+app.get('/api/todos/:user', todos.list);
+app.post('/api/todos/:user', todos.create);
+app.get('/api/todos/:user/:todo', todos.find);
+app.put('/api/todos/:user/:todo', todos.edit);
+app.delete('/api/todos/:user/:todo', todos.remove);
 
 app.use('/api/users/:user/subscriptions', subs.loadUser);
 app.get('/api/users/:user/subscriptions', subs.list);
@@ -98,11 +98,11 @@ app.use('/api/calendars/:cal/subscriptions', subs.loadCalendar);
 app.get('/api/calendars/:cal/subscriptions', subs.list);
 app.get('/api/calendars/:cal/subscriptions/users', users.listSubscribed);
 
-app.get('/api/calendars/:cal/items', items.list);
-app.post('/api/calendars/:cal/items', items.create);
-app.get('/api/calendars/:cal/items/:item', items.find);
-app.put('/api/calendars/:cal/items/:item', items.edit);
-app.delete('/api/calendars/:cal/items/:item', items.remove);
+app.get('/api/items/:cal', items.list);
+app.post('/api/items/:cal', items.create);
+app.get('/api/items/:cal/:item', items.find);
+app.put('/api/items/:cal/:item', items.edit);
+app.delete('/api/items/:cal/:item', items.remove);
 
 app.get('/api/todos', todos.listAll);
 app.get('/api/subscriptions', subs.listAll);

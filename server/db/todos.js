@@ -7,15 +7,15 @@ ENUM FOR ARCHIVED:
     0 corresponds to 'Not archived'
     1 corrsponds to 'Archived'
 */
-db.none('CREATE TABLE IF NOT EXISTS to_dos(id INTEGER PRIMARY KEY, content VARCHAR, user_id INT, archived INT);');
+db.none('CREATE TABLE IF NOT EXISTS to_dos(id INTEGER PRIMARY KEY, content VARCHAR, user_id INT, archived INT, time_of_archive VARCHAR);');
 
 exports.listAll = async function(req, res) {
     res.json(await db.any('SELECT * FROM public."to_dos";'));
 };
 
-exports.list = function(req, res) {
-    let userId = req.body.userId;
-    res.end(JSON.stringify(db.any('SELECT * FROM public."to_dos" WHERE user_id=$1;', [userId])));
+exports.list = async function(req, res) {
+    let userId = req.params.user;
+    res.json(await db.any('SELECT * FROM public."to_dos" WHERE user_id=$1;', [userId]));
     //res.json(todos.filter(todo => todo.user_id === req.user.id));
 };
 
