@@ -109,7 +109,7 @@ app.post('/login',
 // Handle logging out (takes us back to the login page).
 app.get('/logout', (req, res) => {
 	req.logout(); // Logs us out!
-	res.redirect('../html/index.html'); // back to login
+	res.redirect('../html/index.html', 302); // back to login
 });
 
 
