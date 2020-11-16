@@ -45,15 +45,16 @@ exports.load = async function(req, res, next) {
 	}
 };
 
-//check if the username exists
-exports.find = async function(req, res) {
+//check if the username exists, return the user id
+exports.find = function(req, res) {
 	const username = req.params.username;
 	try{
-		res.json(await db.any('SELECT * FROM public."users" WHERE username=$1;', [username]));
+		let user = JSON.stringify(db.any('SELECT * FROM public."users" WHERE username=$1;', [username]));
+		res.end(user);
+
 	} catch(e){
-		return false;
+		res.status(404).send('User Not Found');
 	}
-	return true;
 };
 
 
