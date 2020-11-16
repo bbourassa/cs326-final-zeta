@@ -20,11 +20,13 @@ exports.list = async function(req, res) {
 };
 
 exports.create = function(req, res) {
+    console.log('hit');
 	let lastId =  db.any('SELECT MAX(id) FROM public."items_for_calendars";');
     let newId = lastId + 1; 
     let content = req.body.content;
-    let userId = req.body.userId;
+    let userId = req.params.user;
     let archived = 0;
+    console.log(newId, content, userId, archived);
     db.none('INSERT INTO public."to_dos"(id, content, user_id, archived) VALUES($1, $2, $3, $4);', [newId, content, userId, archived]);
 };
 
