@@ -60,15 +60,25 @@ exports.findUnlinked = function(req, res){
 
 exports.edit = function(req, res) {
     let itemId = req.params.item;
+    console.log('id is ' + itemId);
     let name = req.body.name;
-    let itemType = req.body.itemType;
-    let startTime = req.body.startTime;
-    let endTime = req.body.endTime;
+    console.log('name is ' + name);
+    let itemType = req.body.type;
+    console.log('type is ' + itemType);
+    let startTime = req.body.start;
+    console.log('start time is ' + startTime);
+    let endTime = req.body.end;
+    console.log('end time is ' + endTime);
     let description = req.body.description;
-    let itemStatus = req.body.itemStatus;
+    console.log('descriptions is ' + description);
+    let itemStatus = req.body.status;
+    console.log('item status is ' + itemStatus);
     let calendarId = req.params.cal;
-    let relatedLinks = req.body.relatedLinks;
-    db.none('UPDATE public."items_for_calendars" SET name=$1, itemType=$2, startTime=$3, endTime=$4, description=$5, itemStatus=$6, relatedLinks=$7 WHERE id=$8 AND calendar_id=$9;', [name, itemType, startTime, endTime, description, itemStatus, relatedLinks, itemId, calendarId]);
+    console.log('calendar id is ' + calendarId);
+    let relatedLinks = req.body.related_links;
+    console.log('related links is ' + relatedLinks);
+    /*db.none('UPDATE public."items_for_calendars" SET name=$1, WHERE id=0;', [name]);*/
+    db.none('UPDATE public."items_for_calendars" SET name=$1, item_type=$2, start_time=$3, end_time=$4, description=$5, item_status=$6, related_links=$7 WHERE id=$8 AND calendar_id=$9;', [name, itemType, startTime, endTime, description, itemStatus, relatedLinks, itemId, calendarId]);
 	res.sendStatus(204);
 };
 
