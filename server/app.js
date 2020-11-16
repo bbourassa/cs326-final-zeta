@@ -4,6 +4,11 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
+//SECRET
+const dbconnection = require('./secret.json');
+const username= dbconnection.username;
+const password=dbconnection.password;
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const expressSession = require('express-session');  // for managing session state
 const passport = require('passport');               // handles authentication
@@ -18,8 +23,7 @@ const pgp = require('pg-promise')({
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
-const url = process.env.DATABASE_URL ;
-// || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+const url = process.env.DATABASE_URL || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
 
 exports.db = pgp(url);
 
@@ -44,7 +48,7 @@ app.use('/html', express.static(path.join(dir, 'html')));
 
 //session configuration
 const session = {
-	secret: process.env.SECRET ,
+	secret: process.env.SECRET || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
@@ -97,10 +101,9 @@ app.get('/',
 // Handle post data from the login.html form.
 app.post('/login',
 	passport.authenticate('local' , {     // use username/password authentication
-		'successRedirect' : '../html/personalcal.html',   // when we login, go to /private
-		// 'failureRedirect' : '../html/index.html'      // otherwise, back to login
-	}), function(req, res) {
-		res.redirect('../html/personalcal.html'); }
+		successRedirect : '../html/personalcal.html',   // when we login, go to /private
+		failureRedirect : '../html/index.html'      // otherwise, back to login
+	})
 );
 
 // Handle logging out (takes us back to the login page).
@@ -108,15 +111,6 @@ app.get('/logout', (req, res) => {
 	req.logout(); // Logs us out!
 	res.redirect('../html/index.html'); // back to login
 });
-
-
-
-
-
-
-
-
-
 
 
 
