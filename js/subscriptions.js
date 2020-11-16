@@ -1,5 +1,5 @@
 'use strict';
-/* eslint-env jquery */ //this tag is needed so that the $in the modal 
+/* eslint-env jquery */ //this tag is needed so that the $in the modal
 //calls don't throw an error
 const user_id = JSON.parse(window.localStorage.getItem('userInfo')).id;
 // const user_id  =0;
@@ -25,9 +25,9 @@ function loadSettingListeners(){
 			let checkbox = document.getElementById('eventTable').childNodes[i].childNodes[0].childNodes[0];
 			checkbox.checked = checkbox.checked ? false:true;
 		}
-        
+
 	});
-	
+
 	//for each selected item, add it to personal cal
 	document.getElementById('setAddItems').addEventListener('click', async ()=>{
 		//get an array of every itemID that has been checked
@@ -38,19 +38,19 @@ function loadSettingListeners(){
 			let itemID=  checkedItemIds[i];
 
 			//pull that item into your cal
-			const response = await fetch(`/api/users/${user_id}/calendar/pull/`, {  
+			const response = await fetch(`/api/users/${user_id}/calendar/pull/`, {
 				method: 'PUT',
 				headers:{
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({id:itemID})
 			});
-			
+
 			if(!response.ok){
 				alert('Error: Unable to add specified item(s) to your personal calendar.');
 				return;
 			}
-			
+
 		}
 	});
 
@@ -61,7 +61,7 @@ function loadSettingListeners(){
 		if(!response.ok){
 			alert('Unable to add selected item(s) to your calendar at this time.');
 			return;
-		} 
+		}
 		else {
 			//fetch the item
 			let itemList = await response.json();
@@ -69,7 +69,7 @@ function loadSettingListeners(){
 			for(let i = 0; i<itemList.length; i++){
 				if (itemList[i].type === 'Action Item' || itemList[i].type ==='action' ){
 					const addResp = await fetch(`/api/calendars/${cal_id}/items/`, {
-						method: 'POST', 
+						method: 'POST',
 						headers: {
 							'Contenct-Type': 'application/json'
 						},
@@ -91,7 +91,7 @@ function loadSettingListeners(){
 		if(!response.ok){
 			alert('Unable to add selected item(s) to your calendar at this time.');
 			return;
-		} 
+		}
 		else {
 			//fetch the item
 			let itemList = await response.json();
@@ -100,7 +100,7 @@ function loadSettingListeners(){
 			for(let i = 0; i<itemList.length; i++){
 				if (itemList[i].type === 'Event' || itemList[i].type ==='event'){
 					const addResp = await fetch(`/api/calendars/${cal_id}/items/`, {
-						method: 'POST', 
+						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'
 						},
@@ -113,7 +113,7 @@ function loadSettingListeners(){
 				}
 			}
 		}
-        
+
 	});
 
 	//for each selected item, find corresponding in personal, updare
@@ -132,10 +132,10 @@ function loadSettingListeners(){
 				//don't then try to do the rest!
 				return;
 			}
-			
+
 		}
 	});
-	
+
 
 	//make a new event
 	document.getElementById('setCreate').addEventListener('click', ()=>{
@@ -153,37 +153,61 @@ function loadSettingListeners(){
 			$('#itemEditCenter').modal('hide');
 			commitChanges();
 			//make sure the commit message input is visible
-			document.getElementById('commitMessage').removeAttribute('hidden'); 
-			document.getElementById('btnsForEdits').removeAttribute('hidden'); 
+			document.getElementById('commitMessage').removeAttribute('hidden');
+			document.getElementById('btnsForEdits').removeAttribute('hidden');
 
 
-		}); 
+		});
 		//now you are in the commit modal
-		
+
 
 	});
-	
+
 	//delete selected items
 	document.getElementById('setDeleteItem').addEventListener('click', async()=>{
 		const checkedItemIds = getCheckedItems();
 		//assumes the appropriate cal is the one you are on currently
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-		for(let i=0; i<checkedItemIds.length; i++){
-			alert('Deleting items is permanant. Are you sure that you want to delete this item?');
-			const item_id = checkedItemIds[i];
-			try{
-				await fetch(`/api/calendars/${cal_id}/items/${item_id}/`, {
-					method: 'DELETE'
-				});
-			} catch(e){
-				console.log('Unable to delete selected item(s) at this time.');
-				return;
-			}
+		if(document.getElementById('itemList')){
+			document.getElementById('itemsToDelete').removeChild(document.getElementById('itemList'));
 		}
 
+		let itemList = document.createElement('ul');
+
+		for(let i=0; i<checkedItemIds.length; i++){
+			const item_id = checkedItemIds[i];
+
+			//get item
+			//print item name as a list item
+			//        const response = await db.any('SELECT * FROM gameScores ORDER BY score desc LIMIT 10;').catch((err) => { console.error(err); });
+			let itemName = document.createElement('li');
+			itemName.innerHTML= item_id;
+			itemName.classList.add('list-group-item', 'list-group-item-action');
+
+			itemList.appendChild(itemName);
+		}
+		//add the items to the modal
+		document.getElementById('itemsToDelete').appendChild(itemList);
+		$('#deleteWarning').modal('show');
+
+		//delete the items
+		document.getElementById('confirmDeleteBtn').addEventListener('click', async ()=>{
+			for(let i=0; i<checkedItemIds.length; i++){
+				const item_id = checkedItemIds[i];
+				try{
+					await fetch(`/api/calendars/${cal_id}/items/${item_id}/`, {
+						method: 'DELETE'
+					});
+				} catch(e){
+					console.log('Unable to delete selected item(s) at this time.');
+					return;
+				}
+			}
+		});
+
 	});
-	
-	//Delete current calendar 
+
+	//Delete current calendar
 	document.getElementById('setDeleteCal').addEventListener('click', async ()=>{
 		//assumes the appropriate cal is the one you are on currently
 		//@Milestone3 make a confirmation screen
@@ -198,10 +222,10 @@ function loadSettingListeners(){
 			console.log('Unable to delete calendar at this time.');
 			return;
 		}
-		
+
 
 	});
-	
+
 	//if there is already a share code, make it visible, set toggle to checked
 	if(document.getElementById('shareCode')){
 		document.getElementById('shareCode').setAttribute('hidden', true);
@@ -213,14 +237,14 @@ function loadSettingListeners(){
 		if(!document.getElementById('publicSwitch').checked){
 			document.getElementById('shareCode').setAttribute('hidden', true);
 
-		} 
+		}
 		//otherwise, make and display it
 		else {
 			if(document.getElementById('shareCode')){
 				document.getElementById('shareCode').removeAttribute('hidden');
 			} else {
 				let shareCode;
-				
+
 				//if you aleady have a code html element, display
 				if(document.getElementById(shareCode)){
 					document.getElementById(shareCode).removeAttribute('hidden');
@@ -229,7 +253,7 @@ function loadSettingListeners(){
 					//therwise, check for an existing code
 					//share code = mapping of ca_id, constant
 					shareCode = generateNewId('shareCode');
-					
+
 					//make a list element for the code to live in
 					let code = document.createElement('li');
 					code.innerText = 'Your sharable code is:  ' + shareCode;
@@ -238,13 +262,13 @@ function loadSettingListeners(){
 					document.getElementById('adminSettings').appendChild(code);
 				}
 			}
-		}	
+		}
 	});
 
 }
 
 
-/** 
+/**
  * Generates a new random set of digits, ensures that it does not already exist
  * @param {String} field to generate an id for
  */
@@ -253,7 +277,7 @@ function generateNewId(field){
 
 	let id = 0;
 	//Calendar id's should have 5 digits, for now
-	if(field === 'cal'){ 
+	if(field === 'cal'){
 		// id = Math.floor(Math.random() * (99999 - 10000) + 10000);
 		let unique = false;
 		while(!unique){
@@ -264,7 +288,7 @@ function generateNewId(field){
 				unique = false;
 			}
 			unique = true;
-			
+
 		}
 
 	} //item id's should have 7 digits, for now
@@ -286,10 +310,10 @@ function generateNewId(field){
 		// console.log(cal_id, JSON.stringify(cal_id).length);
 		for(let i=0; i<JSON.stringify(cal_id).length; i++){
 			let digit = parseInt(JSON.stringify(cal_id)[i]);
-			let enLetter = Object.keys(letterMap).find(key => letterMap[key] === digit);	
+			let enLetter = Object.keys(letterMap).find(key => letterMap[key] === digit);
 			mappedString = mappedString+ enLetter;
 		}
-		
+
 		id=mappedString;
 	}
 	return id;
@@ -352,12 +376,12 @@ async function loadNotifications(){
 
 	});
 	document.getElementById('allNotes').appendChild(noti);
-	
+
 	//Clear button removes all notifications without redirecting
 	document.getElementById('clearNoteCenter').addEventListener('click', ()=>{
 		while (document.getElementById('allNotes').childNodes.length>0){
 			document.getElementById('allNotes').removeChild(document.getElementById('allNotes').childNodes[0]);
-			
+
 		}
 		document.getElementById('num-Notifications').innerHTML ='';
 		document.getElementById('notificationCenter').setAttribute('hidden', true);
@@ -374,7 +398,7 @@ async function loadNotifications(){
 	}
 
 	/*
-	//Get all of the notifications, use the number to set the notification bell 
+	//Get all of the notifications, use the number to set the notification bell
 	let notifs = GNotifs.json();
 	let numNotifs = notifs.length();
 	document.getElementById('num-Notifications').value = numNotifs;
@@ -401,10 +425,10 @@ async function loadNotifications(){
 
 /**
  * Load all of the user's subscription calendars
- * @param {int} userId 
+ * @param {int} userId
  */
 async function loadCalendars(){
-	
+
 
 
 	//load all the calendars you have a subscription relationship with
@@ -415,15 +439,15 @@ async function loadCalendars(){
 	if(!response.ok){
 		alert('Unable to load your subscriptions');
 		return;
-	} 
-	let cals = await response.json(); 
+	}
+	let cals = await response.json();
 	const subs = document.getElementById('subscribed-cals');
 
 	//make the button for each calendar, adding admin button where applicalbe
 	//if you click that clanedar, it will load into the item table
 	cals.forEach((cal) =>{
 		const admin = (cal.owner_id === user_id);
-		
+
 		//makke the button for the calendar
 		let aCal = document.createElement('button');
 		aCal.innerHTML=cal.name;
@@ -448,7 +472,7 @@ async function loadCalendars(){
 	});
 	// If you have been redirected because you have a new subscription,
 	// it should redirect you to that events page
-	//this function assumes that the new subscription will be at the end 
+	//this function assumes that the new subscription will be at the end
 	//of your list of subscriptions
 	if(window.localStorage.getItem('newSubscription')){
 		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'));
@@ -464,14 +488,14 @@ async function loadCalendars(){
  * @param {int} calId the id number for the calendar
  */
 async function loadTable(calId){
-	
+
 	const response = await fetch(`/api/calendars/${calId}`);
 	let calData = await response.json();
 	// console.log(calData);
 	//make this work with r
 	const admin = (calData.owner_id === user_id);
 
-	
+
 	document.getElementById('cal-name').innerHTML = calData.name;
 	document.getElementById('cal-name').setAttribute('calID', calId);
 
@@ -578,7 +602,7 @@ async function loadTable(calId){
 		info.appendChild(infoBtn);
 		anItem.appendChild(info);
 
-        
+
 		if(admin){
 			//make cell and button
 			let editable = document.createElement('td');
@@ -603,14 +627,14 @@ async function loadTable(calId){
 
 	});
 
-    
+
 
 }
 
 /**
  * Fills the Edit center modal with the appropriate information
 
- * @param {Item object} item 
+ * @param {Item object} item
  */
 function loadModal(item){
 	//set it to confirmation card values
@@ -645,17 +669,17 @@ function loadModal(item){
 		commitChanges();
 		//make sure the commit message input is visible
 		document.getElementById('commitMessage').removeAttribute('hidden');
-	});    
+	});
 
 	//event listener to toggle between event and action inputs
 	let toggleType = document.getElementById('typeItem');
 	toggleType.addEventListener('change', () =>{setUpdateForm(item);});
-    
+
 
 }
 
 /**
- * Gets all of the information currently in the edit center, 
+ * Gets all of the information currently in the edit center,
  * formats it into item JSON, returns
  * to be sent as the body of a request.
  */
@@ -721,7 +745,7 @@ function setUpdateForm(item) {
 		} else if(item.end !== undefined){
 			document.getElementById('dueDate').value = item.end;
 		} else{
-			document.getElementById('dueDate').value = '';	
+			document.getElementById('dueDate').value = '';
 		}
 
 	} else if (currentType.value === 'event'  || currentType.value ==='Event' ) {
@@ -729,8 +753,8 @@ function setUpdateForm(item) {
 		dueDateShow.style.display = 'none';
 		startTimeShow.style.display = 'inline-block';
 		endTimeShow.style.display = 'inline-block';
-        
-		//if start time is not a defined value, the html value will 
+
+		//if start time is not a defined value, the html value will
 		//still be the value it was last set to; this clears it out
 		if(item.start !== undefined){
 			document.getElementById('startTime').value = item.start;
@@ -747,11 +771,11 @@ function setUpdateForm(item) {
 
 /**
  * Load the information you are about to commit
- * This will reference the information that was just inserted into the 
+ * This will reference the information that was just inserted into the
  * edit modal. The database has not been updated, so it has to reference the html
  */
 function loadCommit(){
-    
+
 	//clear out any current list
 	if(document.getElementById('listOfInfo')){
 		document.getElementById('listOfInfo').parentElement.removeChild(document.getElementById('listOfInfo'));
@@ -822,7 +846,7 @@ async function commitChanges(){
 			return;
 		}
 	});
-	
+
 }
 
 // function newItem
