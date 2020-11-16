@@ -1,13 +1,18 @@
 'use strict';
 /* eslint-env jquery */ //this tag is needed so that the $in the modal 
 //calls don't throw an error
-window.addEventListener('load', checkForUser());
+//window.addEventListener('load', checkForUser());
 //console.log(window.localStorage.getItem('userInfo'));
-
-function checkForUser() {
+//window.localStorage.removeItem('personalCalId');
+//window.localStorage.removeItem('personalCalItems');
+/*function checkForUser() {
 	console.log(window.localStorage.getItem('userInfo'));
-}
+}*/
 
+/*
+TEMP ID TO USE
+*/
+//let userInfo = {'id': 0};
 /*
 FOR NOW: -this function updates the DayView Title 
           when a day is clicked on the calendar
@@ -31,7 +36,8 @@ function switchDate(day, month, year) {
 			}
 		}
 	}
-	setUpDayCard(day, month+1, year);
+    setUpDayCard(day, month+1, year);
+    window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': day, 'month': month+1, 'year': year}));
 	if(day === currentDay.getDate() && month === currentMonth && parseInt(year) === currentYear) {
 		lastDay = day;
 	} else {
@@ -89,20 +95,19 @@ function setUpCalendar(month, year) {
 }
 
 function checkForItems(month, year) {
-	let listOfItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
-	console.log(listOfItems);
-	for(let i = 1; i < listOfItems.length; i++) {
-		let startTime = listOfItems[i].start;
+	let listOfItems = (JSON.parse(window.localStorage.getItem('personalCalItems')));
+	for(let i = 0; i < listOfItems.length; i++) {
+        let startTime = listOfItems[i].start_time;
 		let itemYear = parseInt(startTime.slice(0, 4));
 		let itemMonth = parseInt(startTime.slice(5, 7));
-		let itemDay = parseInt(startTime.slice(8, 10));
+        let itemDay = parseInt(startTime.slice(8, 10));
 		if(itemYear === year && itemMonth === month+1) {
 			if(parseInt(itemDay) !== currentDay.getDate()) {
-				let dateItem = document.getElementById(itemDay.toString(10));
+                let dateItem = document.getElementById(itemDay.toString(10));
 				dateItem.classList.add('btn-outline-secondary');
 			}
 		}
-	} 
+	}
 }
 
 /*
@@ -134,88 +139,95 @@ FUTURE:  will update item information based on status in
          order to demonstrate the correct information
          for what is due on which day
 */
-function setUpDayCard(day, month, year) {
+async function setUpDayCard(day, month, year) {
+    console.log(day, month, year);
 	let dayViewTitle = document.getElementById('dayViewTitle');
 	dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[month-1] + ' ' + day + ' ' + year;
 	let calendarItems = JSON.parse(window.localStorage.getItem('personalCalItems'));
 	let dayEvents = [];
 	resetDayCard();
 	for(let i = 0; i < calendarItems.length; i++) {
-		let thisYear = parseInt(calendarItems[i].start.slice(0, 4));
-		let thisMonth = parseInt(calendarItems[i].start.slice(5, 7));
-		let thisDay = parseInt(calendarItems[i].start.slice(8, 10));
+        console.log(calendarItems)
+		let thisYear = parseInt(calendarItems[i].start_time.slice(0, 4));
+		let thisMonth = parseInt(calendarItems[i].start_time.slice(5, 7));
+		let thisDay = parseInt(calendarItems[i].start_time.slice(8, 10));
 		if(thisYear === parseInt(year) && thisMonth === month && thisDay === day) {
 			dayEvents.push(calendarItems[i].id);
 			let newDayItem = document.createElement('div');
 			newDayItem.classList.add('list-group-item', 'list-group-item-action', 'day-item');
 			newDayItem.setAttribute('data-toggle', 'modal');
-			newDayItem.setAttribute('data-target', '#itemEditCenter');
-			newDayItem.innerHTML = calendarItems[i].calendar_title + ': ';
+            newDayItem.setAttribute('data-target', '#itemEditCenter');
+            const response = await fetch('/api/calendars/'+calendarItems[i].parent_id);
+	        if (!response.ok) {
+		        console.log(response.error);
+		    return;
+	        }
+            let parentCalendar = await response.json();
+			newDayItem.innerHTML = parentCalendar[0].name + ': ';
 			newDayItem.innerHTML += calendarItems[i].name;
-			newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id));
-			let thisStatus = calendarItems[i].status;
-			let thisType = calendarItems[i].type;
-			if(thisType === 'event') {
+			newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, parentCalendar[0].name));
+			let thisStatus = calendarItems[i].item_status;
+			let thisType = calendarItems[i].item_type;
+			if(thisType === 2) {
 				let scheduleDiv = document.getElementById('todaysSchedule');
 				scheduleDiv.append(newDayItem);
 			} else {
-				if(thisStatus === 'not started') {
+				if(thisStatus === 1) {
 					let statusDiv = document.getElementById('notStarted');
 					statusDiv.append(newDayItem);
-				} else if (thisStatus === 'in progress') {
+				} else if (thisStatus === 2) {
 					let statusDiv = document.getElementById('inProgress');
 					statusDiv.append(newDayItem);
-				} else if (thisStatus === 'completed') {
+				} else if (thisStatus === 3) {
 					let statusDiv = document.getElementById('completed');
 					statusDiv.append(newDayItem);
 				} 
 			}
 		}
 	}
-	/*window.localStorage.setItem('currentDayItemInfo', JSON.stringify(dayEvents));
-    console.log(JSON.parse(window.localStorage.getItem('currentDayItemInfo')));*/
+	window.localStorage.setItem('currentDayItemInfo', JSON.stringify(dayEvents));
 }
 
-async function fillModalInfo(itemId) {
+async function fillModalInfo(itemId, parentCalendar) {
 	tempId = itemId;
     let personalCalId = window.localStorage.getItem('personalCalId');
-    console.log(itemId);
-	const response = await fetch('/api/calendars/'+personalCalId+'/items/'+itemId);
+	const response = await fetch('/api/items/'+personalCalId+'/'+itemId);
 	if (!response.ok) {
 		console.log(response.error);
 		return;
 	}
-	let itemData = await response.json();
+    let itemData = await response.json();
+    let currentItem = itemData[0];
 	let itemName = document.getElementById('itemName');
-	itemName.value = itemData.name;
+	itemName.value = currentItem.name;
 	let calendarName = document.getElementById('calendarName');
-	calendarName.setAttribute('placeholder', itemData.calendar_title);
+	calendarName.setAttribute('placeholder', parentCalendar);
 	let itemDescription = document.getElementById('itemDescription');
-	itemDescription.value = itemData.description;
+	itemDescription.value = currentItem.description;
 	let itemType = document.getElementById('itemType');
-	if(itemData.type === 'action') {
+	if(currentItem.item_type === 1) {
 		itemType.value = 'Action Item';
 		setUpdateForm();
 		let itemStatus = document.getElementById('itemStatus');
-		if(itemData.status === 'not started') {
+		if(currentItem.item_status === 1) {
 			itemStatus.value = 'Not Started';
-		} else if(itemData.status === 'in progress') {
+		} else if(currentItem.item_status === 2) {
 			itemStatus.value = 'In Progress';
-		} else if (itemData.status === 'completed') {
+		} else if (currentItem.item_status === 3) {
 			itemStatus.value = 'Completed';
 		}
 		let itemDueDate = document.getElementById('itemDueDate');
-		itemDueDate.value = itemData.start.slice(0, 16);
+		itemDueDate.value = currentItem.start_time.slice(0, 16);
 	} else {
 		itemType.value = 'Event';
 		setUpdateForm();
 		let itemStartTime = document.getElementById('startTime');
-		itemStartTime.value = itemData.start.slice(0, 16);
+		itemStartTime.value = currentItem.start_time.slice(0, 16);
 		let itemEndTime = document.getElementById('endTime');
-		itemEndTime.value = itemData.end.slice(0, 16);
+		itemEndTime.value = currentItem.end_time.slice(0, 16);
 	}
 	let itemLinks = document.getElementById('itemLinks');
-	itemLinks.value = itemData.related_links;
+	itemLinks.value = currentItem.related_links;
 }
 
 function resetDayCard() {
@@ -379,7 +391,7 @@ async function setNewToDo() {
 	addedToDo.appendChild(formCheckLabel);
 	listGroupItem.appendChild(addedToDo);
 	currentToDoList.appendChild(listGroupItem);
-	fetch('/api/users/'+userInfo.id+'/todos', {
+	fetch('/api/todos/'+userInfo.id, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -438,7 +450,7 @@ for (let item of toDoItems) {
 	item.addEventListener('change', () => switchToDoLocation(item));
 }
 
-let userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
+let userInfo = {'id': 0, 'username': 'LifeOnTrack', 'password': 'password'}; //placeholder
 
 let saveItemChanges = document.getElementById('saveItemChanges');
 
@@ -448,21 +460,19 @@ saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
 
 async function updateItemChanges(itemId) {
     let personalCalId = window.localStorage.getItem('personalCalId');
-    console.log(itemId);
-	let updatedItem = {id: itemId, name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: personalCalId, calendar_title: null, related_links: null};
+	let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: personalCalId, related_links: null};
 	updatedItem.name = document.getElementById('itemName').value;
-	updatedItem.calendar_title = document.getElementById('calendarName').placeholder;
 	updatedItem.description = document.getElementById('itemDescription').value;
 	let itemType = document.getElementById('itemType');
 	if(itemType.value === 'Action Item') {
-		updatedItem.type = 'action';
+		updatedItem.type = 1;
 		let itemStatus = document.getElementById('itemStatus');
 		if(itemStatus.value === 'Not Started') {
-			updatedItem.status = 'not started';
+			updatedItem.status = 1;
 		} else if(itemStatus.value === 'In Progress') {
-			updatedItem.status = 'in progress';
+			updatedItem.status = 2;
 		} else if (itemStatus.value === 'Completed') {
-			updatedItem.status = 'completed';
+			updatedItem.status = 3;
 		}
 		updatedItem.start = document.getElementById('itemDueDate').value;
 	} else {
@@ -470,51 +480,57 @@ async function updateItemChanges(itemId) {
 		updatedItem.start = document.getElementById('startTime').value;
 		updatedItem.end = document.getElementById('endTime').value;
 	}
-	updatedItem.related_links = document.getElementById('itemLinks').value;
-	fetch('/api/calendars/'+personalCalId+'/items/'+itemId, {
+    updatedItem.related_links = document.getElementById('itemLinks').value;
+    console.log(updatedItem);
+	fetch('/api/items/'+personalCalId+'/'+itemId, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(updatedItem)
-	});
-	$('#itemEditCenter').modal('hide');
+    });
+    searchForCalendarItems();
+    let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
+    console.log(dayInfo);
+    setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
+    $('#itemEditCenter').modal('hide');
+    //setUpDayCard();
 }
 
 async function loadPersonalCalendar() {
-	const response = await fetch('/api/calendars');
+	const response = await fetch('/api/calendars/'+userInfo.id);
 	if (!response.ok) {
 		console.log(response.error);
 		return;
 	}
-	let calendarData = await response.json();
+    let calendarData = await response.json();
 	for(let i = 0; i < calendarData.length; i++) {
-		if(calendarData[i].owner_id === userInfo.id && calendarData[i].personal === true) {
+		if(calendarData[i].owner_id === userInfo.id && calendarData[i].personal === 1) {
 			window.localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
 		}
-	}
+    }
 }
 
 async function searchForCalendarItems() {
-	console.log('run');
 	let personalCalId = window.localStorage.getItem('personalCalId');
-	const response = await fetch('/api/calendars/'+personalCalId+'/items'); 
+	const response = await fetch('/api/items/'+personalCalId); 
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
-	let itemData = await response.json();
-	window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
+    let itemData = await response.json();
+    console.log(itemData);
+    window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
+    console.log('items is ' + JSON.stringify(window.localStorage.getItem('personalCalItems')));
 }
 
 async function populateToDoList() {
-	const response = await fetch('/api/users/'+userInfo.id+'/todos'); 
+	const response = await fetch('/api/todos/'+userInfo.id); 
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
-	let toDoData = await response.json();
-	console.log(toDoData);
+    let toDoData = await response.json();
 	buildCurrentToDos(toDoData);
 	buildArchivedToDos(toDoData);
 }
@@ -523,7 +539,7 @@ function buildCurrentToDos(toDoData) {
 	let toDoItems = document.getElementById('toDoItems');
 	toDoItems.innerHTML = '';
 	for(let i = 0; i < toDoData.length; i++) {
-		if(toDoData[i].archived === false) {
+		if(toDoData[i].archived === 0) {
 			let newToDoDiv = document.createElement('div');
 			newToDoDiv.classList.add('list-group-item', 'list-group-item-action');
 			let newToDoFormCheck = document.createElement('div');
@@ -549,7 +565,7 @@ function buildArchivedToDos(toDoData) {
 	let archivedToDos = document.getElementById('archivedToDos');
 	archivedToDos.innerHTML = '';
 	for(let i = 0; i < toDoData.length; i++) {
-		if(toDoData[i].archived === true) {
+		if(toDoData[i].archived === 1) {
 			let newToDoDiv = document.createElement('div');
 			newToDoDiv.classList.add('list-group-item');
 			let newToDoFormCheck = document.createElement('div');
@@ -579,7 +595,7 @@ function buildArchivedToDos(toDoData) {
  * not yet hold the information we need it to.
  */
 async function loadNotificationBell(){
-	const user_id = JSON.parse(window.localStorage.getItem('userInfo')).id;
+	const user_id = userInfo.id;
 	const GNotifs = await fetch(`/api/users/${user_id}/notifications`);
 	if(!GNotifs.ok){
 		console.log('Unable to load notifications');
@@ -594,3 +610,4 @@ window.addEventListener('load', loadPersonalCalendar);
 window.addEventListener('load', searchForCalendarItems);
 window.addEventListener('load', populateToDoList);
 window.addEventListener('load', loadNotificationBell());
+window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth, 'year': currentYear}));
