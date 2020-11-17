@@ -55,20 +55,16 @@ exports.check = async function checkCreds(username, pwd){
 // if it fails, return false
 //otherwise, check password
 	// let user;
-	console.log('checking cred');
 	const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
 	if(user === '[]'){
-		console.log('no user');
 		return false;
 	}
 
 
-	else if(!user[0].password_val === pwd){ //TODO not failing where it is supposed to
-		console.log('wrong pss');
+	else if(user[0].password_val !== pwd){ //TODO not failing where it is supposed to
 		return false;
 	}
 	else{
-		console.log(user[0].password_val, '=?', pwd);
 		return true;
 	}
 };
@@ -76,6 +72,7 @@ exports.check = async function checkCreds(username, pwd){
 
 exports.checkLoggedIn = function checkLoggedIn(req, res, next) {
 	if(req.isAuthenticated()){
+		console.log('is logged in');
 		//if you are logged/ authenticated, run next route
 		next();
 	} else {
