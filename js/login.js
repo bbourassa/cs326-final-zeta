@@ -66,7 +66,7 @@ async function validate(){
 	const usern = document.getElementById('inputUsername').value;
 	const pass = document.getElementById('inputPassword').value;
 	try {
-        console.log('validating');
+		console.log('validating');
 		await fetch('/login', {
 			method: 'POST',
 			headers:{
