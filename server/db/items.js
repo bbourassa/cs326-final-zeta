@@ -61,11 +61,8 @@ exports.findUnlinked = function(req, res){
 
 exports.edit = function(req, res) {
     let itemId = req.params.item;
-    console.log('id is ' + itemId);
     let name = req.body.name;
-    console.log('name is ' + name);
     let itemType = req.body.type;
-    console.log('type is ' + itemType);
     let startTime = req.body.start;
     console.log('start time is ' + startTime);
     let endTime = req.body.end;
@@ -78,6 +75,9 @@ exports.edit = function(req, res) {
     console.log('calendar id is ' + calendarId);
     let relatedLinks = req.body.related_links;
     console.log('related links is ' + relatedLinks);
+    if(itemType === 2) {
+        itemStatus = 0;
+    }
     /*db.none('UPDATE public."items_for_calendars" SET name=$1, WHERE id=0;', [name]);*/
     db.none('UPDATE public."items_for_calendars" SET name=$1, item_type=$2, start_time=$3, end_time=$4, description=$5, item_status=$6, related_links=$7 WHERE id=$8 AND calendar_id=$9;', [name, itemType, startTime, endTime, description, itemStatus, relatedLinks, itemId, calendarId]);
 	res.sendStatus(204);
