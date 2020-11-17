@@ -19,10 +19,9 @@ exports.list = async function(req, res) {
     //res.json(todos.filter(todo => todo.user_id === req.user.id));
 };
 
-exports.create = function(req, res) {
-    console.log('hit');
-	let lastId =  db.any('SELECT MAX(id) FROM public."items_for_calendars";');
-    let newId = lastId + 1; 
+exports.create = async function(req, res) {
+    let lastId =  await db.any('SELECT MAX(id) FROM public."to_dos";');
+    let newId = lastId[0].max + 1; 
     let content = req.body.content;
     let userId = req.params.user;
     let archived = 0;
@@ -43,11 +42,14 @@ exports.find = async function(req, res) {
 };
 
 exports.edit = function(req, res) {
+    console.log('hit');
     let userId = req.params.user;
     let toDoId = req.params.todo;
-    let content = req.body.content;
-    let archived = req.body.archived
-    db.none('UPDATE public."to_dos" SET content=$1, archived=$2 WHERE id=$3 AND user_id=$4;', [content, archived, toDoId, userId]);
+    //let content = req.body.content;
+    let archived = req.body.archived;
+    let timeOfArchive = req.body.timeArchived;
+    console.log(userId, toDoId, archived, timeOfArchive);
+    db.none('UPDATE public."to_dos" SET archived=$1, time_of_archive=$2 WHERE id=$3 AND user_id=$4;', [archived, timeOfArchive, toDoId, userId]);
 	res.sendStatus(204);
 };
 
