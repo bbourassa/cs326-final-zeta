@@ -8,86 +8,72 @@ have been entered. Enables sign-in button only
 when username and password field have inputs.
 
 */
-function checkHasInputs() {
-	let setActive = true;
-	for(let input of inputs) {
-		if(input.value === '') {
-			setActive = false;
-			break;
-		}
-	}
-	if (setActive === true) {
-		signInButton.disabled = false;
-	}
-}
-
-// async function searchUsers(currUser, currPassword) {
-// 	const response = await fetch('/api/users');
-// 	if (!response.ok) {
-// 		console.log(response.error);
-// 		return;
-// 	}
-// 	let allUsers = await response.json();
-// 	console.log(allUsers);
-// 	for(let i = 0; i < allUsers.length; i++) {
-// 		if(allUsers[i].username === currUser) {
-// 			if(allUsers[i].password === currPassword) {
-// 				window.localStorage.setItem('userInfo', JSON.stringify({id: allUsers[i].id, username: allUsers[i].username, password: allUsers[i].password }));
-// 				return true;
-// 			}
+// function checkHasInputs() {
+// 	let setActive = true;
+// 	for(let input of inputs) {
+// 		if(input.value === '') {
+// 			setActive = false;
+// 			break;
 // 		}
 // 	}
-// 	return false;
+// 	if (setActive === true) {
+// 		signInButton.disabled = false;
+// 	}
 // }
 
-// /*
-// FOR NOW: redirects to the Personal Calendar
-//          page on sign-in
-// */
-// function redirectToCal() {
-// 	let currentUsername = document.getElementById('inputUsername');
-// 	let currentPassword = document.getElementById('inputPassword');
-// 	//let validUser = false;
-// 	searchUsers(currentUsername.value, currentPassword.value).then((res) => {if(res === true) { window.location = '../html/personalcal.html';} else {
-// 		if(document.getElementById('loginError') === null) {
-// 			let loginError = document.createElement('p');
-// 			loginError.classList.add('text-uppercase');
-// 			loginError.id = 'loginError';
-// 			loginError.innerHTML = 'Invalid Login Info';
-// 			document.getElementById('loginText').appendChild(loginError);
-// 		}
-// 	}});
+// function login(){
+// 	let form = document.getElementById('login-form');
+// 	let data = new FormData(form);
+// 	console.log("formdata",data);
 // }
 
-/**
- * posts the login data. Authentication handles the rest
- */
-async function validate(){
-	const usern = document.getElementById('inputUsername').value;
-	const pass = document.getElementById('inputPassword').value;
-	try {
-		console.log('validating');
-		await fetch('/login', {
-			method: 'POST',
-			headers:{
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({username: usern, password:pass })
-		});
-	} catch (e) {
-		console.log('Unable to login. ', e);
-	}
-}
+// async function validate(){
+// 	const usern = document.getElementById('inputUsername').value;
+// 	const pass = document.getElementById('inputPassword').value;
+// 	try {
+// 		console.log('validating');
+// 		await fetch('/login', {
+// 			method: 'POST',
+// 			headers:{
+// 				'Content-Type': 'application/json'
+// 			},
+// 			body: JSON.stringify({username: usern, password:pass })
+// 		});
+// 	} catch (e) {
+// 		console.log('Unable to login. ', e);
+// 	}
+// }
 
 /*
 FOR NOW: -sets methods for signInButton
          -sets validation checks on user input
 FUTURE:  TBD
 */
-const signInButton = document.getElementById('signIn');
-signInButton.addEventListener('click', validate);
+// const signIn = document.getElementById('login-form');
+// signIn.addEventListener('submit', (e) =>{
+// 	console.log('submitted');
+// 	e.preventDefault();
 
-const inputs = document.getElementsByTagName('input');
-for(let input of inputs) {
-	input.addEventListener('keyup', checkHasInputs);
-}
+// 	// construct a FormData object, which fires the formdata event
+// 	new FormData(signIn);
+// });
+
+// signIn.addEventListener('formdata', (e) => {
+// 	console.log('formdata fired');
+
+// 	// Get the form data from the event object
+// 	let data = e.formData;
+// 	console.log(data.inputUsername);
+// 	for (let value of data.values()) {
+// 		console.log(value);
+// 	}
+// 	// submit the data via XHR
+// 	let request = new XMLHttpRequest();
+// 	request.open('POST', '/login');
+// 	request.send(data);
+// });
+
+// const inputs = document.getElementsByTagName('input');
+// for(let input of inputs) {
+// 	input.addEventListener('keyup', checkHasInputs);
+// }

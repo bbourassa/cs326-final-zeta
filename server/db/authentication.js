@@ -3,6 +3,7 @@
 
 // For loading environment variables.
 require('dotenv').config(); //Should be as high up as possible-- does the .env stuff
+const e = require('express');
 const express = require('express');                 // express routing
 const expressSession = require('express-session');  // for managing session state
 const passport = require('passport');               // handles authentication
@@ -35,6 +36,11 @@ exports.findU =  async function findUser(username){
 	// let exists;
 	try {
 		const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
+		console.log(username, user);
+		if(user === '[]'){
+			console.log('not exst');
+			return false;
+		}
 		return true;
 	} catch(e){
 		console.log(e);
@@ -50,16 +56,21 @@ exports.check = async function checkCreds(username, pwd){
 //otherwise, check password
 	// let user;
 	console.log('checking cred');
-	try { //check that user exists by username, returns user
-		const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
-		//then check password
-		if(user[0].password_val !== pwd){
-			return false;
-		}
-	} catch (e){
+	const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
+	if(user === '[]'){
+		console.log('no user');
 		return false;
 	}
-	return true;
+
+
+	else if(!user[0].password_val === pwd){ //TODO not failing where it is supposed to
+		console.log('wrong pss');
+		return false;
+	}
+	else{
+		console.log(user[0].password_val, '=?', pwd);
+		return true;
+	}
 };
 
 

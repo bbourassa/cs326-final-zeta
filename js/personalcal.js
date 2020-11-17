@@ -523,7 +523,7 @@ async function deleteItem(itemId) {
     console.log(dayInfo);
     setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
     $('#itemEditCenter').modal('hide');
-} 
+}
 
 async function loadPersonalCalendar() {
 	const response = await fetch('/api/calendars/'+userInfo.id);
