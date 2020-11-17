@@ -5,10 +5,10 @@ const path = require('path');
 const app = express();
 
 //SECRET
-const dbconnection = require('./secret.json');
-const username= dbconnection.username;
-const password=dbconnection.password;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// const dbconnection = require('./secret.json');
+// const username= dbconnection.username;
+// const password=dbconnection.password;
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const expressSession = require('express-session');  // for managing session state
 const passport = require('passport');               // handles authentication
@@ -23,7 +23,8 @@ const pgp = require('pg-promise')({
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
-const url = process.env.DATABASE_URL || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+const url = process.env.DATABASE_URL;
+//  || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
 
 exports.db = pgp(url);
 
@@ -48,7 +49,8 @@ app.use('/html', express.static(path.join(dir, 'html')));
 
 //session configuration
 const session = {
-	secret: process.env.SECRET || dbconnection.secret,
+	secret: process.env.SECRET ,
+	// || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
@@ -65,7 +67,6 @@ const strategy = new LocalStrategy(
 			await new Promise((r) => setTimeout(r, 2000));
 			return done(null, false, {'message':'Wrong username or password'});
 		}
-		//create a user object, associated w/ user_id
 		// currently: user object is username string
 		return done(null, username);
 	}

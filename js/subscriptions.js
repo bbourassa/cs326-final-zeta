@@ -493,6 +493,8 @@ async function loadTable(calId){
 
 	const response = await fetch(`/api/calendars/${calId}`);
 	let calData = await response.json();
+	calData = calData[0];
+	console.log(calData);
 	// console.log(calData);
 	//make this work with r
 	const admin = (calData.owner_id === user_id);
@@ -530,9 +532,11 @@ async function loadTable(calId){
 		return;
 	}
 	let calItems = await items.json();
+	console.log(calItems);
 
 	//load each item in this calendar
 	calItems.forEach((item) => {
+		console.log(item);
 		let anItem = document.createElement('tr');
 
 		anItem.setAttribute('itemID', item.id);
