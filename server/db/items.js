@@ -13,7 +13,7 @@ ENUM FOR STATUS:
     3 corresponds to 'completed'
 */
 db.none('CREATE TABLE IF NOT EXISTS items_for_calendars(id INTEGER PRIMARY KEY, name VARCHAR, item_type INT, start_time VARCHAR, end_time VARCHAR, description TEXT, item_status INT, calendar_id INT, related_links TEXT, parent_id INT);');
-//db.none('UPDATE public."items_for_calendars" SET parent_id=$1 WHERE id=0', [0]);
+//db.none('UPDATE public."items_for_calendars" SET start_time=$1 WHERE id=$2 AND calendar_id=$3;', ['2020-11-18T10:23', 1, 0]);
 
 exports.listAll = async function(req, res) {
     res.json(await db.any('SELECT * FROM public."items_for_calendars";'));
@@ -36,7 +36,8 @@ exports.create = function(req, res) {
     let itemStatus = req.body.itemStatus;
     let calendarId = req.params.cal;
     let relatedLinks = req.body.relatedLinks;
-    db.none('INSERT INTO public."items_for_calendars"(id, name, item_type, start_time, end_time, description, item_status, calendar_id, related_links) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9);', [newId, name, itemType, startTime, endTime, description, itemStatus, calendarId, relatedLinks]);
+    let parentId = req.body.parentId
+    db.none('INSERT INTO public."items_for_calendars"(id, name, item_type, start_time, end_time, description, item_status, calendar_id, related_links, parent_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);', [newId, name, itemType, startTime, endTime, description, itemStatus, calendarId, relatedLinks, parentId]);
 	res.sendStatus(201);
 };
 
@@ -83,6 +84,7 @@ exports.edit = function(req, res) {
 };
 
 exports.remove = function(req, res) {
+    console.log('hit');
     let calendarId = req.params.cal;
     let itemId = req.params.item;
     db.none('DELETE from public."items_for_calendars" WHERE calendar_id=$1 AND id=$2;', [calendarId, itemId]);
