@@ -11,13 +11,15 @@ function loadAll(userId){
 	loadNotifications();
 
 }
-
-// loadAll(0);
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+	fetch('/logout');
+});
 
 /**
  * Loads the event listers for each setting button
  */
 function loadSettingListeners(){
+
 	//  the header checkbox will cause all other check oxes to check/uncheck
 	document.getElementById('checkAll').addEventListener('change', ()=> {
 		let rows = document.getElementById('eventTable').childNodes;
@@ -491,6 +493,8 @@ async function loadTable(calId){
 
 	const response = await fetch(`/api/calendars/${calId}`);
 	let calData = await response.json();
+	calData = calData[0];
+	console.log(calData);
 	// console.log(calData);
 	//make this work with r
 	const admin = (calData.owner_id === user_id);
@@ -528,9 +532,11 @@ async function loadTable(calId){
 		return;
 	}
 	let calItems = await items.json();
+	console.log(calItems);
 
 	//load each item in this calendar
 	calItems.forEach((item) => {
+		console.log(item);
 		let anItem = document.createElement('tr');
 
 		anItem.setAttribute('itemID', item.id);

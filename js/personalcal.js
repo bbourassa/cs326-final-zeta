@@ -1,5 +1,5 @@
 'use strict';
-/* eslint-env jquery */ //this tag is needed so that the $in the modal 
+/* eslint-env jquery */ //this tag is needed so that the $in the modal
 //calls don't throw an error
 //window.addEventListener('load', checkForUser());
 //console.log(window.localStorage.getItem('userInfo'));
@@ -9,12 +9,16 @@
 	console.log(window.localStorage.getItem('userInfo'));
 }*/
 
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+	fetch('/logout');
+});
+
 /*
 TEMP ID TO USE
 */
 //let userInfo = {'id': 0};
 /*
-FOR NOW: -this function updates the DayView Title 
+FOR NOW: -this function updates the DayView Title
           when a day is clicked on the calendar
          -it also updates the calendar to show which
           date has been clicked
@@ -52,17 +56,17 @@ function switchDate(day, month, year) {
 }
 
 /*
-FOR NOW: -sets calendar body based on the current day 
+FOR NOW: -sets calendar body based on the current day
           information which comes from getting the current
           date as well as accounting for the number of days
           in the current month (daysInMonth() accounts for
           this)
-FUTURE:  -will associate appropriate item data with each 
+FUTURE:  -will associate appropriate item data with each
           day on calendar
 */
 function setUpCalendar(month, year) {
 	let firstDay = (new Date(year, month)).getDay();
-    
+
 	let days = document.getElementById('days');
 	let totalDays = daysInMonth(month, year);
 
@@ -72,7 +76,7 @@ function setUpCalendar(month, year) {
 		newDateDiv.classList.add('btn');
 		newDateDiv.classList.add('date');
 		newDateItem.appendChild(newDateDiv);
-		days.appendChild(newDateItem); 
+		days.appendChild(newDateItem);
 	}
 	for(let i = 1; i < totalDays+1; i++) {
 		let newDateItem = document.createElement('li');
@@ -135,10 +139,10 @@ function daysInMonth(month, year) {
 
 /*
 FOR NOW: updates the Daily view with correct date header
-         for initial date --> anymore updates to the card 
+         for initial date --> anymore updates to the card
          happen in switchDate() as of now but some of that
          code may be pulled out to another method
-FUTURE:  will update item information based on status in 
+FUTURE:  will update item information based on status in
          order to demonstrate the correct information
          for what is due on which day
 */
@@ -185,7 +189,7 @@ async function setUpDayCard(day, month, year) {
 				} else if (thisStatus === 3) {
 					let statusDiv = document.getElementById('completed');
 					statusDiv.append(newDayItem);
-				} 
+				}
 			}
 		}
 	}
@@ -242,7 +246,7 @@ function resetDayCard() {
 	scheduleHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-light');
 	scheduleHeader.innerHTML = 'Today\'s Schedule';
 	scheduleDiv.appendChild(scheduleHeader);
-    
+
 	let notStartedDiv = document.getElementById('notStarted');
 	notStartedDiv.innerHTML = '';
 	let notStartedHeader = document.createElement('div');
@@ -313,7 +317,7 @@ function switchCalendar(selectedMonth, selectedYear) {
 		newDateDiv.classList.add('btn');
 		newDateDiv.classList.add('date');
 		newDateItem.appendChild(newDateDiv);
-		days.appendChild(newDateItem); 
+		days.appendChild(newDateItem);
 	}
 	for(let i = 1; i < totalDays+1; i++) {
 		let newDateItem = document.createElement('li');
@@ -565,7 +569,7 @@ async function loadPersonalCalendar() {
 
 async function searchForCalendarItems() {
 	let personalCalId = window.localStorage.getItem('personalCalId');
-	const response = await fetch('/api/items/'+personalCalId); 
+	const response = await fetch('/api/items/'+personalCalId);
 	if(!response.ok) {
 		console.log(response.error);
 		return;
@@ -578,7 +582,7 @@ async function searchForCalendarItems() {
 }
 
 async function populateToDoList() {
-    console.log('hit populate todo list');
+  console.log('hit populate todo list');
 	const response = await fetch('/api/todos/'+userInfo.id); 
 	if(!response.ok) {
 		console.log(response.error);
@@ -672,7 +676,7 @@ async function buildArchivedToDos(toDoData) {
 /**
  * This function loads the notification bell with the correct number
  * of notifications.
- * It is currently hard coded to be set to 1, as the GET response does 
+ * It is currently hard coded to be set to 1, as the GET response does
  * not yet hold the information we need it to.
  */
 async function loadNotificationBell(){
