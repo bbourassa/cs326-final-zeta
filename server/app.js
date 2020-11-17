@@ -82,11 +82,12 @@ app.get('/',
 		console.log(req.id);
 		res.redirect('../html/personalcal.html');
 	});
-app.get('/html/subscriptions.html',
-	auth.checkLoggedIn,
-	(req, res) =>{
-		res.redirect('/html/subscriptions.html');
-	});
+// app.get('/html/subscriptions.html',
+// 	auth.checkLoggedIn,
+// 	console.log('checked'),
+// 	(req, res) =>{
+// 		res.redirect(express.static(path.join(dir, 'html')));
+// 	});
 
 
 passport.serializeUser((user, done) => {  //produces an identifier;
