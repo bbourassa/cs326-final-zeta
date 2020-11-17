@@ -495,8 +495,52 @@ let deleteItemBtn = document.getElementById('deleteItemBtn');
 
 let tempId = 0;
 
+function checkRequiredFields() {
+    console.log('hit check required');
+    let itemNameVal = document.getElementById('itemName').value;
+    let itemType = document.getElementById('itemType').value;
+    console.log('itemNameVal', itemNameVal, 'itemType', itemType);
+    if(itemType === 'Action Item') {
+        console.log('hit action check');
+        let dueDateVal = document.getElementById('itemDueDate').value;
+        if(itemNameVal !== '' && dueDateVal !== '') {
+            saveItemChanges.disabled = false;
+        }
+    } else {
+        let startTimeVal = document.getElementById('startTime').value;
+        let endTimeVal = document.getElementById('endTime').value;
+        if(itemNameVal !== '' && startTimeVal !== '' && endTimeVal !== '') {
+            saveItemChanges.disabled = false;
+        }
+    }
+}
+
+function disableSave() {   
+    saveItemChanges.disabled = true;
+    $('#itemEditCenter').modal('hide');
+}
+
 saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
-deleteItemBtn.addEventListener('click', () => deleteItem(tempId));
+let itemInputElements = document.getElementById('itemForm').getElementsByTagName('input');
+
+for(let item of itemInputElements) {
+    if(item.id === 'itemName') {
+        console.log('add keyup');
+        item.addEventListener('keyup', checkRequiredFields);
+    } else {
+        item.addEventListener('change', checkRequiredFields);
+    }
+}
+
+let itemTextAreaElements = document.getElementById('itemForm').getElementsByTagName('textarea');
+for(let item of itemTextAreaElements) {
+    item.addEventListener('keyup', checkRequiredFields);
+}
+
+deleteItemBtn.addEventListener('click', confirmDelete);
+
+let closeItemBtn = document.getElementById('closeItemBtn');
+closeItemBtn.addEventListener('click', disableSave());
 
 async function updateItemChanges(itemId) {
     let personalCalId = window.localStorage.getItem('personalCalId');
@@ -537,6 +581,13 @@ async function updateItemChanges(itemId) {
     //setUpDayCard();
 }
 
+let confirmDeletionBtn = document.getElementById('confirmDeletionBtn');
+confirmDeletionBtn.addEventListener('click', () => deleteItem(tempId));
+
+function confirmDelete() {
+    $('#confirmItemDelete').modal('show');
+}
+
 async function deleteItem(itemId) {
     let personalCalId = window.localStorage.getItem('personalCalId');
     fetch('/api/items/'+personalCalId+'/'+itemId, {
@@ -550,6 +601,7 @@ async function deleteItem(itemId) {
     let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
     console.log(dayInfo);
     setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
+    $('#confirmItemDelete').modal('hide');
     $('#itemEditCenter').modal('hide');
 } 
 

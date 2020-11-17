@@ -5,9 +5,9 @@ const path = require('path');
 const app = express();
 
 //SECRET
-// const dbconnection = require('./secret.json');
-// const username= dbconnection.username;
-// const password=dbconnection.password;
+/*const dbconnection = require('./secrets.json');
+const username= dbconnection.username;
+const password=dbconnection.password;*/
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const expressSession = require('express-session');  // for managing session state
@@ -24,7 +24,7 @@ const pgp = require('pg-promise')({
     }*/
 });
 const url = process.env.DATABASE_URL;
-//  || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+//|| `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
 
 exports.db = pgp(url);
 
@@ -49,8 +49,8 @@ app.use('/html', express.static(path.join(dir, 'html')));
 
 //session configuration
 const session = {
-	secret: process.env.SECRET ,
-	// || dbconnection.secret,
+    secret: process.env.SECRET, 
+    // || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
