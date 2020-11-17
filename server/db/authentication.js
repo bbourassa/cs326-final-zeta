@@ -36,7 +36,7 @@ exports.findU =  async function findUser(username){
 	// let exists;
 	try {
 		const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
-		console.log(username, user);
+		// console.log(username, user);
 		if(user === '[]'){
 			console.log('not exst');
 			return false;
@@ -47,6 +47,19 @@ exports.findU =  async function findUser(username){
 		return false;
 	}
 	// return exists;
+};
+
+exports.addUser = function addUser(name, pwd) {
+
+	// Check for user
+	if(!findUser(name)){
+
+
+		console.log('added');
+		return true;
+	} else{
+		return false;
+	}
 };
 
 
@@ -72,10 +85,10 @@ exports.check = async function checkCreds(username, pwd){
 
 exports.checkLoggedIn = function checkLoggedIn(req, res, next) {
 	if(req.isAuthenticated()){
-		console.log('is logged in');
 		//if you are logged/ authenticated, run next route
 		next();
 	} else {
+		console.log('not logged it');
 		//otherwise, redirect to login
 		res.redirect('../html/index.html');
 	}

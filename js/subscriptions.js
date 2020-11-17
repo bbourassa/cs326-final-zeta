@@ -9,6 +9,7 @@ function loadAll(userId){
 	loadCalendars(userId);
 	loadSettingListeners();
 	loadNotifications();
+	// console.log()
 
 }
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
@@ -526,7 +527,7 @@ async function loadTable(calId){
 	}
 
 	//load the items associated with this calendar
-	const items = await fetch(`/api/calendars/${calId}/items`);
+	const items = await fetch('/api/items/'+calId);
 	if(!items.ok){
 		console.log(items.error);
 		return;
@@ -572,8 +573,9 @@ async function loadTable(calId){
 		let status = document.createElement('td');
 		let prog = document.createElement('button');
 		prog.classList.add('btn','btn-sm', 'disabled');
-		if(item.status!== null ){
-			let low =  (item.status).toLowerCase();
+		if(item.item_status!== null ){
+
+			let low =  (item.item_status).toLowerCase();
 			if(low === 'in progress'){
 				prog.classList.add('btn-warning');
 			} else if (low === 'not started'){
