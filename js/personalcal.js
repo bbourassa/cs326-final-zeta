@@ -189,12 +189,21 @@ async function setUpDayCard(day, month, year) {
 			newDayItem.classList.add('list-group-item', 'list-group-item-action', 'day-item');
 			newDayItem.setAttribute('data-toggle', 'modal');
             newDayItem.setAttribute('data-target', '#itemEditCenter');
-            const response = await fetch('/api/calendars/'+calendarItems[i].parent_id);
-	        if (!response.ok) {
-		        console.log(response.error);
+            console.log('parent id', calendarItems[i].parent_id);
+            const firstResponse = await fetch('/api/item/'+calendarItems[i].parent_id);
+            if (!firstResponse.ok) {
+		        console.log(firstResponse.error);
 		    return;
 	        }
+            let parentItem = await firstResponse.json();
+            console.log('parentItem', parentItem);
+            const response = await fetch('/api/cals/'+parentItem[0].calendar_id);
+	        if (!response.ok) {
+		        console.log(response.error);
+		        return;
+	        }
             let parentCalendar = await response.json();
+            console.log('parentCalendar', parentCalendar);
 			newDayItem.innerHTML = parentCalendar[0].name + ': ';
 			newDayItem.innerHTML += calendarItems[i].name;
             newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, parentCalendar[0].name));
@@ -252,7 +261,7 @@ async function fillModalInfo(itemId, parentCalendar) {
 		itemDueDate.value = currentItem.start_time.slice(0, 16);
 	} else {
 		itemType.value = 'Event';
-		setUpdateForm();
+        setUpdateForm();
 		let itemStartTime = document.getElementById('startTime');
 		itemStartTime.value = currentItem.start_time.slice(0, 16);
 		let itemEndTime = document.getElementById('endTime');
@@ -374,9 +383,35 @@ function updateCalendar() {
 	}
 }
 
-function switchToDoLocation(toDo) {
-	console.log(toDo);
-	/*let itemNum = toDo.id;
+async function switchToDoLocation(toDo) {
+    let toDoItem = toDo.getElementsByTagName('input');
+    if(toDoItem[0].checked === true) {
+        let thisId = toDo.getElementsByTagName('label')[0].id;
+        let currentTime = new Date().toISOString(); //ZULU TIME CURRENTLY
+        let archiveInfo = {archived: 1, timeArchived: currentTime};
+        fetch('/api/todos/'+userInfo.id+'/'+thisId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(archiveInfo)
+        });
+    } else {
+        console.log('hit');
+        let thisId = toDo.getElementsByTagName('label')[0].id;
+        console.log(thisId);
+        let archiveInfo = {archived: 0, timeArchived: null};
+        fetch('/api/todos/'+userInfo.id+'/'+thisId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(archiveInfo)
+        });
+    }
+    populateToDoList();
+	/*console.log('isChecked', toDoItem[0].checked);
+	let itemNum = toDo.id;
     console.log(toDo);
     let divForToDo = document.getElementById('toDo'+itemNum);
     divForToDo.remove();
@@ -395,12 +430,14 @@ function setUpdateForm() {
 		itemStatus.style.display = 'inline-block';
 		dueDateShow.style.display = 'inline-block';
 		startTimeShow.style.display = 'none';
-		endTimeShow.style.display = 'none';
+        endTimeShow.style.display = 'none';
+        saveItemChanges.disabled = true;
 	} else if (currentType.value === 'Event') {
 		itemStatus.style.display = 'none';
 		dueDateShow.style.display = 'none';
 		startTimeShow.style.display = 'inline-block';
-		endTimeShow.style.display = 'inline-block';
+        endTimeShow.style.display = 'inline-block';
+        saveItemChanges.disabled = true;
 	}
 }
 
@@ -421,9 +458,10 @@ async function setNewToDo() {
 	let inputHelper = document.createElement('i');
 	inputHelper.classList.add('input-helper');
 	formCheckLabel.appendChild(inputHelper);
-	addedToDo.appendChild(formCheckLabel);
+    addedToDo.appendChild(formCheckLabel);
+    addedToDo.addEventListener('click', () => switchToDoLocation(addedToDo));
 	listGroupItem.appendChild(addedToDo);
-	currentToDoList.appendChild(listGroupItem);
+    currentToDoList.appendChild(listGroupItem);
 	fetch('/api/todos/'+userInfo.id, {
 		method: 'POST',
 		headers: {
@@ -458,13 +496,13 @@ window.addEventListener('load', setUpCalendarSelection);
 window.addEventListener('load', setUpdateForm);
 
 const dayItems = document.getElementsByClassName('day-item');
-
+console.log('dayItems', dayItems);
 for (let item of dayItems) {
 	item.addEventListener('click', () => switchItem(item.textContent));
 }
 
 const calSelections = document.getElementsByClassName('calendar-selection');
-
+console.log('calSelections', calSelections);
 for (let item of calSelections) {
 	item.addEventListener('change', updateCalendar);
 }
@@ -477,11 +515,12 @@ let addToDoItem = document.getElementById('addToDo');
 
 addToDoItem.addEventListener('click', setNewToDo);
 
-let toDoItems = document.getElementsByClassName('to-do-item');
-
+/*const toDoItems = document.getElementsByName('to-do-item');
+console.log('toDoItems', toDoItems[0])
 for (let item of toDoItems) {
-	item.addEventListener('change', () => switchToDoLocation(item));
-}
+    console.log('parent item', item.parentElement.nodeName);
+	item.addEventListener('click', () => switchToDoLocation(item));
+}*/
 
 let userInfo = {'id': 0, 'username': 'LifeOnTrack', 'password': 'password'}; //placeholder
 console.log(userInfo);
@@ -491,8 +530,54 @@ let deleteItemBtn = document.getElementById('deleteItemBtn');
 
 let tempId = 0;
 
+function checkRequiredFields() {
+    console.log('hit check required');
+    let itemNameVal = document.getElementById('itemName').value;
+    let itemType = document.getElementById('itemType').value;
+    console.log('itemNameVal', itemNameVal, 'itemType', itemType);
+    if(itemType === 'Action Item') {
+        console.log('hit action check');
+        let dueDateVal = document.getElementById('itemDueDate').value;
+        if(itemNameVal !== '' && dueDateVal !== '') {
+            saveItemChanges.disabled = false;
+        }
+    } else {
+        let startTimeVal = document.getElementById('startTime').value;
+        let endTimeVal = document.getElementById('endTime').value;
+        if(itemNameVal !== '') {
+            if(startTimeVal !== '' && endTimeVal !== '') {
+                saveItemChanges.disabled = false;
+            } 
+        }
+    }
+}
+
+function disableSave() {   
+    saveItemChanges.disabled = true;
+    $('#itemEditCenter').modal('hide');
+}
+
 saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
-deleteItemBtn.addEventListener('click', () => deleteItem(tempId));
+let itemInputElements = document.getElementById('itemForm').getElementsByTagName('input');
+
+for(let item of itemInputElements) {
+    if(item.id === 'itemName') {
+        console.log('add keyup');
+        item.addEventListener('keyup', checkRequiredFields);
+    } else {
+        item.addEventListener('change', checkRequiredFields);
+    }
+}
+
+let itemTextAreaElements = document.getElementById('itemForm').getElementsByTagName('textarea');
+for(let item of itemTextAreaElements) {
+    item.addEventListener('keyup', checkRequiredFields);
+}
+
+deleteItemBtn.addEventListener('click', confirmDelete);
+
+let closeItemBtn = document.getElementById('closeItemBtn');
+closeItemBtn.addEventListener('click', disableSave());
 
 async function updateItemChanges(itemId) {
     let personalCalId = window.localStorage.getItem('personalCalId');
@@ -533,6 +618,13 @@ async function updateItemChanges(itemId) {
     //setUpDayCard();
 }
 
+let confirmDeletionBtn = document.getElementById('confirmDeletionBtn');
+confirmDeletionBtn.addEventListener('click', () => deleteItem(tempId));
+
+function confirmDelete() {
+    $('#confirmItemDelete').modal('show');
+}
+
 async function deleteItem(itemId) {
     let personalCalId = window.localStorage.getItem('personalCalId');
     fetch('/api/items/'+personalCalId+'/'+itemId, {
@@ -546,11 +638,12 @@ async function deleteItem(itemId) {
     let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
     console.log(dayInfo);
     setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
+    $('#confirmItemDelete').modal('hide');
     $('#itemEditCenter').modal('hide');
 }
 
 async function loadPersonalCalendar() {
-	const response = await fetch('/api/calendars/'+userInfo.id);
+	const response = await fetch('/api/cals/'+userInfo.id+'/all');
 	if (!response.ok) {
 		console.log(response.error);
 		return;
@@ -578,7 +671,8 @@ async function searchForCalendarItems() {
 }
 
 async function populateToDoList() {
-	const response = await fetch('/api/todos/'+userInfo.id);
+  console.log('hit populate todo list');
+	const response = await fetch('/api/todos/'+userInfo.id); 
 	if(!response.ok) {
 		console.log(response.error);
 		return;
@@ -596,47 +690,74 @@ function buildCurrentToDos(toDoData) {
 			let newToDoDiv = document.createElement('div');
 			newToDoDiv.classList.add('list-group-item', 'list-group-item-action');
 			let newToDoFormCheck = document.createElement('div');
-			newToDoFormCheck.classList.add('form-check');
+            newToDoFormCheck.classList.add('form-check');
 			let newToDoLabel = document.createElement('label');
 			newToDoLabel.classList.add('form-check-label');
 			let newToDoInput = document.createElement('input');
 			newToDoInput.classList.add('checkbox', 'to-do-item');
-			newToDoInput.setAttribute('type', 'checkbox');
+            newToDoInput.setAttribute('type', 'checkbox');
+            console.log(newToDoInput);
 			let newInputHelper = document.createElement('i');
 			newInputHelper.classList.add('input-helper');
 			newToDoLabel.appendChild(newToDoInput);
-			newToDoLabel.innerHTML += ' ' + toDoData[i].content;
+            newToDoLabel.innerHTML += ' ' + toDoData[i].content;
+            newToDoLabel.id = toDoData[i].id;
 			newToDoLabel.appendChild(newInputHelper);
-			newToDoFormCheck.appendChild(newToDoLabel);
+            newToDoFormCheck.appendChild(newToDoLabel);
+            newToDoFormCheck.addEventListener('click', () => switchToDoLocation(newToDoFormCheck));
 			newToDoDiv.appendChild(newToDoFormCheck);
 			toDoItems.appendChild(newToDoDiv);
 		}
 	}
 }
 
-function buildArchivedToDos(toDoData) {
+function checkArchiveTime(toDoItem) {
+    let archiveTime = new Date(toDoItem.time_of_archive);
+    let maxTimeWindow = new Date(new Date(archiveTime).getTime() + 60 * 60 * 24 * 1000);
+    let currentTime = new Date();
+    console.log(currentTime < maxTimeWindow);
+    if(currentTime > maxTimeWindow) {
+        return true;
+    }
+    return false;
+}
+
+async function buildArchivedToDos(toDoData) {
 	let archivedToDos = document.getElementById('archivedToDos');
 	archivedToDos.innerHTML = '';
 	for(let i = 0; i < toDoData.length; i++) {
 		if(toDoData[i].archived === 1) {
-			let newToDoDiv = document.createElement('div');
-			newToDoDiv.classList.add('list-group-item');
-			let newToDoFormCheck = document.createElement('div');
-			newToDoFormCheck.classList.add('form-check');
-			let newToDoLabel = document.createElement('label');
-			newToDoLabel.classList.add('form-check-label', 'item-checked', 'text-muted');
-			let newToDoInput = document.createElement('input');
-			newToDoInput.classList.add('checkbox', 'to-do-item');
-			newToDoInput.setAttribute('type', 'checkbox');
-			newToDoInput.setAttribute('checked', true);
-			let newInputHelper = document.createElement('i');
-			newInputHelper.classList.add('input-helper');
-			newToDoLabel.appendChild(newToDoInput);
-			newToDoLabel.innerHTML += ' ' + toDoData[i].content;
-			newToDoLabel.appendChild(newInputHelper);
-			newToDoFormCheck.appendChild(newToDoLabel);
-			newToDoDiv.appendChild(newToDoFormCheck);
-			archivedToDos.appendChild(newToDoDiv);
+            if (checkArchiveTime(toDoData[i]) === false) {
+                let newToDoDiv = document.createElement('div');
+                newToDoDiv.classList.add('list-group-item');
+                let newToDoFormCheck = document.createElement('div');
+                newToDoFormCheck.classList.add('form-check');
+                let newToDoLabel = document.createElement('label');
+                newToDoLabel.classList.add('form-check-label', 'item-checked', 'text-muted');
+                let newToDoInput = document.createElement('input');
+                newToDoInput.classList.add('checkbox', 'to-do-item');
+                newToDoInput.setAttribute('type', 'checkbox');
+                newToDoInput.setAttribute('checked', true);
+                let newInputHelper = document.createElement('i');
+                newInputHelper.classList.add('input-helper');
+                newToDoLabel.appendChild(newToDoInput);
+                newToDoLabel.innerHTML += ' ' + toDoData[i].content;
+                newToDoLabel.id = toDoData[i].id;
+                newToDoLabel.appendChild(newInputHelper);
+                newToDoFormCheck.appendChild(newToDoLabel);
+                newToDoFormCheck.addEventListener('click', () => switchToDoLocation(newToDoFormCheck));
+                newToDoDiv.appendChild(newToDoFormCheck);
+                archivedToDos.appendChild(newToDoDiv);
+            } else {
+                //FILL IN FOR DELETE TODOS
+                fetch('/api/todos/'+userInfo.id+'/'+toDoData[i].id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    //body: JSON.stringify(updatedItem)
+                });
+            }
 		}
 	}
 }
