@@ -168,6 +168,7 @@ async function setUpDayCard(day, month, year) {
 			newDayItem.classList.add('list-group-item', 'list-group-item-action', 'day-item');
 			newDayItem.setAttribute('data-toggle', 'modal');
             newDayItem.setAttribute('data-target', '#itemEditCenter');
+            newDayItem.id = 'item'+calendarItems[i].id;
             console.log('parent id', calendarItems[i].parent_id);
             const firstResponse = await fetch('/api/item/'+calendarItems[i].parent_id);
             if (!firstResponse.ok) {
@@ -263,7 +264,7 @@ function resetDayCard() {
 	notStartedDiv.innerHTML = '';
 	let notStartedHeader = document.createElement('div');
 	notStartedHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-danger');
-	notStartedHeader.innerHTML = 'Not Started';
+    notStartedHeader.innerHTML = 'Not Started';
 	notStartedDiv.appendChild(notStartedHeader);
 
 	let inProgressDiv = document.getElementById('inProgress');
@@ -588,7 +589,39 @@ async function updateItemChanges(itemId) {
     searchForCalendarItems();
     let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
     console.log(dayInfo);
-    setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
+    let itemToMove = document.getElementById('item'+itemId);
+    document.getElementById('item'+itemId).remove();
+    //FIND THE ITEM
+    const updateItemResponse = await fetch('/api/item/'+itemId);
+    if (!updateItemResponse.ok) {
+        console.log(updateItemResponse.error);
+        return;
+    }
+    let thisUpdatedItem = await updateItemResponse.json();
+    let indexOfSplit = itemToMove.innerText.indexOf(':');
+    let currentItemName = itemToMove.innerText.substring(0, indexOfSplit+2);
+    itemToMove.innerText = currentItemName + thisUpdatedItem[0].name;
+    //console.log('itemToMoveName', itemToMove.innerText.substring(indexOfSplit+2));
+    if(thisUpdatedItem[0].item_status === 1) {
+        console.log('hit not started');
+        let notStartedDiv = document.getElementById('notStarted');
+        console.log(notStartedDiv);
+        notStartedDiv.appendChild(itemToMove);
+        console.log(notStartedDiv);
+    } else if(thisUpdatedItem[0].item_status === 2) {
+        console.log('hit in progress');
+        let inProgressDiv = document.getElementById('inProgress');
+        console.log('inProgressDiv', inProgressDiv);
+        inProgressDiv.appendChild(itemToMove);
+    } else if(thisUpdatedItem[0].item_status === 3) {
+        let completedDiv = document.getElementById('completed');
+        completedDiv.appendChild(itemToMove);
+    } else {
+        let todaysScheduleDiv = document.getElementById('todaysSchedule');
+        todaysScheduleDiv.appendChild(itemToMove);
+    }
+    //CHECK ITS STATUS
+    //setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
     $('#itemEditCenter').modal('hide');
     //setUpDayCard();
 }

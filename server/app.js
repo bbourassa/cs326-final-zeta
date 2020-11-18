@@ -50,7 +50,7 @@ app.use('/html', express.static(path.join(dir, 'html')));
 //session configuration
 const session = {
     secret: process.env.SECRET,
-	// || dbconnection.secret,
+    // || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
