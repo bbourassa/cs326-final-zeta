@@ -25,9 +25,9 @@ exports.list = async function(req, res) {
     //res.end(JSON.stringify(db.any('SELECT name FROM public."items_for_calendars" WHERE id=$1;', [calendarId])));
 };
 
-exports.create = function(req, res) {
-    let lastId =  db.any('SELECT MAX(id) FROM public."items_for_calendars";');
-    let newId = lastId + 1; 
+exports.create = async function(req, res) {
+    let lastId =  await db.any('SELECT MAX(id) FROM public."items_for_calendars";');
+    let newId = lastId[0].max + 1; 
     let name = req.body.name;
     let itemType = req.body.itemType;
     let startTime = req.body.startTime;
@@ -36,16 +36,30 @@ exports.create = function(req, res) {
     let itemStatus = req.body.itemStatus;
     let calendarId = req.params.cal;
     let relatedLinks = req.body.relatedLinks;
-    let parentId = req.body.parentId
+    let parentId = 0;
+    if (req.body.isParent === true) {
+        parentId = newId;
+    } else {
+        console.log('hit');
+        parentId = req.body.oldId;
+    }
+    console.log(lastId, newId, name, itemType, startTime, endTime, description, itemStatus, calendarId, relatedLinks, parentId);
     db.none('INSERT INTO public."items_for_calendars"(id, name, item_type, start_time, end_time, description, item_status, calendar_id, related_links, parent_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);', [newId, name, itemType, startTime, endTime, description, itemStatus, calendarId, relatedLinks, parentId]);
 	res.sendStatus(201);
 };
 
 exports.find = async function(req, res) {
+    console.log('hit find item');
     let calendarId = req.params.cal;
     let itemId = req.params.item;
     res.json(await db.any('SELECT * FROM public."items_for_calendars" WHERE calendar_id=$1 AND id=$2;', [calendarId, itemId]));
 };
+
+exports.search = async function(req, res) {
+    //console.log('item locate');
+    let itemId = req.params.item;
+    res.json(await db.any('SELECT * FROM public."items_for_calendars" WHERE id=$1;', [itemId]));
+}
 
 //NOT SURE WE EVER USE THIS 
 exports.findUnlinked = function(req, res){

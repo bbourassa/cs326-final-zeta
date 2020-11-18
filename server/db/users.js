@@ -15,10 +15,10 @@ exports.list = async function(req, res) {
     res.json(await db.any('SELECT * FROM public."users";'));
 };
 
-exports.create = function(req, res) {
+exports.create = async function(req, res) {
 	res.sendStatus(201);
-	let lastId = db.any('SELECT MAX(id) FROM public."users";');
-	let newId = lastId + 1;
+	let lastId = await db.any('SELECT MAX(id) FROM public."users";');
+	let newId = lastId[0].max + 1;
     let username = req.body.username;
     let firstName = req.body.firstName;
     let lastName = req.body.lastName;

@@ -22,10 +22,23 @@ exports.list = async function(req, res) {
 	//res.json(req.subs);
 };
 
-exports.create = function(req, res) {
+exports.listSubscribed = async function(req, res) {
+    let userId = req.params.user;
+    let subscriptionList = await db.any('SELECT * FROM public."subscriptions" WHERE user_id=$1', [userId]);
+    let subCalendars = [];
+    for(let i = 0; i < subscriptionList.length; i++) {
+        let thisCalendar = await db.any('SELECT * FROM public."calendars" WHERE id=$1 AND personal=0', [subscriptionList[i].calendar_id]);
+        if(thisCalendar[0] !== undefined) {
+            subCalendars.push(thisCalendar[0]);
+        }
+    }
+    res.json(subCalendars);
+}
+
+exports.create = async function(req, res) {
 	res.sendStatus(201);
-	let lastId =  db.any('SELECT MAX(id) FROM public."items_for_calendars";');
-    let newId = lastId + 1; 
+	let lastId =  await db.any('SELECT MAX(id) FROM public."subscriptions";');
+    let newId = lastId[0].max + 1; 
     let userId = req.params.user;
     let calendarId = req.body.calendarId;
     db.none('INSERT INTO public."subscriptions"(id, user_id, calendar_id) VALUES($1, $2, $3);', [newId, userId, calendarId]);

@@ -165,12 +165,21 @@ async function setUpDayCard(day, month, year) {
 			newDayItem.classList.add('list-group-item', 'list-group-item-action', 'day-item');
 			newDayItem.setAttribute('data-toggle', 'modal');
             newDayItem.setAttribute('data-target', '#itemEditCenter');
-            const response = await fetch('/api/calendars/'+calendarItems[i].parent_id);
+            console.log('parent id', calendarItems[i].parent_id);
+            const firstResponse = await fetch('/api/item/'+calendarItems[i].parent_id);
+            if (!firstResponse.ok) {
+		        console.log(firstResponse.error);
+		    return;
+	        }
+            let parentItem = await firstResponse.json();
+            console.log('parentItem', parentItem);
+            const response = await fetch('/api/cals/'+parentItem[0].calendar_id);
 	        if (!response.ok) {
 		        console.log(response.error);
 		    return;
 	        }
             let parentCalendar = await response.json();
+            console.log('parentCalendar', parentCalendar);
 			newDayItem.innerHTML = parentCalendar[0].name + ': ';
 			newDayItem.innerHTML += calendarItems[i].name;
             newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, parentCalendar[0].name));
@@ -228,7 +237,7 @@ async function fillModalInfo(itemId, parentCalendar) {
 		itemDueDate.value = currentItem.start_time.slice(0, 16);
 	} else {
 		itemType.value = 'Event';
-		setUpdateForm();
+        setUpdateForm();
 		let itemStartTime = document.getElementById('startTime');
 		itemStartTime.value = currentItem.start_time.slice(0, 16);
 		let itemEndTime = document.getElementById('endTime');
@@ -397,12 +406,14 @@ function setUpdateForm() {
 		itemStatus.style.display = 'inline-block';
 		dueDateShow.style.display = 'inline-block';
 		startTimeShow.style.display = 'none';
-		endTimeShow.style.display = 'none';
+        endTimeShow.style.display = 'none';
+        saveItemChanges.disabled = true;
 	} else if (currentType.value === 'Event') {
 		itemStatus.style.display = 'none';
 		dueDateShow.style.display = 'none';
 		startTimeShow.style.display = 'inline-block';
-		endTimeShow.style.display = 'inline-block';
+        endTimeShow.style.display = 'inline-block';
+        saveItemChanges.disabled = true;
 	}
 }
 
@@ -509,8 +520,10 @@ function checkRequiredFields() {
     } else {
         let startTimeVal = document.getElementById('startTime').value;
         let endTimeVal = document.getElementById('endTime').value;
-        if(itemNameVal !== '' && startTimeVal !== '' && endTimeVal !== '') {
-            saveItemChanges.disabled = false;
+        if(itemNameVal !== '') {
+            if(startTimeVal !== '' && endTimeVal !== '') {
+                saveItemChanges.disabled = false;
+            } 
         }
     }
 }
@@ -606,7 +619,7 @@ async function deleteItem(itemId) {
 } 
 
 async function loadPersonalCalendar() {
-	const response = await fetch('/api/calendars/'+userInfo.id);
+	const response = await fetch('/api/cals/'+userInfo.id+'/all');
 	if (!response.ok) {
 		console.log(response.error);
 		return;
