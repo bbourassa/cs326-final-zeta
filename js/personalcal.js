@@ -12,7 +12,7 @@
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
-
+window.localStorage.clear();
 /*
 TEMP ID TO USE
 */
@@ -65,6 +65,7 @@ FUTURE:  -will associate appropriate item data with each
           day on calendar
 */
 function setUpCalendar(month, year) {
+    console.log('hit setup calendar');
 	let firstDay = (new Date(year, month)).getDay();
 
 	let days = document.getElementById('days');
@@ -147,12 +148,14 @@ FUTURE:  will update item information based on status in
          for what is due on which day
 */
 async function setUpDayCard(day, month, year) {
+    console.log('hit setup day card');
 	let dayViewTitle = document.getElementById('dayViewTitle');
 	dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[month-1] + ' ' + day + ' ' + year;
-	let calendarItems = await searchForCalendarItems();
+    let calendarItems = await searchForCalendarItems();
+    console.log('calendarItems', calendarItems);
     let dayEvents = [];
     //console.log('personalCalItems', JSON.parse(window.localStorage.getItem('personalCalItems')));
-	resetDayCard();
+    resetDayCard();
 	for(let i = 0; i < calendarItems.length; i++) {
         console.log(calendarItems[i]);
 		let thisYear = parseInt(calendarItems[i].start_time.slice(0, 4));
@@ -466,10 +469,6 @@ let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'A
 /*initial page setup for calendar and
 daily view
 */
-window.addEventListener('load', () => setUpCalendar(currentMonth, currentYear));
-window.addEventListener('load', () => setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear));
-window.addEventListener('load', setUpCalendarSelection);
-window.addEventListener('load', setUpdateForm);
 
 const dayItems = document.getElementsByClassName('day-item');
 console.log('dayItems', dayItems);
@@ -498,7 +497,7 @@ for (let item of toDoItems) {
 	item.addEventListener('click', () => switchToDoLocation(item));
 }*/
 
-let userInfo = {'id': 0, 'username': 'LifeOnTrack', 'password': 'password'}; //placeholder
+let userInfo = {'id': 1, 'username': 'LifeOnTrack', 'password': 'password'}; //placeholder
 console.log(userInfo);
 
 let saveItemChanges = document.getElementById('saveItemChanges');
@@ -627,13 +626,17 @@ async function loadPersonalCalendar() {
     let calendarData = await response.json();
 	for(let i = 0; i < calendarData.length; i++) {
 		if(calendarData[i].owner_id === userInfo.id && calendarData[i].personal === 1) {
+            console.log('hit set personal calid');
 			window.localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
 		}
     }
+    setUpCalendar(currentMonth, currentYear);
+    setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
 }
 
 async function searchForCalendarItems() {
-	let personalCalId = window.localStorage.getItem('personalCalId');
+    let personalCalId = window.localStorage.getItem('personalCalId');
+    console.log('personalCalId', personalCalId);
 	const response = await fetch('/api/items/'+personalCalId);
 	if(!response.ok) {
 		console.log(response.error);
@@ -756,7 +759,13 @@ async function loadNotificationBell(){
 	document.getElementById('num-Notifications').innerHTML = 1;
 }
 
-window.addEventListener('load', loadPersonalCalendar);
+window.addEventListener('load', async () => {
+    loadPersonalCalendar();
+});
+//window.addEventListener('load', () => setUpCalendar(currentMonth, currentYear));
+window.addEventListener('load', () => setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear));
+window.addEventListener('load', setUpCalendarSelection);
+window.addEventListener('load', setUpdateForm);
 window.addEventListener('load', searchForCalendarItems);
 window.addEventListener('load', populateToDoList);
 window.addEventListener('load', loadNotificationBell());
