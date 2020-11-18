@@ -8,18 +8,26 @@
 /*function checkForUser() {
 	console.log(window.localStorage.getItem('userInfo'));
 }*/
+window.addEventListener('load', loadUser());
+
+let globalU;
+
 async function loadUser(){
 	const username = await fetch('/user');
 	if(!username.ok){
 		console.log(username.error);
 	}
 	const name = await username.json();
-	console.log('username'+name);
+	// console.log('username'+name);
 	const userid = await fetch('/api/username/'+name);
-	const id = await userid;
-	console.log('USER: ',name, id);
+	const id = await userid.json();
+	// console.log('USER: ',name, id[0].id);
+	console.log(id[0].id);
+	globalU =  JSON.stringify(id[0].id);
+	// return id[0].id;
 }
-
+loadUser();
+console.log(globalU);
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
@@ -650,5 +658,4 @@ window.addEventListener('load', loadPersonalCalendar);
 window.addEventListener('load', searchForCalendarItems);
 window.addEventListener('load', populateToDoList);
 window.addEventListener('load', loadNotificationBell());
-window.addEventListener('load', loadUser());
 window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth, 'year': currentYear}));

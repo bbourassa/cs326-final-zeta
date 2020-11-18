@@ -49,9 +49,8 @@ exports.load = async function(req, res, next) {
 exports.findById = async function(req, res) {
 	const username = req.params.username;
 	try{
-		res.json(await db.any('SELECT * FROM users WHERE Username="'+username+'";'));
-		// console.log(user);
-		// res.end(user);
+		let user = res.json(await db.any('SELECT * FROM public."users" WHERE username=$1;', [username]));
+		res.end(user);
 
 	} catch(e){
 		res.status(404).send('User Not Found');
