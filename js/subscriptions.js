@@ -223,6 +223,7 @@ function loadSettingListeners(){
 	//delete selected items
 	document.getElementById('setDeleteItem').addEventListener('click', async()=>{
         const checkedItemIds = getCheckedItems();
+        console.log(checkedItemIds);
         //console.log('checkedItemIds', checkedItemIds);
 		//assumes the appropriate cal is the one you are on currently
         const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
@@ -233,8 +234,10 @@ function loadSettingListeners(){
                     'Content-Type': 'application/json'
                 },
             });
+            document.getElementById(checkedItemIds[i]).remove();
+            console.log('hit removed');
         }
-        loadTable(cal_id);
+        //(cal_id, true);
 		/*if(document.getElementById('itemList')){
 			document.getElementById('itemsToDelete').removeChild(document.getElementById('itemList'));
 		}
@@ -435,7 +438,7 @@ function getCheckedItems(){
 	let allBoxes = document.getElementsByClassName('itemCheck');
 	for (let i=0; i<allBoxes.length; i++){
 		if(allBoxes[i].checked){
-			const itemID = parseInt(allBoxes[i].parentElement.parentElement.getAttribute('itemid'));
+			const itemID = parseInt(allBoxes[i].parentElement.parentElement.getAttribute('id'));
 
 			checkedBoxes.push(itemID);
 		}
@@ -471,7 +474,7 @@ async function loadNotifications(){
 			document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
 		}
 		//currently hard coded
-		loadTable(1); // placeholder
+		loadTable(1, true); // placeholder
 		//should send you to the right cal items);
 		noti.parentElement.removeChild(noti);
 		//if that was the last notification, hide the notification card
@@ -564,7 +567,7 @@ async function loadCalendars(){
 				document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
             }
             console.log('hit load table');
-			loadTable(cal.id);
+			loadTable(cal.id, true);
 		});
 		if(admin){
 			let adminIndic = document.createElement('btn'); //btn btn-outline-secondary btn-sm float-right
@@ -581,11 +584,11 @@ async function loadCalendars(){
 	//this function assumes that the new subscription will be at the end
 	//of your list of subscriptions
 	if(window.localStorage.getItem('newSubscription')){
-		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'));
+		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'), true);
 		window.localStorage.removeItem('newSubscription');
 	}
 
-	loadTable(subs.childNodes[1].getAttribute('cal_id'));
+	loadTable(subs.childNodes[1].getAttribute('cal_id'), true);
 
 }
 
@@ -593,8 +596,10 @@ async function loadCalendars(){
  * Gets and renders all events and activities in a given calendar
  * @param {int} calId the id number for the calendar
  */
-async function loadTable(calId) {
-    document.getElementById('eventTable').innerHTML = '';
+async function loadTable(calId, rebuild) {
+    if(rebuild === true) {
+        document.getElementById('eventTable').innerHTML = '';
+    }
 	const response = await fetch('/api/cals/'+calId+'/');
     let calData = await response.json();
 	calData = calData[0];
@@ -603,31 +608,33 @@ async function loadTable(calId) {
 	//make this work with r
 	const admin = (calData.owner_id === user_id);
 
+    if(rebuild === true) {
+        document.getElementById('cal-name').innerHTML = calData.name;
+        document.getElementById('cal-name').setAttribute('calID', calId);
+    }
 
-	document.getElementById('cal-name').innerHTML = calData.name;
-	document.getElementById('cal-name').setAttribute('calID', calId);
-
-	//Add or remove the edit column based on whether you are an admin
-	if(!admin){
-		if(document.getElementById('table-edit')){
-			document.getElementById('table-head').removeChild(document.getElementById('table-edit'));
-		}
-	}
-	//if you are admin, and then edit isn't already there, add it
-	else if(!document.getElementById('table-edit')){
-		let edit =document.createElement('th');
-		edit.setAttribute('id','table-edit');
-		edit.innerHTML = 'EDIT';
-		edit.classList.add('text-uppercase', 'font-weight-bold');
-		document.getElementById('table-head').appendChild(edit);
-	}
-
-	//if you are an admin and admin settings are not vsible
-	if(admin){
-		document.getElementById('adminSettings').hidden = false;
-	} else{
-		document.getElementById('adminSettings').hidden =true;
-	}
+    //Add or remove the edit column based on whether you are an admin
+    if(rebuild === true) {
+        if(!admin){
+            if(document.getElementById('table-edit')){
+                document.getElementById('table-head').removeChild(document.getElementById('table-edit'));
+            }
+        }
+        //if you are admin, and then edit isn't already there, add it
+        else if(!document.getElementById('table-edit')){
+            let edit =document.createElement('th');
+            edit.setAttribute('id','table-edit');
+            edit.innerHTML = 'EDIT';
+            edit.classList.add('text-uppercase', 'font-weight-bold');
+            document.getElementById('table-head').appendChild(edit);
+        }
+        	//if you are an admin and admin settings are not vsible
+	    if(admin){
+		    document.getElementById('adminSettings').hidden = false;
+	    } else{
+		    document.getElementById('adminSettings').hidden =true;
+	    }
+    }
 
 	//load the items associated with this calendar
 	const items = await fetch('/api/items/'+calId);
@@ -638,117 +645,233 @@ async function loadTable(calId) {
 	let calItems = await items.json();
 	console.log(calItems);
 
-	//load each item in this calendar
-	calItems.forEach((item) => {
-		console.log(item);
-		let anItem = document.createElement('tr');
-
-		anItem.setAttribute('itemID', item.id);
-
-		let check = document.createElement('td');
-		let box = document.createElement('input');
-		box.type ='checkbox';
-		box.classList.add('itemCheck');
-		// box.setAttribute('name', 'itemCheck');
-		check.appendChild(box);
-		anItem.appendChild(check);
-
-		//load name
-		let name= document.createElement('td');
-		name.innerHTML = item.name;
-		anItem.appendChild(name);
-
-		//load duedate/start date
-        let date = document.createElement('td');
-        console.log('hit start time');
-		if(item.start_time !== ''){
-            let time = new Date(item.start_time).toDateString();
-            console.log('time', time);
-			date.innerHTML = time;
-        } 
-        /*else if(item.end_time !== ''){
-			date.innerHTML = item.end_time;
-		}*/
-		anItem.appendChild(date);
-
-		//load type of Event
-        let type = document.createElement('td');
-        if(item.item_type === 1) {
-            type.innerHTML = 'Action Item';
-        } else {
-            type.innerHTML = 'Event';
-        } 
-		//type.innerHTML = item.item_type;
-		anItem.appendChild(type);
-
-		//creates status indicator
-		let status = document.createElement('td');
-		let prog = document.createElement('button');
-        prog.classList.add('btn','btn-sm');
-        prog.disabled = true;
-		if(item.item_status!== null ){
-			let low =  (item.item_status);
-			if(low === 2){
-                prog.classList.add('btn-warning');
-                prog.innerHTML = 'In Progress';
-			} else if (low === 1){
-                prog.classList.add('btn-danger');
-                prog.innerHTML = 'Not Started';
-			} else if(low === 3){
-                prog.classList.add('btn-success');
-                prog.innerHTML = 'Completed';
-			}
-		}
-		status.appendChild(prog);
-		anItem.appendChild(status);
-
-
-		//creates detail
-		let info = document.createElement('td');
-		let infoBtn = document.createElement ('button');
-		infoBtn.classList.add('btn', 'btn-sm', 'btn-outline-info');
-		infoBtn.innerText = 'Details';
-		infoBtn.setAttribute('data-toggle', 'modal');
-		infoBtn.setAttribute('data-target', '#editConfirmation');
-		infoBtn.addEventListener('click', () =>{
-            //pop up modal with any details, non-editable
-            console.log('cal-name', document.getElementById('cal-name').value);
-			fillModalInfo(item, document.getElementById('cal-name').textContent);
-			loadCommit();
-			document.getElementById('btnsForEdits').setAttribute('hidden', true);
-			document.getElementById('commitMessage').setAttribute('hidden', true);
-			document.getElementById('confEditHeader').innerText = 'Details';
-			document.getElementById('reviewMessage').setAttribute('hidden', true);
-
-
-		});
-		info.appendChild(infoBtn);
-		anItem.appendChild(info);
-
-
-		if(admin){
-			//make cell and button
-			let editable = document.createElement('td');
-			let editBtn = document.createElement('button');
-			//button activates modal
-			editBtn.setAttribute('data-toggle', 'modal');
-			editBtn.setAttribute('data-target', '#itemEditCenter');
-			editBtn.setAttribute('type', 'button');
-			editBtn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-			editBtn.innerHTML = 'Edit';
-            console.log('cal-name', document.getElementById('cal-name').textContent);
-			editBtn.addEventListener('click', ()=> {
-				fillModalInfo(item, document.getElementById('cal-name').textContent);
-			});
-
-			editable.appendChild(editBtn);
-			anItem.appendChild(editable);
-
-		}
-
-		document.getElementById('eventTable').appendChild(anItem);
-
-	});
+    //load each item in this calendar
+    if(rebuild === true) {
+        calItems.forEach((item) => {
+            console.log(item);
+            let anItem = document.createElement('tr');
+    
+            anItem.setAttribute('id', item.id);
+    
+            let check = document.createElement('td');
+            let box = document.createElement('input');
+            box.type ='checkbox';
+            box.classList.add('itemCheck');
+            // box.setAttribute('name', 'itemCheck');
+            check.appendChild(box);
+            anItem.appendChild(check);
+    
+            //load name
+            let name= document.createElement('td');
+            name.innerHTML = item.name;
+            anItem.appendChild(name);
+    
+            //load duedate/start date
+            let date = document.createElement('td');
+            console.log('hit start time');
+            if(item.start_time !== ''){
+                let time = new Date(item.start_time).toDateString();
+                console.log('time', time);
+                date.innerHTML = time;
+            } 
+            /*else if(item.end_time !== ''){
+                date.innerHTML = item.end_time;
+            }*/
+            anItem.appendChild(date);
+    
+            //load type of Event
+            let type = document.createElement('td');
+            if(item.item_type === 1) {
+                type.innerHTML = 'Action Item';
+            } else {
+                type.innerHTML = 'Event';
+            } 
+            //type.innerHTML = item.item_type;
+            anItem.appendChild(type);
+    
+            //creates status indicator
+            let status = document.createElement('td');
+            let prog = document.createElement('button');
+            prog.classList.add('btn','btn-sm');
+            prog.disabled = true;
+            if(item.item_status!== null ){
+                let low =  (item.item_status);
+                if(low === 2){
+                    prog.classList.add('btn-warning');
+                    prog.innerHTML = 'In Progress';
+                } else if (low === 1){
+                    prog.classList.add('btn-danger');
+                    prog.innerHTML = 'Not Started';
+                } else if(low === 3){
+                    prog.classList.add('btn-success');
+                    prog.innerHTML = 'Completed';
+                }
+            }
+            status.appendChild(prog);
+            anItem.appendChild(status);
+    
+    
+            //creates detail
+            let info = document.createElement('td');
+            let infoBtn = document.createElement ('button');
+            infoBtn.classList.add('btn', 'btn-sm', 'btn-outline-info');
+            infoBtn.innerText = 'Details';
+            infoBtn.setAttribute('data-toggle', 'modal');
+            infoBtn.setAttribute('data-target', '#editConfirmation');
+            infoBtn.addEventListener('click', () =>{
+                //pop up modal with any details, non-editable
+                console.log('cal-name', document.getElementById('cal-name').value);
+                fillModalInfo(item, document.getElementById('cal-name').textContent);
+                loadCommit();
+                document.getElementById('btnsForEdits').setAttribute('hidden', true);
+                document.getElementById('commitMessage').setAttribute('hidden', true);
+                document.getElementById('confEditHeader').innerText = 'Details';
+                document.getElementById('reviewMessage').setAttribute('hidden', true);
+    
+    
+            });
+            info.appendChild(infoBtn);
+            anItem.appendChild(info);
+    
+    
+            if(admin){
+                //make cell and button
+                let editable = document.createElement('td');
+                let editBtn = document.createElement('button');
+                //button activates modal
+                editBtn.setAttribute('data-toggle', 'modal');
+                editBtn.setAttribute('data-target', '#itemEditCenter');
+                editBtn.setAttribute('type', 'button');
+                editBtn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+                editBtn.innerHTML = 'Edit';
+                console.log('cal-name', document.getElementById('cal-name').textContent);
+                editBtn.addEventListener('click', ()=> {
+                    fillModalInfo(item, document.getElementById('cal-name').textContent);
+                });
+    
+                editable.appendChild(editBtn);
+                anItem.appendChild(editable);
+    
+            }
+    
+            document.getElementById('eventTable').appendChild(anItem);
+    
+        });
+    } else if (rebuild === false) {
+        let newItem = calItems[0];
+        for(let i = 0; i < calItems.length; i++) {
+            if(calItems[i].id > newItem.id) {
+                newItem = calItems[i];
+            }
+        }
+        console.log(newItem);
+            let anItem = document.createElement('tr');
+    
+            anItem.setAttribute('id', 'item'+newItem.id);
+    
+            let check = document.createElement('td');
+            let box = document.createElement('input');
+            box.type ='checkbox';
+            box.classList.add('itemCheck');
+            // box.setAttribute('name', 'itemCheck');
+            check.appendChild(box);
+            anItem.appendChild(check);
+    
+            //load name
+            let name= document.createElement('td');
+            name.innerHTML = newItem.name;
+            anItem.appendChild(name);
+    
+            //load duedate/start date
+            let date = document.createElement('td');
+            console.log('hit start time');
+            if(newItem.start_time !== ''){
+                let time = new Date(newItem.start_time).toDateString();
+                console.log('time', time);
+                date.innerHTML = time;
+            } 
+            /*else if(item.end_time !== ''){
+                date.innerHTML = item.end_time;
+            }*/
+            anItem.appendChild(date);
+    
+            //load type of Event
+            let type = document.createElement('td');
+            if(newItem.item_type === 1) {
+                type.innerHTML = 'Action Item';
+            } else {
+                type.innerHTML = 'Event';
+            } 
+            //type.innerHTML = item.item_type;
+            anItem.appendChild(type);
+    
+            //creates status indicator
+            let status = document.createElement('td');
+            let prog = document.createElement('button');
+            prog.classList.add('btn','btn-sm');
+            prog.disabled = true;
+            if(newItem.item_status!== null ){
+                let low =  (newItem.item_status);
+                if(low === 2){
+                    prog.classList.add('btn-warning');
+                    prog.innerHTML = 'In Progress';
+                } else if (low === 1){
+                    prog.classList.add('btn-danger');
+                    prog.innerHTML = 'Not Started';
+                } else if(low === 3){
+                    prog.classList.add('btn-success');
+                    prog.innerHTML = 'Completed';
+                }
+            }
+            status.appendChild(prog);
+            anItem.appendChild(status);
+    
+    
+            //creates detail
+            let info = document.createElement('td');
+            let infoBtn = document.createElement ('button');
+            infoBtn.classList.add('btn', 'btn-sm', 'btn-outline-info');
+            infoBtn.innerText = 'Details';
+            infoBtn.setAttribute('data-toggle', 'modal');
+            infoBtn.setAttribute('data-target', '#editConfirmation');
+            infoBtn.addEventListener('click', () =>{
+                //pop up modal with any details, non-editable
+                console.log('cal-name', document.getElementById('cal-name').value);
+                fillModalInfo(newItem, document.getElementById('cal-name').textContent);
+                loadCommit();
+                document.getElementById('btnsForEdits').setAttribute('hidden', true);
+                document.getElementById('commitMessage').setAttribute('hidden', true);
+                document.getElementById('confEditHeader').innerText = 'Details';
+                document.getElementById('reviewMessage').setAttribute('hidden', true);
+    
+    
+            });
+            info.appendChild(infoBtn);
+            anItem.appendChild(info);
+    
+    
+            if(admin){
+                //make cell and button
+                let editable = document.createElement('td');
+                let editBtn = document.createElement('button');
+                //button activates modal
+                editBtn.setAttribute('data-toggle', 'modal');
+                editBtn.setAttribute('data-target', '#itemEditCenter');
+                editBtn.setAttribute('type', 'button');
+                editBtn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+                editBtn.innerHTML = 'Edit';
+                console.log('cal-name', document.getElementById('cal-name').textContent);
+                editBtn.addEventListener('click', ()=> {
+                    fillModalInfo(item, document.getElementById('cal-name').textContent);
+                });
+    
+                editable.appendChild(editBtn);
+                anItem.appendChild(editable);
+    
+            }
+    
+            document.getElementById('eventTable').appendChild(anItem);
+    }
 
 }
 
@@ -1173,7 +1296,8 @@ async function addNewItem() {
 		},
 		body: JSON.stringify(newItemToAdd)
     });
-    loadTable(cal_id);
+    //ADD NEW ROW IN THE TABLE
+    loadTable(cal_id, false);
     $('#itemAdditionCenter').modal('hide');
 }
 
