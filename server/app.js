@@ -133,7 +133,6 @@ app.get('/logout', (req, res) => {
 
 // );
 
-
 app.get('/api/users', users.list);
 app.post('/api/users', users.create);
 app.use('/api/users/:user', users.load);
@@ -188,5 +187,4 @@ app.get('/api/items', items.listAll);
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
 	console.log('Listening on http://localhost:' + port);
-
 });
