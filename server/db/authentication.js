@@ -3,7 +3,6 @@
 
 // For loading environment variables.
 require('dotenv').config(); //Should be as high up as possible-- does the .env stuff
-const e = require('express');
 const express = require('express');                 // express routing
 const expressSession = require('express-session');  // for managing session state
 const passport = require('passport');               // handles authentication
@@ -36,11 +35,6 @@ exports.findUser = async function findUser(username){
 	// let exists;
 	try {
 		const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
-		// console.log(username, user);
-		if(user === '[]'){
-			console.log('not exst');
-			return false;
-		}
 		return true;
 	} catch(e){
 		console.log(e);
@@ -103,16 +97,25 @@ exports.check = async function checkCreds(username, pwd){
 // if it fails, return false
 //otherwise, check password
 	// let user;
+<<<<<<< HEAD
 	const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
 	if(user === '[]'){
 		return false;
 	}
 	else if(user[0].password_val !== pwd){ //TODO not failing where it is supposed to
+=======
+	console.log('checking cred');
+	try { //check that user exists by username, returns user
+		const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
+		//then check password
+		if(user[0].password_val !== pwd){
+			return false;
+		}
+	} catch (e){
+>>>>>>> b6aaf9e528596b48c851f49ef7f560ba552dc8cf
 		return false;
 	}
-	else{
-		return true;
-	}
+	return true;
 };
 
 
@@ -121,7 +124,6 @@ exports.checkLoggedIn = function checkLoggedIn(req, res, next) {
 		//if you are logged/ authenticated, run next route
 		next();
 	} else {
-		console.log('not logged it');
 		//otherwise, redirect to login
 		res.redirect('../html/index.html');
 	}
