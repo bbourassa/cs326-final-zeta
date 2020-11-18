@@ -42,7 +42,7 @@
                 <div class="col-sm-6">
                     <div class="card shadow bg-white item-table">
                      <!-- Grid view of calendar events -->
-                     <h2 class="card-title text-uppercase font-weight-bold" id="cal-name">Select A Calendar</h2>
+                     <h2 class="card-title text-uppercase font-weight-bold" id="cal-name"></h2>
                      <table class="table table-responsive">
                          <thead>
                              <tr   id="table-head">
@@ -112,7 +112,7 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="card-title text-uppercase font-weight-bold">Edit Item</h2>
+                        <h2 class="card-title text-uppercase font-weight-bold" id="editItemTitle"></h2>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -121,27 +121,27 @@
                         <form id="editForm">
                             <div class="form-group">
                                 <label class="font-weight-bold">Item Name:
-                                    <input type="text" class="form-control shadow-sm modal-editable-area" id="itemName" placeholder="Milestone 1">
+                                    <input type="text" class="form-control shadow-sm modal-editable-area" id="itemName" placeholder="add item name">
                                 </label>
                                 <label class="font-weight-bold">Current Calendar:
-                                    <input class="form-control shadow-sm modal-editable-area" type="text" placeholder="CS 326" id="currCal" readonly>
+                                    <input class="form-control shadow-sm modal-editable-area" type="text"  id="calendarName" readonly>
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label class="font-weight-bold">
                                     Item Description:
-                                    <textarea class="form-control shadow-sm modal-editable-area" rows="3" type="text" placeholder="Add any details regarding the item" id="detailsText"></textarea>
+                                    <textarea class="form-control shadow-sm modal-editable-area" rows="3" type="text" placeholder="Add any details regarding the item" id="itemDescription"></textarea>
                                 </label>
                             </div>
                             <div class="form-group">
                                 <label class="font-weight-bold">Item Type:
-                                    <select class="custom-select shadow-sm  modal-editable-area" id="typeItem">
+                                    <select class="custom-select shadow-sm  modal-editable-area" id="itemType">
                                         <option value="Action Item" selected>Action Item</option>
                                         <option value="Event">Event</option>
                                       </select>
                                 </label>
-                                <label class="font-weight-bold"id="statusModal">Item Status:
-                                    <select class="custom-select shadow-sm  modal-editable-area" >
+                                <label class="font-weight-bold"id="showStatus">Item Status:
+                                    <select class="custom-select shadow-sm  modal-editable-area" id="itemStatus">
                                         <option selected value="Not Started">
                                             Not Started
                                         </option>
@@ -156,7 +156,7 @@
                             </div>
                             <div class="form-group" id="dueDateSet">
                                 <label class="font-weight-bold" id="showDueDate">Due Date:
-                                    <input class="form-control shadow-sm modal-editable-area" type="datetime-local" id="dueDate">
+                                    <input class="form-control shadow-sm modal-editable-area" type="datetime-local" id="itemDueDate">
                                 </label>
                                 <label class="font-weight-bold" id="showStartTime">Start Time:
                                     <input class="form-control shadow-sm modal-editable-area" type="datetime-local" id="startTime">
@@ -175,11 +175,86 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary shadow-sm" id="saveChanges">Save changes</button>
+                        <button type="button" class="btn btn-success shadow-sm" id="saveChanges" disabled>Save changes</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!--Adding Item modal-->
+        <div class="modal fade" id="itemAdditionCenter" tabindex="-1" role="dialog" aria-labelledby="itemAdditionCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="card-title text-uppercase font-weight-bold" id="editItemTitle">Add New Item</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="newItemForm">
+                            <div class="form-group">
+                                <label class="font-weight-bold">Item Name:
+                                    <input type="text" class="form-control shadow-sm modal-editable-area" id="newName" placeholder="add item name">
+                                </label>
+                                <label class="font-weight-bold">Current Calendar:
+                                    <input class="form-control shadow-sm modal-editable-area" type="text" placeholder=""  id="parentCal" readonly>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold">
+                                    Item Description:
+                                    <textarea class="form-control shadow-sm modal-editable-area" rows="3" type="text" placeholder="Add any details regarding the item" id="newDescription"></textarea>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold">Item Type:
+                                    <select class="custom-select shadow-sm  modal-editable-area" id="newItemType">
+                                        <option value="Action Item" selected>Action Item</option>
+                                        <option value="Event">Event</option>
+                                      </select>
+                                </label>
+                                <label class="font-weight-bold"id="showNewStatus">Item Status:
+                                    <select class="custom-select shadow-sm  modal-editable-area" id="newItemStatus">
+                                        <option selected value="Not Started">
+                                            Not Started
+                                        </option>
+                                        <option value="In Progress">
+                                            In Progress
+                                        </option>
+                                        <option value="Completed">
+                                            Completed
+                                        </option>
+                                      </select>
+                                </label>
+                            </div>
+                            <div class="form-group" id="dueDateSet">
+                                <label class="font-weight-bold" id="showNewDueDate">Due Date:
+                                    <input class="form-control shadow-sm modal-editable-area" type="datetime-local" id="newItemDueDate">
+                                </label>
+                                <label class="font-weight-bold" id="showNewStartTime">Start Time:
+                                    <input class="form-control shadow-sm modal-editable-area" type="datetime-local" id="newStartTime">
+                                </label>
+                                <label class="font-weight-bold" id="showNewEndTime">End Time:
+                                    <input class="form-control shadow-sm modal-editable-area" type="datetime-local", id="newEndTime">
+                                </label>
+                            </div>
+
+                            <div class="form-group item-on-table">
+                                <label class="font-weight-bold">Related Links:
+                                    <textarea class="form-control shadow-sm modal-editable-area" rows="3" type="text" placeholder="Add related links if necessary here" id="newItemLinks"></textarea>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success shadow-sm" id="createItemBtn">Create New Item</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Edit confirmation modal -->
         <div class = "modal fade" id="editConfirmation" tabindex="-1" role="dialog" aria-labelledby="editConfirmationTitle" aria-hidden="true" >
             <div class="modal-dialog modal-dialog-centered" role="document">
