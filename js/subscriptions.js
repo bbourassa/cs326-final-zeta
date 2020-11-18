@@ -318,7 +318,7 @@ function loadSettingListeners(){
                 'Content-Type': 'application/json'
             },
         });
-        loadAll(userId);
+        loadAll(user_id);
 		/*alert('Deleting calendars is permanant. Are you sure that you want to delete this calendar?');
 
 		try{
