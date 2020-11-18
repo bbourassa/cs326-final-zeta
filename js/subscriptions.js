@@ -35,6 +35,8 @@ for(let item of itemInputEditElements) {
     }
 }
 
+let sendUpdates = false;
+
 /**
  * Loads the event listers for each setting button
  */
@@ -246,53 +248,38 @@ function loadSettingListeners(){
         //console.log('checkedItemIds', checkedItemIds);
 		//assumes the appropriate cal is the one you are on currently
         const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-        for(let i = 0; i < checkedItemIds.length; i++) {
-            fetch('/api/items/'+cal_id+'/'+checkedItemIds[i], {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-            document.getElementById(checkedItemIds[i]).remove();
-            console.log('hit removed');
-        }
-        //(cal_id, true);
-		/*if(document.getElementById('itemList')){
-			document.getElementById('itemsToDelete').removeChild(document.getElementById('itemList'));
-		}
-
-		let itemList = document.createElement('ul');
-
-		for(let i=0; i<checkedItemIds.length; i++){
-			const item_id = checkedItemIds[i];
-
-			//get item
-			//print item name as a list item
-			//        const response = await db.any('SELECT * FROM gameScores ORDER BY score desc LIMIT 10;').catch((err) => { console.error(err); });
-			let itemName = document.createElement('li');
-			itemName.innerHTML= item_id;
-			itemName.classList.add('list-group-item', 'list-group-item-action');
-
-			itemList.appendChild(itemName);
-		}
-		//add the items to the modal
-		document.getElementById('itemsToDelete').appendChild(itemList);
-		$('#deleteWarning').modal('show');
-
-		//delete the items
-		document.getElementById('confirmDeleteBtn').addEventListener('click', async ()=>{
-			for(let i=0; i<checkedItemIds.length; i++){
-				const item_id = checkedItemIds[i];
-				try{
-					await fetch('/api/items/'+cal_id+'/'+item_id, {
-						method: 'DELETE'
-					});
-				} catch(e){
-					console.log('Unable to delete selected item(s) at this time.');
-					return;
-				}
-			}
-		});*/
+        $('#editConfirmation').modal('show');
+	    document.getElementById('confirmBtn').addEventListener('click', async ()=> {    
+            //$('#editConfirmation').modal('hide');
+            let notifMessage = document.getElementById('message').value;
+            console.log('notifMessage', notifMessage);
+            const subResponse = await fetch ('/api/listsubs/'+cal_id);
+            if(!subResponse) {
+                console.log(subResponse.error);
+                return;
+            }
+            let listOfSubs = await subResponse.json();
+            console.log('listOfSubs', listOfSubs);
+            for(let sub of listOfSubs) {
+                fetch('/api/notifications/'+user_id+'/'+sub.id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'content': notifMessage})
+                });
+            }
+            $('#editConfirmation').modal('hide');
+            for(let i = 0; i < checkedItemIds.length; i++) {
+                fetch('/api/items/'+cal_id+'/'+checkedItemIds[i], {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+                document.getElementById(checkedItemIds[i]).remove();
+            }
+        });
 
 	});
 
@@ -303,45 +290,67 @@ function loadSettingListeners(){
         console.log('hit delete cal');
         const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
         console.log('calId', cal_id);
-        //FIRST DELETE SUBSCRITPIONS
-        const response = await fetch('/api/subscriptionlist/'+cal_id);
-        if (!response.ok) {
-            console.log(response.error);
-            return;
-        }
-        let listSubscriptions = await response.json();
-        console.log('listSubscriptions', listSubscriptions);
-        for(let i = 0; i < listSubscriptions.length; i++) {
-            fetch('/api/subscriptions/'+listSubscriptions[i].id, {
+        document.getElementById('confirmBtn').addEventListener('click', async ()=> {    
+            //$('#editConfirmation').modal('hide');
+            let notifMessage = document.getElementById('message').value;
+            console.log('notifMessage', notifMessage);
+            const subResponse = await fetch ('/api/listsubs/'+cal_id);
+            if(!subResponse) {
+                console.log(subResponse.error);
+                return;
+            }
+            let listOfSubs = await subResponse.json();
+            console.log('listOfSubs', listOfSubs);
+            for(let sub of listOfSubs) {
+                fetch('/api/notifications/'+user_id+'/'+sub.id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({'content': notifMessage})
+                });
+            }
+            $('#editConfirmation').modal('hide');
+            //FIRST DELETE SUBSCRITPIONS
+            const response = await fetch('/api/subscriptionlist/'+cal_id);
+            if (!response.ok) {
+                console.log(response.error);
+                return;
+            }
+            let listSubscriptions = await response.json();
+            console.log('listSubscriptions', listSubscriptions);
+            for(let i = 0; i < listSubscriptions.length; i++) {
+                fetch('/api/subscription/'+listSubscriptions[i].id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+            }
+            //SECOND DELETE ITEMS
+            const itemResponse = await fetch('/api/items/'+cal_id);
+            if (!itemResponse.ok) {
+                console.log(itemResponse.error);
+                return;
+            }
+            let listItems = await itemResponse.json();
+            for(let i = 0; i < listItems.length; i++) {
+                fetch('/api/items/'+cal_id+'/'+listItems[i].id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+            }
+            //THIRD DELETE CALENDAR
+            fetch('/api/cals/'+cal_id, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
                 },
             });
-        }
-        //SECOND DELETE ITEMS
-        const itemResponse = await fetch('/api/items/'+cal_id);
-        if (!itemResponse.ok) {
-            console.log(itemResponse.error);
-            return;
-        }
-        let listItems = await itemResponse.json();
-        for(let i = 0; i < listItems.length; i++) {
-            fetch('/api/items/'+cal_id+'/'+listItems[i].id, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-        }
-        //THIRD DELETE CALENDAR
-        fetch('/api/cals/'+cal_id, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            loadAll(user_id);
         });
-        loadAll(user_id);
 		/*alert('Deleting calendars is permanant. Are you sure that you want to delete this calendar?');
 
 		try{
@@ -571,7 +580,8 @@ async function loadCalendars(){
 	const subs = document.getElementById('subscribed-cals');
 
 	//make the button for each calendar, adding admin button where applicalbe
-	//if you click that clanedar, it will load into the item table
+    //if you click that clanedar, it will load into the item table
+    document.getElementById('subscribed-cals').innerHTML = '';
 	cals.forEach((cal) =>{
 		const admin = (cal.owner_id === user_id);
         console.log('admin', admin);
@@ -1191,7 +1201,7 @@ function loadCommit(){
 /**
  * Closes editing modal and opens a new confirmation modal.
  */
-async function commitChanges(){
+/*async function commitChanges(){
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 	const cal_nam = document.getElementById('cal-name').childNodes[0].data;
 	document.getElementById('btnsForEdits').removeAttribute('hidden');
@@ -1200,10 +1210,7 @@ async function commitChanges(){
 	//fill confirmation modal with information values from the edit modal
 	loadCommit();
 	//opens the confirmation modal
-	$('#editConfirmation').modal('show');
-	document.getElementById('confirmBtn').addEventListener('click', async ()=> {
-		$('#editConfirmation').modal('hide');
-		let bodyInfo = getInfo();
+		/*let bodyInfo = getInfo();
 		let notMess = document.getElementById('message').value;
 		let notification = JSON.stringify({id:user_id, cal_name: cal_nam, notification: notMess});
 		//PUT will update or add an item; don't need to check first
@@ -1225,10 +1232,7 @@ async function commitChanges(){
 		} catch(e){
 			console.log(e);
 			return;
-		}
-	});
-
-}
+		}*/
 
 // function newItem
 
@@ -1361,38 +1365,61 @@ async function addNewItem() {
 }
 
 async function sendItemChanges(itemId) {
-    console.log('hit send item changes');
     const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-	let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: cal_id, related_links: null};
-	updatedItem.name = document.getElementById('itemName').value;
-	updatedItem.description = document.getElementById('itemDescription').value;
-	let itemType = document.getElementById('itemType');
-	if(itemType.value === 'Action Item') {
-		updatedItem.type = 1;
-		let itemStatus = document.getElementById('itemStatus');
-		if(itemStatus.value === 'Not Started') {
-			updatedItem.status = 1;
-		} else if(itemStatus.value === 'In Progress') {
-			updatedItem.status = 2;
-		} else if (itemStatus.value === 'Completed') {
-			updatedItem.status = 3;
-		}
-		updatedItem.start = document.getElementById('itemDueDate').value;
-	} else {
-		updatedItem.type = 2;
-		updatedItem.start = document.getElementById('startTime').value;
-		updatedItem.end = document.getElementById('endTime').value;
-	}
-    updatedItem.related_links = document.getElementById('itemLinks').value;
-    console.log(updatedItem);
-	fetch('/api/items/'+cal_id+'/'+itemId, {
-		method: 'PUT',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(updatedItem)
+    $('#editConfirmation').modal('show');
+	document.getElementById('confirmBtn').addEventListener('click', async ()=> {
+        //$('#editConfirmation').modal('hide');
+        let notifMessage = document.getElementById('message').value;
+        console.log('notifMessage', notifMessage);
+        const subResponse = await fetch ('/api/listsubs/'+cal_id);
+        if(!subResponse) {
+            console.log(subResponse.error);
+            return;
+        }
+        let listOfSubs = await subResponse.json();
+        console.log('listOfSubs', listOfSubs);
+        for(let sub of listOfSubs) {
+            fetch('/api/notifications/'+user_id+'/'+sub.id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'content': notifMessage})
+            });
+        }
+        $('#editConfirmation').modal('hide');
+        let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: cal_id, related_links: null};
+	    updatedItem.name = document.getElementById('itemName').value;
+	    updatedItem.description = document.getElementById('itemDescription').value;
+	    let itemType = document.getElementById('itemType');
+	    if(itemType.value === 'Action Item') {
+		    updatedItem.type = 1;
+		    let itemStatus = document.getElementById('itemStatus');
+		    if(itemStatus.value === 'Not Started') {
+			    updatedItem.status = 1;
+		    } else if(itemStatus.value === 'In Progress') {
+			    updatedItem.status = 2;
+		    } else if (itemStatus.value === 'Completed') {
+			    updatedItem.status = 3;
+		    }
+		    updatedItem.start = document.getElementById('itemDueDate').value;
+	    } else {
+		    updatedItem.type = 2;
+		    updatedItem.start = document.getElementById('startTime').value;
+		    updatedItem.end = document.getElementById('endTime').value;
+	    }
+        updatedItem.related_links = document.getElementById('itemLinks').value;
+        console.log(updatedItem);
+	    fetch('/api/items/'+cal_id+'/'+itemId, {
+		    method: 'PUT',
+		    headers: {
+			    'Content-Type': 'application/json'
+		    },
+		    body: JSON.stringify(updatedItem)
+        });
+        loadTable(cal_id, true);
+        $('#itemEditCenter').modal('hide');
     });
-    loadTable(cal_id, true);
 }
 
 async function addToPersonal(personalCalId, newPersonalItem) {

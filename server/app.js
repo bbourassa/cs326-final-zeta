@@ -23,8 +23,8 @@ const pgp = require('pg-promise')({
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
-const url = process.env.DATABASE_URL; 
-//|| `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+const url = process.env.DATABASE_URL;
+// || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
 
 exports.db = pgp(url);
 
@@ -34,6 +34,7 @@ const subs = require('./db/subs');
 const todos = require('./db/todos');
 const items = require('./db/items');
 const auth = require('./db/authentication');
+const notifs = require('./db/notifications');
 
 app.set('json spaces', '\t');
 app.use(express.json());
@@ -51,8 +52,8 @@ app.use('/html', express.static(path.join(dir, 'html')));
 const session = {
     secret: process.env.SECRET,
     // || dbconnection.secret,
-	resave:false,
-	saveUninitialized : false
+	resave: false,
+	saveUninitialized: false
 };
 
 
@@ -122,8 +123,10 @@ app.use('/api/users/:user', users.load);
 app.get('/api/username/:username', users.find); //EDITED ENDPOINT
 app.delete('/api/users/:user', users.remove);
 
-app.get('/api/users/:user/notifications', users.notifications);
-app.post('/api/users/:user/notifications', users.notify);
+/*app.get('/api/users/:user/notifications', users.notifications);
+app.post('/api/users/:user/notifications', users.notify);*/
+
+app.post('/api/notifications/:user/:sub', notifs.create);
 
 app.get('/api/todos/:user', todos.list);
 app.post('/api/todos/:user', todos.create);
@@ -132,13 +135,13 @@ app.put('/api/todos/:user/:todo', todos.edit);
 app.delete('/api/todos/:user/:todo', todos.remove);
 
 app.use('/api/users/:user/subscriptions', subs.loadUser);
-app.get('/api/users/:user/subscriptions', subs.list);
+app.get('/api/listsubs/:cal', subs.list);
 app.post('/api/users/:user/subscriptions', subs.create);
 app.use('/api/subscriptions/:user', subs.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars', cals.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
 app.get('/api/subscriptionlist/:cal', subs.find);
-app.delete('/api/subscriptions/:sub', subs.remove);
+app.delete('/api/subscription/:sub', subs.remove);
 
 app.put('/api/users/:user/calendar/pull', cals.updatePersonal);
 
