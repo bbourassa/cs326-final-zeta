@@ -1,11 +1,12 @@
 'use strict';
 /* eslint-env jquery */ //this tag is needed so that the $in the modal
 //calls don't throw an error
-const user_id = 0; //PLACEHOLDER
+const user_id = 1; //PLACEHOLDER
 // const user_id  =0;
 window.addEventListener('load', loadAll(user_id));
-
+window.localStorage.clear();
 function loadAll(userId){
+    console.log('userId', userId);
 	loadCalendars(userId);
 	loadSettingListeners();
 	loadNotifications();
