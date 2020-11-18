@@ -16,9 +16,10 @@ exports.loadUser = function(req, res, next) {
 
 //DO WE USE THIS TO GET THE CALENDARS ALSO OR JUST THE SUBSCRIPTION ITEMS?
 exports.list = async function(req, res) {
-    let userId = req.params.user;
+    console.log('hit sub list');
+    let calId = req.params.cal;
     //res.end(JSON.stringify(db.any('SELECT * FROM public."subscriptions" WHERE user_id=$1;', [userId])));
-    res.json(await db.any('SELECT * FROM public."subscriptions" INNER JOIN public."calendars" ON calendars.id = subscriptions.calendar_id WHERE user_id=$1;', [userId]));
+    res.json(await db.any('SELECT * FROM public."subscriptions" WHERE calendar_id=$1', [calId]));
 	//res.json(req.subs);
 };
 
