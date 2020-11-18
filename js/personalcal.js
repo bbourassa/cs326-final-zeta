@@ -13,7 +13,11 @@ async function loadUser(){
 	if(!username.ok){
 		console.log(username.error);
 	}
-	console.log('USER: ',await username.json());
+	const name = await username.json();
+	console.log('username'+name);
+	const userid = await fetch('/api/username/'+name);
+	const id = await userid;
+	console.log('USER: ',name, id);
 }
 
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
