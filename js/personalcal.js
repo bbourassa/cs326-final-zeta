@@ -8,26 +8,31 @@
 /*function checkForUser() {
 	console.log(window.localStorage.getItem('userInfo'));
 }*/
-window.addEventListener('load', loadUser());
 
-let globalU;
-
+/**
+ * This is an example. I could not figure out how to assign an outside
+ * variable to the result of this function-- everything was
+ * assigning as a promise.
+ * /user will get the current user. /api/username/:username will get
+ * you the user object. If you need the user id, you can get it from there.
+ */
 async function loadUser(){
+	console.log('running');
 	const username = await fetch('/user');
 	if(!username.ok){
 		console.log(username.error);
 	}
 	const name = await username.json();
-	// console.log('username'+name);
+	console.log(name);
 	const userid = await fetch('/api/username/'+name);
+	if(!userid.ok){
+		console.log(userid.error);
+	}
 	const id = await userid.json();
-	// console.log('USER: ',name, id[0].id);
-	console.log(id[0].id);
-	globalU =  JSON.stringify(id[0].id);
-	// return id[0].id;
+	const uid = id[0].id;
+	console.log(uid);
 }
-loadUser();
-console.log(globalU);
+
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
