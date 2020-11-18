@@ -98,7 +98,7 @@ exports.edit = function(req, res) {
 };
 
 exports.remove = function(req, res) {
-    console.log('hit');
+    console.log('hit remove item');
     let calendarId = req.params.cal;
     let itemId = req.params.item;
     db.none('DELETE from public."items_for_calendars" WHERE calendar_id=$1 AND id=$2;', [calendarId, itemId]);

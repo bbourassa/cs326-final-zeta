@@ -45,9 +45,10 @@ exports.create = async function(req, res) {
 };
 
 exports.find = async function(req, res) {
-    let userId = req.params.user;
-    let subId = req.params.sub;
-    res.json(await db.any('SELECT * FROM public."subscriptions" WHERE user_id=$1 AND id=$2;', [userId, subId]));
+    console.log('hit sub find');
+    let calId = req.params.cal;
+    console.log('calId', calId);
+    res.json(await db.any('SELECT * FROM public."subscriptions" WHERE calendar_id=$1;', [calId]));
     /*if (subs[id] && subs[id].user_id === req.user.id) {
 		res.json(subs[id]);
 	} else {
@@ -56,9 +57,10 @@ exports.find = async function(req, res) {
 };
 
 exports.remove = function(req, res) {
-    let userId = req.params.user;
+    console.log('hit remove sub');
+    //let userId = req.params.user;
     let subId = req.params.sub;
-    db.none('DELETE from public."subscriptions" WHERE user_id=$1 AND id=$2;', [userId, subId]);
+    db.none('DELETE from public."subscriptions" WHERE id=$1;', [subId]);
 	res.sendStatus(204);
 };
 
