@@ -49,19 +49,53 @@ exports.findUser = async function findUser(username){
 	// return exists;
 };
 
-// exports.addUser = async function addUser(fname, lname, email, username, password) {
+exports.addNewUser = async function addUser(fname, lname, Email,Username, password) {
+	let exists = true;
+	const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [Username])));
 
-// 	// Check for user
-// 	if(!findUser(username)){
+	if(user === '[]'){
+		// console.log('not exst');
+		exists= false;
+	} else {
+		exists = true;
+	}
+	console.log('checked for user');
+	// Check for user
+	if(!exists){
+		let lastId = await db.any('SELECT MAX(id) FROM public."users";');
+		let newId = lastId[0].max + 1;
+		let username = Username;
+		let firstName = fname;
+		let lastName = lname;
+		let email = Email;
+		let password_val = password;
+		// let notifications = req.body.notifications;
 
-//     db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, fname, lname, email, password, calendar_id, notifications]);
+		//create personal cal
+		let lastCal = await db.any('SELECT MAX(id) FROM public."calendars";');
+		let newCal = lastCal[0].max + 1;
+		let name = username;
+		let ownerId = newId;
+		let personal = 1;
+		let description = 'User ' + username +'\'s personal calendar';
+		db.none('INSERT INTO public."calendars"(id, name, owner_id, personal, description) VALUES($1, $2, $3, $4, $5);', [newCal, name, ownerId, personal, description]);
 
-// 		console.log('added');
-	// 	return true;
-	// } else{
-	// 	return false;
-	// }
-// };
+		//create user!
+		db.none('INSERT INTO public."users"(id, username, firstName, lastName, email, password_val, calendar_id) VALUES($1, $2, $3, $4, $5, $6, $7);', [newId, username, firstName, lastName, email, password_val, newCal]);
+
+		//user should be subscribed to their personal cal
+		let lastSub =  await db.any('SELECT MAX(id) FROM public."subscriptions";');
+		let newSub = lastSub[0].max + 1;
+		let userSub = newId;
+		let calendarId = newCal;
+		db.none('INSERT INTO public."subscriptions"(id, user_id, calendar_id) VALUES($1, $2, $3);', [newSub, userSub, calendarId]);
+
+		return true;
+	} else{
+		// console.log('username used already');
+		return false;
+	}
+};
 
 
 exports.check = async function checkCreds(username, pwd){
@@ -93,4 +127,4 @@ exports.checkLoggedIn = function checkLoggedIn(req, res, next) {
 	}
 };
 
-// export {findUser};
+// module.exports {findUser};

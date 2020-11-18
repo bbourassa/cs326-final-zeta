@@ -25,7 +25,7 @@ const session = {
 //configure passport
 const strategy = new LocalStrategy(
 	async(username, password, done) => {
-		if(await auth.findU(username) ===false){
+		if(await auth.findUser(username) ===false){
 			return done(null, false, { 'message': 'Wrong username or password'});
 		}
 		if(await auth.check(username, password) ==false){
@@ -134,13 +134,13 @@ app.post('/signup',
 		const fname = req.body['fname'];
 		const lname = req.body['lname'];
 		const email = req.body['email'];
-		if (addUser(fname, lname, email, username, password)) {
+		if (auth.addNewUser(fname, lname, email, username, password)) {
 			res.redirect('../html/index.html');
 		} else {
-			res.redirect('../html/signup.html');
+			console.log('already exists, redirect to same pg');
+			res.redirect('../html/signup.html'); //TODO this does not seem to be happening
 		}
 	});
-);
 
 
 app.get('/api/users', users.list);

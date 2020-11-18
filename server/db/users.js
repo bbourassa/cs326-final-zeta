@@ -19,14 +19,25 @@ exports.create = async function(req, res) {
 	res.sendStatus(201);
 	let lastId = await db.any('SELECT MAX(id) FROM public."users";');
 	let newId = lastId[0].max + 1;
-    let username = req.body.username;
-    let firstName = req.body.firstName;
-    let lastName = req.body.lastName;
-    let email = req.body.email;
-    let password_val = req.body.password;
-    let calendar_id = req.body.calendar_id;
-    let notifications = req.body.notifications;
-    db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, password_val, calendar_id, notifications]);
+	let username = req.body.username;
+	let firstName = req.body.firstName;
+	let lastName = req.body.lastName;
+	let email = req.body.email;
+	let password_val = req.body.password;
+	// let calendar_id = req.body.calendar_id;
+	let notifications = req.body.notifications;
+
+	//create personal cal
+	let lastCal = await db.any('SELECT MAX(id) FROM public."calendars";');
+	let newCal = lastCal[0].max + 1;
+	let name = req.body.username;
+	let ownerId = newId;
+	let personal = true;
+	let description = 'User ' + username +'\'s personal calendar';
+	db.none('INSERT INTO public."calendars"(id, name, owner_id, personal, description) VALUES($1, $2, $3, $4, $5);', [newCal, name, ownerId, personal, description]);
+
+
+	db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, password_val, newCal, notifications]);
 };
 
 exports.load = async function(req, res, next) {
