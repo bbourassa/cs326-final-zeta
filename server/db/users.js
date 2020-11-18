@@ -15,18 +15,18 @@ exports.list = async function(req, res) {
 	res.json(await db.any('SELECT * FROM public."users";'));
 };
 
-exports.create = function(req, res) {
+exports.create = async function(req, res) {
 	res.sendStatus(201);
-	let lastId = db.any('SELECT MAX(id) FROM public."users";');
-	let newId = lastId + 1;
-	let username = req.body.username;
-	let firstName = req.body.firstName;
-	let lastName = req.body.lastName;
-	let email = req.body.email;
-	let password_val = req.body.password;
-	let calendar_id = req.body.calendar_id;
-	let notifications = req.body.notifications;
-	db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, password_val, calendar_id, notifications]);
+	let lastId = await db.any('SELECT MAX(id) FROM public."users";');
+	let newId = lastId[0].max + 1;
+    let username = req.body.username;
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
+    let email = req.body.email;
+    let password_val = req.body.password;
+    let calendar_id = req.body.calendar_id;
+    let notifications = req.body.notifications;
+    db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, password_val, calendar_id, notifications]);
 };
 
 exports.load = async function(req, res, next) {
@@ -47,6 +47,7 @@ exports.load = async function(req, res, next) {
 
 //check if the username exists, return the user id
 exports.findById = async function(req, res) {
+
 	const username = req.params.username;
 	try{
 		let user = res.json(await db.any('SELECT * FROM public."users" WHERE username=$1;', [username]));

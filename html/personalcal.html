@@ -132,13 +132,13 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form>
+                        <form id="itemForm">
                             <div class="form-group">
                                 <label class="font-weight-bold">Item Name:
-                                    <input type="text" class="form-control shadow-sm" id="itemName">
+                                    <input type="text" class="form-control shadow-sm" id="itemName" required>
                                 </label>
                                 <label class="font-weight-bold">Current Calendar:
-                                    <input class="form-control shadow-sm" type="text" placeholder="CS 326" readonly id="calendarName">
+                                    <input class="form-control shadow-sm" type="text" readonly id="calendarName">
                                 </label>
                             </div>
                             <div class="form-group">
@@ -170,13 +170,13 @@
                             </div>
                             <div class="form-group" id="dueDateSet">
                                 <label class="font-weight-bold" id="showDueDate">Due Date:
-                                    <input class="form-control shadow-sm" type="datetime-local" id="itemDueDate">
+                                    <input class="form-control shadow-sm" type="datetime-local" id="itemDueDate" required>
                                 </label>
                                 <label class="font-weight-bold" id="showStartTime">Start Time:
-                                    <input class="form-control shadow-sm" type="datetime-local" id="startTime">
+                                    <input class="form-control shadow-sm" type="datetime-local" id="startTime" required>
                                 </label>
                                 <label class="font-weight-bold" id="showEndTime">End Time:
-                                    <input class="form-control shadow-sm" type="datetime-local" id="endTime">
+                                    <input class="form-control shadow-sm" type="datetime-local" id="endTime" required>
                                 </label>
                             </div>
 
@@ -188,14 +188,35 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-danger shadow-sm" data-dismiss="modal" id="deleteItemBtn">Delete From Calendar</button>
-                        <button type="button" class="btn btn-success shadow-sm" id="saveItemChanges">Save changes</button>
+                        <button type="button" id="closeItemBtn" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger shadow-sm"  data-toggle="modal" datat-target="#confirmItemDelete" id="deleteItemBtn">Delete From Calendar</button>
+                        <button type="button" class="btn btn-success shadow-sm" id="saveItemChanges" disabled='disabled'>Save changes</button>
                     </div>
                 </div>
             </div>
         </div>
         <!--END: Modal HTML for Items-->
+
+        <div class="modal fade" id="confirmItemDelete" tabindex="-1" role="dialog" aria-labelledby="confirmItemDeleteTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="card-title text-uppercase font-weight-bold">Confirm Item Deletetion?</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this item?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger shadow-sm" data-dismiss="modal">Cancel Deletion</button>
+                        <button type="button" id="confirmDeletionBtn" class="btn btn-success shadow-sm">Confirm Deletion</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
 
         <div class="modal fade" id="addToDoItem" tabindex="-1" role="dialog" aria-labelledby="addToDoItemTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -221,6 +242,7 @@
             </div>
           </div>
 
+
         <!--START: Modal HTML for Archived To-Do Items-->
         <div class="modal fade" id="archivedItemsCenter" tabindex="-1" role="dialog" aria-labelledby="archivedItemsTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -243,7 +265,6 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary shadow-sm">Save changes</button>
                     </div>
                 </div>
             </div>
