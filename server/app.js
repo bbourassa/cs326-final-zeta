@@ -79,7 +79,7 @@ app.use('/html', express.static(path.join(dir, 'html')));
 app.get('/',
 	auth.checkLoggedIn,
 	(req, res) => {
-		console.log(req.id);
+		console.log('user ' + req.user);
 		res.redirect('../html/personalcal.html');
 	});
 // app.get('/html/subscriptions.html',
@@ -89,6 +89,12 @@ app.get('/',
 // 		res.redirect(express.static(path.join(dir, 'html')));
 // 	});
 
+app.get('/user',
+	auth.checkLoggedIn,
+	(req, res) => {
+		res.json(req.user);
+	}
+);
 
 passport.serializeUser((user, done) => {  //produces an identifier;
 	//puts id in the req.session.passport.user = {id: ''}
