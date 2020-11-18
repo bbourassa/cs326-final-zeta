@@ -32,7 +32,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 //End of magic
 
-exports.findU =  async function findUser(username){
+exports.findUser = async function findUser(username){
 	// let exists;
 	try {
 		const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
@@ -49,18 +49,19 @@ exports.findU =  async function findUser(username){
 	// return exists;
 };
 
-exports.addUser = function addUser(name, pwd) {
+// exports.addUser = async function addUser(fname, lname, email, username, password) {
 
-	// Check for user
-	if(!findUser(name)){
+// 	// Check for user
+// 	if(!findUser(username)){
 
+//     db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, fname, lname, email, password, calendar_id, notifications]);
 
-		console.log('added');
-		return true;
-	} else{
-		return false;
-	}
-};
+// 		console.log('added');
+	// 	return true;
+	// } else{
+	// 	return false;
+	// }
+// };
 
 
 exports.check = async function checkCreds(username, pwd){
@@ -72,8 +73,6 @@ exports.check = async function checkCreds(username, pwd){
 	if(user === '[]'){
 		return false;
 	}
-
-
 	else if(user[0].password_val !== pwd){ //TODO not failing where it is supposed to
 		return false;
 	}
@@ -94,3 +93,4 @@ exports.checkLoggedIn = function checkLoggedIn(req, res, next) {
 	}
 };
 
+// export {findUser};

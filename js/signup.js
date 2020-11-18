@@ -1,4 +1,5 @@
 'use strict';
+const auth = require('../server/db/authentication');
 
 /*
 THIS WAS MOCK SINGUP USER INFO DATA OBJECT
@@ -8,9 +9,9 @@ USE IT TO PASS THE DATA - NOT SURE
 */
 let signUpInfo = {
 	firstName: '',
-	lastName: '', 
-	email: '', 
-	userName: '', 
+	lastName: '',
+	email: '',
+	userName: '',
 	password: ''
 };
 
@@ -36,12 +37,12 @@ function checkPasswords() {
 }
 
 /*
-FOR NOW: checks if all form inputs have been filled 
+FOR NOW: checks if all form inputs have been filled
          out by the user then sets signUpInfo values
          when all are true --> enables sign in button
          when all fields are filled out
 FUTURE:  will check that user login info is valid
-         before allowing sign-in to occur --> this 
+         before allowing sign-in to occur --> this
          should also show an indication to show
          why sign in button may still be disabled
 */
@@ -66,13 +67,14 @@ function checkValidation() {
 	}
 }
 
-async function addNewUser() {
+async function addNewUser(fname, lname, email, username, password) {
+	const cal_id;
 	fetch('/api/users', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({username: document.getElementById('username').value, firstName: document.getElementById('firstName').value, lastName: document.getElementById('lastName').value, email: document.getElementById('email').value, password: document.getElementById('password').value})
+		body: JSON.stringify({username: username, firstName: fname, lastName: lname, email: email, password: password, calendar_id: cal_id})
 	});
 }
 
