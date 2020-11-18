@@ -49,8 +49,7 @@ app.use('/html', express.static(path.join(dir, 'html')));
 
 //session configuration
 const session = {
-    secret: process.env.SECRET,
-    // || dbconnection.secret,
+    secret: process.env.SECRET || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
@@ -137,8 +136,8 @@ app.post('/api/users/:user/subscriptions', subs.create);
 app.use('/api/subscriptions/:user', subs.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars', cals.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
-app.get('/api/users/:user/subscriptions/:sub', subs.find);
-app.delete('/api/users/:user/subscriptions/:sub', subs.remove);
+app.get('/api/subscriptionlist/:cal', subs.find);
+app.delete('/api/subscriptions/:sub', subs.remove);
 
 app.put('/api/users/:user/calendar/pull', cals.updatePersonal);
 

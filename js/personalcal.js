@@ -176,7 +176,7 @@ async function setUpDayCard(day, month, year) {
             const response = await fetch('/api/cals/'+parentItem[0].calendar_id);
 	        if (!response.ok) {
 		        console.log(response.error);
-		    return;
+		        return;
 	        }
             let parentCalendar = await response.json();
             console.log('parentCalendar', parentCalendar);

@@ -87,64 +87,81 @@ function loadSettingListeners(){
 	});
 
 	//for every action in the calendar, add it to personal
-	document.getElementById('setAddAllActions').addEventListener('click', async ()=>{
+	document.getElementById('setAddAllActions').addEventListener('click', async ()=> {
+        console.log('hit add all actions');
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 		const response = await fetch('/api/items/'+cal_id);
 		if(!response.ok){
 			alert('Unable to add selected item(s) to your calendar at this time.');
 			return;
-		}
-		else {
-			//fetch the item
-			let itemList = await response.json();
-			//if it is an action, add to cal
-			for(let i = 0; i<itemList.length; i++){
-				if (itemList[i].type === 'Action Item' || itemList[i].type ==='action' ){
-					const addResp = await fetch('/api/items/'+cal_id, {
-						method: 'POST',
-						headers: {
-							'Contenct-Type': 'application/json'
-						},
-						body: JSON.stringify({item_id:itemList[i]})
-					} );
-					if(!addResp.ok){
-						alert('Unable to add selected item(s) to your calendar at this time.');
-						return;
-					}
-				}
-			}
-		}
+        }
+        let allCalendarItems = await response.json();
+        let personalCalId = 0;
+        const calResponse = await fetch('/api/cals/'+user_id+'/all');
+                if (!calResponse.ok) {
+                    console.log(calResponse.error);
+                    return;
+                }
+                let userCalendars = await calResponse.json();
+                for(let i = 0; i < userCalendars.length; i++) {
+                    if(userCalendars[i].personal === 1) {
+                        //console.log('userCalendars', userCalendars[i]);
+                        personalCalId = userCalendars[i].id;
+                    }
+                }
+        for(let i = 0; i < allCalendarItems.length; i++) {
+            if (allCalendarItems[i].item_type === 1) {
+                const itemResponse = await fetch('/api/items/'+cal_id+'/'+allCalendarItems[i].id);
+                if (!itemResponse.ok) {
+                    console.log(itemResponse.error);
+                    return;
+                }
+                let prepItem = await itemResponse.json();
+                let addThisItem = prepItem[0];
+                let thisPersonalItem = {name: addThisItem.name, itemType: addThisItem.item_type, startTime: addThisItem.start_time, endTime: addThisItem.end_time, description: addThisItem.description, itemStatus: addThisItem.item_status, relatedLinks: addThisItem.related_links, isParent: false, oldId: addThisItem.id};
+                console.log(thisPersonalItem);
+                addToPersonal(personalCalId, thisPersonalItem);
+            }
+        }
 	});
 
 	//for every event in cal, add it to personal
 	document.getElementById('setAddAllEvents').addEventListener('click', async()=>{
+        console.log('hit add all events');
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 		const response = await fetch('/api/items/'+cal_id);
 		if(!response.ok){
 			alert('Unable to add selected item(s) to your calendar at this time.');
 			return;
-		}
-		else {
-			//fetch the item
-			let itemList = await response.json();
-			//if it is an event, add to cal
-			// console.log(itemList.length);
-			for(let i = 0; i<itemList.length; i++){
-				if (itemList[i].type === 'Event' || itemList[i].type ==='event'){
-					const addResp = await fetch('/api/items/'+cal_id, {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify({item_id:itemList[i]})
-					} );
-					if(!addResp.ok){
-						alert('Unable to add selected item(s) to your calendar at this time.');
-						return;
-					}
-				}
-			}
-		}
+        }
+        let allCalendarItems = await response.json();
+        let personalCalId = 0;
+        const calResponse = await fetch('/api/cals/'+user_id+'/all');
+                if (!calResponse.ok) {
+                    console.log(calResponse.error);
+                    return;
+                }
+                let userCalendars = await calResponse.json();
+                for(let i = 0; i < userCalendars.length; i++) {
+                    if(userCalendars[i].personal === 1) {
+                        //console.log('userCalendars', userCalendars[i]);
+                        personalCalId = userCalendars[i].id;
+                    }
+                }
+        for(let i = 0; i < allCalendarItems.length; i++) {
+            if (allCalendarItems[i].item_type === 2) {
+                const itemResponse = await fetch('/api/items/'+cal_id+'/'+allCalendarItems[i].id);
+                if (!itemResponse.ok) {
+                    console.log(itemResponse.error);
+                    return;
+                }
+                let prepItem = await itemResponse.json();
+                let addThisItem = prepItem[0];
+                let thisPersonalItem = {name: addThisItem.name, itemType: addThisItem.item_type, startTime: addThisItem.start_time, endTime: addThisItem.end_time, description: addThisItem.description, itemStatus: addThisItem.item_status, relatedLinks: addThisItem.related_links, isParent: false, oldId: addThisItem.id};
+                console.log(thisPersonalItem);
+                addToPersonal(personalCalId, thisPersonalItem);
+            }
+        }
 
 	});
 
@@ -204,10 +221,20 @@ function loadSettingListeners(){
 
 	//delete selected items
 	document.getElementById('setDeleteItem').addEventListener('click', async()=>{
-		const checkedItemIds = getCheckedItems();
+        const checkedItemIds = getCheckedItems();
+        //console.log('checkedItemIds', checkedItemIds);
 		//assumes the appropriate cal is the one you are on currently
-		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-		if(document.getElementById('itemList')){
+        const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+        for(let i = 0; i < checkedItemIds.length; i++) {
+            fetch('/api/items/'+cal_id+'/'+checkedItemIds[i], {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+        }
+        loadTable(cal_id);
+		/*if(document.getElementById('itemList')){
 			document.getElementById('itemsToDelete').removeChild(document.getElementById('itemList'));
 		}
 
@@ -242,7 +269,7 @@ function loadSettingListeners(){
 					return;
 				}
 			}
-		});
+		});*/
 
 	});
 
@@ -250,8 +277,49 @@ function loadSettingListeners(){
 	document.getElementById('setDeleteCal').addEventListener('click', async ()=>{
 		//assumes the appropriate cal is the one you are on currently
 		//@Milestone3 make a confirmation screen
-		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-		alert('Deleting calendars is permanant. Are you sure that you want to delete this calendar?');
+        console.log('hit delete cal');
+        const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+        console.log('calId', cal_id);
+        //FIRST DELETE SUBSCRITPIONS
+        const response = await fetch('/api/subscriptionlist/'+cal_id);
+        if (!response.ok) {
+            console.log(response.error);
+            return;
+        }
+        let listSubscriptions = await response.json();
+        console.log('listSubscriptions', listSubscriptions);
+        for(let i = 0; i < listSubscriptions.length; i++) {
+            fetch('/api/subscriptions/'+listSubscriptions[i].id, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+        }
+        //SECOND DELETE ITEMS
+        const itemResponse = await fetch('/api/items/'+cal_id);
+        if (!itemResponse.ok) {
+            console.log(itemResponse.error);
+            return;
+        }
+        let listItems = await itemResponse.json();
+        for(let i = 0; i < listItems.length; i++) {
+            fetch('/api/items/'+cal_id+'/'+listItems[i].id, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+        }
+        //THIRD DELETE CALENDAR
+        fetch('/api/cals/'+cal_id, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        loadAll(userId);
+		/*alert('Deleting calendars is permanant. Are you sure that you want to delete this calendar?');
 
 		try{
 			await fetch('/api/cals/'+cal_id, {
@@ -260,7 +328,7 @@ function loadSettingListeners(){
 		} catch(e){
 			console.log('Unable to delete calendar at this time.');
 			return;
-		}
+		}*/
 
 
 	});
