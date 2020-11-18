@@ -12,21 +12,21 @@ const users = [];
 // };
 
 exports.list = async function(req, res) {
-    res.json(await db.any('SELECT * FROM public."users";'));
+	res.json(await db.any('SELECT * FROM public."users";'));
 };
 
 exports.create = function(req, res) {
 	res.sendStatus(201);
 	let lastId = db.any('SELECT MAX(id) FROM public."users";');
 	let newId = lastId + 1;
-    let username = req.body.username;
-    let firstName = req.body.firstName;
-    let lastName = req.body.lastName;
-    let email = req.body.email;
-    let password_val = req.body.password;
-    let calendar_id = req.body.calendar_id;
-    let notifications = req.body.notifications;
-    db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, password_val, calendar_id, notifications]);
+	let username = req.body.username;
+	let firstName = req.body.firstName;
+	let lastName = req.body.lastName;
+	let email = req.body.email;
+	let password_val = req.body.password;
+	let calendar_id = req.body.calendar_id;
+	let notifications = req.body.notifications;
+	db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, password_val, calendar_id, notifications]);
 };
 
 exports.load = async function(req, res, next) {
@@ -59,16 +59,16 @@ exports.findById = async function(req, res) {
 
 
 exports.remove = function(req, res) {
-    let userId = req.params.user;
-    db.none('DELETE from public."users" WHERE id=$1;', [userId]);
+	let userId = req.params.user;
+	db.none('DELETE from public."users" WHERE id=$1;', [userId]);
 	res.sendStatus(204);
 };
 
 //NEEDS TO BE WORKED MORE - MEGHAN CAN YOU ALTER THIS TO WORK CORRECTLY?
 //I FEEL YOU PROBABLY KNOW MORE ABOUT THIS FUNCTION
 exports.listSubscribed = async function(req, res) {
-    let userId = req.body.id;
-    res.json(await db.any('SELECT * FROM public."subscriptions" INNER JOIN public."calendars" ON calendars.id = subscriptions.calendar_id WHERE user_id=$1;', [userId]));
+	let userId = req.body.id;
+	res.json(await db.any('SELECT * FROM public."subscriptions" INNER JOIN public."calendars" ON calendars.id = subscriptions.calendar_id WHERE user_id=$1;', [userId]));
 	//res.json(req.subs.map(sub => users[sub.user_id]));
 };
 

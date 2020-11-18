@@ -152,22 +152,22 @@ app.delete('/api/todos/:user/:todo', todos.remove);
 app.use('/api/users/:user/subscriptions', subs.loadUser);
 app.get('/api/users/:user/subscriptions', subs.list);
 app.post('/api/users/:user/subscriptions', subs.create);
-app.use('/api/users/:user/subscriptions/calendars', cals.loadSubscribed);
+app.use('/api/subscriptions/:user', subs.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars', cals.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
-app.get('/api/users/:user/subscriptions/:sub', subs.find);
-app.delete('/api/users/:user/subscriptions/:sub', subs.remove);
+app.get('/api/subscriptionlist/:cal', subs.find);
+app.delete('/api/subscriptions/:sub', subs.remove);
 
 app.put('/api/users/:user/calendar/pull', cals.updatePersonal);
 
-app.get('/api/calendars', cals.listAll);
-app.get('/api/calendars/:user', cals.getUsersCals);
-app.post('/api/calendars', cals.create);
-app.get('/api/calendars/ours', cals.listOurs);
-app.use('/api/calendars/:cal', cals.load);
-app.get('/api/calendars/:cal', cals.find);
-app.put('/api/calendars/:cal', cals.edit);
-app.delete('/api/calendars/:cal', cals.remove);
+app.get('/api/cals', cals.listAll);
+app.get('/api/cals/:user/all', cals.getUsersCals);
+app.post('/api/cals', cals.create);
+app.get('/api/cals/ours', cals.listOurs);
+//app.use('/api/cals/:cal', cals.load);
+app.get('/api/cals/:cal/', cals.find);
+app.put('/api/cals/:cal', cals.edit);
+app.delete('/api/cals/:cal', cals.remove);
 
 app.use('/api/calendars/:cal/subscriptions', subs.loadCalendar);
 app.get('/api/calendars/:cal/subscriptions', subs.list);
@@ -176,13 +176,14 @@ app.get('/api/calendars/:cal/subscriptions/users', users.listSubscribed);
 app.get('/api/items/:cal', items.list);
 app.post('/api/items/:cal', items.create);
 app.get('/api/items/:cal/:item', items.find);
+app.get('/api/item/:item', items.search);
 app.put('/api/items/:cal/:item', items.edit);
 app.delete('/api/items/:cal/:item', items.remove);
 
 app.get('/api/todos', todos.listAll);
 app.get('/api/subscriptions', subs.listAll);
 app.get('/api/items', items.listAll);
-app.get('/api/items/:item', items.findUnlinked);
+//app.get('/api/items/:item', items.findUnlinked);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
