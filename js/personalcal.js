@@ -9,30 +9,6 @@
 	console.log(window.localStorage.getItem('userInfo'));
 }*/
 
-/**
- * This is an example. I could not figure out how to assign an outside
- * variable to the result of this function-- everything was
- * assigning as a promise.
- * /user will get the current user. /api/username/:username will get
- * you the user object. If you need the user id, you can get it from there.
- */
-async function loadUser(){
-	console.log('running');
-	const username = await fetch('/user');
-	if(!username.ok){
-		console.log(username.error);
-	}
-	const name = await username.json();
-	console.log(name);
-	const userid = await fetch('/api/username/'+name);
-	if(!userid.ok){
-		console.log(userid.error);
-	}
-	const id = await userid.json();
-	const uid = id[0].id;
-	console.log(uid);
-}
-
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
@@ -640,7 +616,7 @@ async function deleteItem(itemId) {
     setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
     $('#confirmItemDelete').modal('hide');
     $('#itemEditCenter').modal('hide');
-}
+} 
 
 async function loadPersonalCalendar() {
 	const response = await fetch('/api/cals/'+userInfo.id+'/all');

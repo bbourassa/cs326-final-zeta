@@ -9,7 +9,6 @@ function loadAll(userId){
 	loadCalendars(userId);
 	loadSettingListeners();
 	loadNotifications();
-	// console.log()
 
 }
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
@@ -684,7 +683,6 @@ async function loadTable(calId) {
 		//creates status indicator
 		let status = document.createElement('td');
 		let prog = document.createElement('button');
-
         prog.classList.add('btn','btn-sm');
         prog.disabled = true;
 		if(item.item_status!== null ){
