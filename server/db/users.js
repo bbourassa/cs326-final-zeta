@@ -12,7 +12,7 @@ const users = [];
 // };
 
 exports.list = async function(req, res) {
-    res.json(await db.any('SELECT * FROM public."users";'));
+	res.json(await db.any('SELECT * FROM public."users";'));
 };
 
 exports.create = async function(req, res) {
@@ -59,16 +59,16 @@ exports.find = async function(req, res) {
 
 
 exports.remove = function(req, res) {
-    let userId = req.params.user;
-    db.none('DELETE from public."users" WHERE id=$1;', [userId]);
+	let userId = req.params.user;
+	db.none('DELETE from public."users" WHERE id=$1;', [userId]);
 	res.sendStatus(204);
 };
 
 //NEEDS TO BE WORKED MORE - MEGHAN CAN YOU ALTER THIS TO WORK CORRECTLY?
 //I FEEL YOU PROBABLY KNOW MORE ABOUT THIS FUNCTION
 exports.listSubscribed = async function(req, res) {
-    let userId = req.body.id;
-    res.json(await db.any('SELECT * FROM public."subscriptions" INNER JOIN public."calendars" ON calendars.id = subscriptions.calendar_id WHERE user_id=$1;', [userId]));
+	let userId = req.body.id;
+	res.json(await db.any('SELECT * FROM public."subscriptions" INNER JOIN public."calendars" ON calendars.id = subscriptions.calendar_id WHERE user_id=$1;', [userId]));
 	//res.json(req.subs.map(sub => users[sub.user_id]));
 };
 
