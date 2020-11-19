@@ -6,10 +6,10 @@ const app = express();
 const cookieSession = require('cookie-session');
 
 //SECRET
-// const dbconnection = require('./secret.json');
-// const username= dbconnection.username;
-// const password=dbconnection.password;
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+const dbconnection = require('./secret.json');
+const username= dbconnection.username;
+const password=dbconnection.password;
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const pgp = require('pg-promise')({
 	connect(client) {
@@ -19,7 +19,7 @@ const pgp = require('pg-promise')({
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
-const url = process.env.DATABASE_URL; //   || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+const url = process.env.DATABASE_URL   || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
 
 exports.db = pgp(url);
 
@@ -49,7 +49,7 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 
 //session configuration
 const session = {
-	secret: process.env.SECRET,//   || dbconnection.secret,
+	secret: process.env.SECRET   || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
