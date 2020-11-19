@@ -100,7 +100,7 @@ exports.check = async function checkCreds(username, pwd){
 	if(user === '[]'){
 		return false;
 	}
-	else if(user[0].password_val !== pwd){ //TODO not failing where it is supposed to
+	else if(user[0].password_val !== pwd){
 		return false;
 	}
 	return true;
@@ -108,10 +108,13 @@ exports.check = async function checkCreds(username, pwd){
 
 
 exports.checkLoggedIn = function checkLoggedIn(req, res, next) {
+	console.log('check logged in');
 	if(req.isAuthenticated()){
+		console.log(res.user, req.isAuthenticated());
 		//if you are logged/ authenticated, run next route
 		next();
 	} else {
+		console.log(res.user);
 		//otherwise, redirect to login
 		res.redirect('../html/index.html');
 	}
