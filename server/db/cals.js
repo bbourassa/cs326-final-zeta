@@ -49,6 +49,7 @@ exports.load = async function(req, res) {
 
 //NOT SURE WE EVEN USE THIS
 exports.find = async function(req, res) {
+
 	const id = parseInt(req.params.cal, 10);
 	res.json(await db.any('SELECT * from calendars WHERE id=$1;', [id]));
 };
@@ -80,7 +81,6 @@ exports.listOurs = async function(req, res) {
 exports.loadSubscribed = function(req, res, next) {
 	//console.log('hit');
 	//let subscribedCalendars = [];
-
 	//req.cals = req.subs.map(sub => cals[sub.calendar_id]);
 	next();
 };
