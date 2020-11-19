@@ -19,7 +19,8 @@ const pgp = require('pg-promise')({
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
-const url = process.env.DATABASE_URL; //   || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+const url = process.env.DATABASE_URL;
+//    || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
 
 exports.db = pgp(url);
 
@@ -49,7 +50,8 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 
 //session configuration
 const session = {
-	secret: process.env.SECRET,//   || dbconnection.secret,
+	secret: process.env.SECRET,
+	//    || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
@@ -89,12 +91,13 @@ app.use(passport.session());
 // 		res.redirect(express.static(path.join(dir, 'html')));
 // 	});
 
-// app.get('/user',
-// 	auth.checkLoggedIn,
-// 	(req, res) => {
-// 		req.session.user;
-// 	}
-// );
+app.get('/user',
+	auth.checkLoggedIn,
+	(req, res) => {
+		console.log(req.session.passport.user);
+		res.json(req.session.passport.user);
+	}
+);
 
 passport.serializeUser((user, done) => {  //produces an identifier;
 	//puts id in the req.session.passport.user = {id: ''}

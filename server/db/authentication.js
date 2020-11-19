@@ -125,11 +125,11 @@ exports.check = async function checkCreds(username, pwd){
 exports.checkLoggedIn = function checkLoggedIn(req, res, next) {
 	console.log('check logged in');
 	if(req.isAuthenticated()){
-		console.log(res.user, req.isAuthenticated());
+		// console.log(res.session.passport.user, req.isAuthenticated());
 		//if you are logged/ authenticated, run next route
 		next();
 	} else {
-		console.log(res.user);
+		// console.log(res.user);
 		//otherwise, redirect to login
 		res.redirect('../html/index.html');
 	}
