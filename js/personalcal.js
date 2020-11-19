@@ -188,9 +188,9 @@ async function setUpDayCard(day, month, year) {
 			}
 			let parentItem = await firstResponse.json();
 			if(parentItem[0] === undefined) {
-				newDayItem.innerHTML = 'no related calendar: ';
+				newDayItem.innerHTML = 'item/event cancelled: ';
 				newDayItem.innerHTML += calendarItems[i].name;
-				newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, 'no related calendar:'));
+				newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, 'item/event cancelled:'));
 			} else {
 				const response = await fetch('/api/cals/'+parentItem[0].calendar_id);
 				if (!response.ok) {
@@ -235,7 +235,9 @@ async function fillModalInfo(itemId, parentCalendar) {
 	let itemData = await response.json();
 	let currentItem = itemData[0];
 	let itemName = document.getElementById('itemName');
-	itemName.value = currentItem.name;
+    itemName.value = currentItem.name;
+    let editHeader = document.getElementById('editItemTitle');
+	editHeader.innerHTML = 'Edit ' + currentItem.name;
 	let calendarName = document.getElementById('calendarName');
 	calendarName.setAttribute('placeholder', parentCalendar);
 	let itemDescription = document.getElementById('itemDescription');
@@ -461,8 +463,8 @@ async function setNewToDo() {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({content: newToDo.value, userId: userInfo.id, archived: false})
-	});
-	$('#addToDoItem').modal('hide');
+    });
+    document.getElementById('addToDo').setAttribute('data-dismiss', 'modal');
 }
 
 /*
@@ -520,23 +522,24 @@ function checkRequiredFields() {
 	let itemType = document.getElementById('itemType').value;
 	if(itemType === 'Action Item') {
 		let dueDateVal = document.getElementById('itemDueDate').value;
-		if(itemNameVal !== '' && dueDateVal !== '') {
-			saveItemChanges.disabled = false;
-		}
+		if(itemNameVal === '' || dueDateVal === '') {
+			saveItemChanges.disabled = true;
+		} else {
+            saveItemChanges.disabled = false;
+        }
 	} else {
 		let startTimeVal = document.getElementById('startTime').value;
 		let endTimeVal = document.getElementById('endTime').value;
-		if(itemNameVal !== '') {
-			if(startTimeVal !== '' && endTimeVal !== '') {
-				saveItemChanges.disabled = false;
-			} 
-		}
+		if(itemNameVal === '' || startTimeVal === '' || endTimeVal === '') {
+			saveItemChanges.disabled = false;
+		} else {
+            saveItemChanges.disabled = true;
+        }
 	}
 }
 
 function disableSave() {   
 	saveItemChanges.disabled = true;
-	$('#itemEditCenter').modal('hide');
 }
 
 saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
@@ -561,6 +564,7 @@ let closeItemBtn = document.getElementById('closeItemBtn');
 closeItemBtn.addEventListener('click', disableSave());
 
 async function updateItemChanges(itemId) {
+    document.getElementById('saveItemChanges').setAttribute('data-dismiss', 'modal');
 	let personalCalId = window.localStorage.getItem('personalCalId');
 	let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: personalCalId, related_links: null};
 	updatedItem.name = document.getElementById('itemName').value;
@@ -619,8 +623,7 @@ async function updateItemChanges(itemId) {
 		todaysScheduleDiv.appendChild(itemToMove);
 	}
 	//CHECK ITS STATUS
-	//setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
-	$('#itemEditCenter').modal('hide');
+    //setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
 	//setUpDayCard();
 }
 
@@ -628,10 +631,13 @@ let confirmDeletionBtn = document.getElementById('confirmDeletionBtn');
 confirmDeletionBtn.addEventListener('click', () => deleteItem(tempId));
 
 function confirmDelete() {
-	$('#confirmItemDelete').modal('show');
+    document.getElementById('deleteItemBtn').setAttribute('data-dismiss', 'modal');
+    document.getElementById('deleteItemBtn').setAttribute('data-toggle', 'modal');
+    document.getElementById('deleteItemBtn').setAttribute('data-target', '#confirmItemDelete');
 }
 
 async function deleteItem(itemId) {
+    document.getElementById('confirmDeletionBtn').setAttribute('data-dismiss', 'modal');
 	let personalCalId = window.localStorage.getItem('personalCalId');
 	fetch('/api/items/'+personalCalId+'/'+itemId, {
 		method: 'DELETE',
@@ -643,8 +649,6 @@ async function deleteItem(itemId) {
 	searchForCalendarItems();
 	let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
 	setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
-	$('#confirmItemDelete').modal('hide');
-	$('#itemEditCenter').modal('hide');
 } 
 
 async function loadPersonalCalendar() {

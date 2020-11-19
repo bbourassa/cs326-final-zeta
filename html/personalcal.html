@@ -125,15 +125,16 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="card-title text-uppercase font-weight-bold" id="modalTitle"></h2>
+                        <h2 class="card-title text-uppercase font-weight-bold" id="editItemTitle"></h2>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
+                        <h6 class="reqFields">Fields with '**' indicate required fields.</h6>
                         <form id="itemForm">
                             <div class="form-group">
-                                <label class="font-weight-bold">Item Name:
+                                <label class="font-weight-bold">**Item Name:
                                     <input type="text" class="form-control shadow-sm" id="itemName" required>
                                 </label>
                                 <label class="font-weight-bold">Current Calendar:
@@ -147,13 +148,13 @@
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label class="font-weight-bold">Item Type:
+                                <label class="font-weight-bold">**Item Type:
                                     <select class="custom-select shadow-sm" id="itemType">
                                         <option value="Action Item">Action Item</option>
                                         <option value="Event">Event</option>
                                       </select>
                                 </label>
-                                <label class="font-weight-bold" id="showStatus">Item Status:
+                                <label class="font-weight-bold" id="showStatus">**Item Status:
                                     <select class="custom-select shadow-sm" id="itemStatus">
                                         <option value="Not Started">
                                             Not Started
@@ -168,13 +169,13 @@
                                 </label>
                             </div>
                             <div class="form-group" id="dueDateSet">
-                                <label class="font-weight-bold" id="showDueDate">Due Date:
+                                <label class="font-weight-bold" id="showDueDate">**Due Date:
                                     <input class="form-control shadow-sm" type="datetime-local" id="itemDueDate" required>
                                 </label>
-                                <label class="font-weight-bold" id="showStartTime">Start Time:
+                                <label class="font-weight-bold" id="showStartTime">**Start Time:
                                     <input class="form-control shadow-sm" type="datetime-local" id="startTime" required>
                                 </label>
-                                <label class="font-weight-bold" id="showEndTime">End Time:
+                                <label class="font-weight-bold" id="showEndTime">**End Time:
                                     <input class="form-control shadow-sm" type="datetime-local" id="endTime" required>
                                 </label>
                             </div>

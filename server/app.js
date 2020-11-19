@@ -149,14 +149,14 @@ app.post('/signup',
 app.get('/api/users', users.list);
 app.post('/api/users', users.create);
 app.use('/api/users/:user', users.load);
-app.get('/api/username/:username', users.findById); //EDITED ENDPOINT
+app.get('/api/username/:username', users.find); //EDITED ENDPOINT
 app.delete('/api/users/:user', users.remove);
 
 /*app.get('/api/users/:user/notifications', users.notifications);
 app.post('/api/users/:user/notifications', users.notify);*/
 
-// app.post('/api/notifications/:user/:sub', notifs.create);
-// app.get('/api/notifications/:user', notifs.list);
+app.post('/api/notifications/:user/:sub', notifs.create);
+app.get('/api/notifications/:user', notifs.list);
 
 app.get('/api/todos/:user', todos.list);
 app.post('/api/todos/:user', todos.create);
@@ -166,7 +166,7 @@ app.delete('/api/todos/:user/:todo', todos.remove);
 
 app.use('/api/users/:user/subscriptions', subs.loadUser);
 app.get('/api/listsubs/:cal', subs.list);
-app.post('/api/users/:user/subscriptions', subs.create);
+app.post('/api/subscriptions/:user', subs.create);
 app.use('/api/subscriptions/:user', subs.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars', cals.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
@@ -177,7 +177,7 @@ app.put('/api/users/:user/calendar/pull', cals.updatePersonal);
 
 app.get('/api/cals', cals.listAll);
 app.get('/api/cals/:user/all', cals.getUsersCals);
-app.post('/api/cals', cals.create);
+app.post('/api/cals/:user', cals.create);
 app.get('/api/cals/ours', cals.listOurs);
 //app.use('/api/cals/:cal', cals.load);
 app.get('/api/cals/:cal/', cals.find);

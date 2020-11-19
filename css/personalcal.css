@@ -48,3 +48,6 @@ label {
 .item-checked {
     text-decoration: line-through;
 }
+.reqFields {
+    color: red;
+}

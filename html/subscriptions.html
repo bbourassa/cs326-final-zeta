@@ -119,8 +119,9 @@
                     </div>
                     <div class="modal-body" id='modalBodyItemId' item-id = "">
                         <form id="editForm">
+                            <h6 class="reqFields">Fields with '**' indicate required fields.</h6>
                             <div class="form-group">
-                                <label class="font-weight-bold">Item Name:
+                                <label class="font-weight-bold">**Item Name:
                                     <input type="text" class="form-control shadow-sm modal-editable-area" id="itemName" placeholder="add item name">
                                 </label>
                                 <label class="font-weight-bold">Current Calendar:
@@ -134,13 +135,13 @@
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label class="font-weight-bold">Item Type:
+                                <label class="font-weight-bold">**Item Type:
                                     <select class="custom-select shadow-sm  modal-editable-area" id="itemType">
                                         <option value="Action Item" selected>Action Item</option>
                                         <option value="Event">Event</option>
                                       </select>
                                 </label>
-                                <label class="font-weight-bold"id="showStatus">Item Status:
+                                <label class="font-weight-bold"id="showStatus">**Item Status:
                                     <select class="custom-select shadow-sm  modal-editable-area" id="itemStatus">
                                         <option selected value="Not Started">
                                             Not Started
@@ -155,13 +156,13 @@
                                 </label>
                             </div>
                             <div class="form-group" id="dueDateSet">
-                                <label class="font-weight-bold" id="showDueDate">Due Date:
+                                <label class="font-weight-bold" id="showDueDate">**Due Date:
                                     <input class="form-control shadow-sm modal-editable-area" type="datetime-local" id="itemDueDate">
                                 </label>
-                                <label class="font-weight-bold" id="showStartTime">Start Time:
+                                <label class="font-weight-bold" id="showStartTime">**Start Time:
                                     <input class="form-control shadow-sm modal-editable-area" type="datetime-local" id="startTime">
                                 </label>
-                                <label class="font-weight-bold" id="showEndTime">End Time:
+                                <label class="font-weight-bold" id="showEndTime">**End Time:
                                     <input class="form-control shadow-sm modal-editable-area" type="datetime-local", id="endTime">
                                 </label>
                             </div>
@@ -192,9 +193,10 @@
                         </button>
                     </div>
                     <div class="modal-body">
+                        <h6 class="reqFields">Fields with '**' indicate required fields.</h6>
                         <form id="newItemForm">
                             <div class="form-group">
-                                <label class="font-weight-bold">Item Name:
+                                <label class="font-weight-bold">**Item Name:
                                     <input type="text" class="form-control shadow-sm modal-editable-area" id="newName" placeholder="add item name">
                                 </label>
                                 <label class="font-weight-bold">Current Calendar:
@@ -208,13 +210,13 @@
                                 </label>
                             </div>
                             <div class="form-group">
-                                <label class="font-weight-bold">Item Type:
+                                <label class="font-weight-bold">**Item Type:
                                     <select class="custom-select shadow-sm  modal-editable-area" id="newItemType">
                                         <option value="Action Item" selected>Action Item</option>
                                         <option value="Event">Event</option>
                                       </select>
                                 </label>
-                                <label class="font-weight-bold"id="showNewStatus">Item Status:
+                                <label class="font-weight-bold"id="showNewStatus">**Item Status:
                                     <select class="custom-select shadow-sm  modal-editable-area" id="newItemStatus">
                                         <option selected value="Not Started">
                                             Not Started
@@ -229,13 +231,13 @@
                                 </label>
                             </div>
                             <div class="form-group" id="dueDateSet">
-                                <label class="font-weight-bold" id="showNewDueDate">Due Date:
+                                <label class="font-weight-bold" id="showNewDueDate">**Due Date:
                                     <input class="form-control shadow-sm modal-editable-area" type="datetime-local" id="newItemDueDate">
                                 </label>
-                                <label class="font-weight-bold" id="showNewStartTime">Start Time:
+                                <label class="font-weight-bold" id="showNewStartTime">**Start Time:
                                     <input class="form-control shadow-sm modal-editable-area" type="datetime-local" id="newStartTime">
                                 </label>
-                                <label class="font-weight-bold" id="showNewEndTime">End Time:
+                                <label class="font-weight-bold" id="showNewEndTime">**End Time:
                                     <input class="form-control shadow-sm modal-editable-area" type="datetime-local", id="newEndTime">
                                 </label>
                             </div>
@@ -280,6 +282,33 @@
                     <div class="modal-footer" id="btnsForEdits">
                         <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-primary shadow-sm" id="confirmBtn">Confirm changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Confirm item additions-->
+        <div class = "modal fade" id="additionConfirmation" tabindex="-1" role="dialog" aria-labelledby="additionConfirmationTitle" aria-hidden="true" >
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="card-title text-uppercase font-weight-bold" id="confAddHeader">Confirm Item Additions</h2>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h3 class="card-subtitle" id="addMessage">Are you sure you want to add these additional items to your calendar?</h3>
+                        <!-- fill in with non-editable info -->
+                        <br>
+                        <!--<div id="commitMessage">
+                            <input class="form-control shadow-sm" type="text" id="message" placeholder="Add a message to your subscribers">
+                        </div>-->
+
+                    </div>
+                    <div class="modal-footer" id="btnsForAdds">
+                        <button type="button" class="btn btn-secondary shadow-sm" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary shadow-sm" id="confirmAddBtn">Confirm additions</button>
                     </div>
                 </div>
             </div>
