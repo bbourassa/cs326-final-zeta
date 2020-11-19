@@ -102,6 +102,9 @@ exports.check = async function checkCreds(username, pwd){
 	// let user;
 	console.log('checking credentials');
 	const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
+	if(!user.ok){
+		return false;
+	}
 	if(user === '[]'){
 		console.log('no user');
 		return false;
