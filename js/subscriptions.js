@@ -189,20 +189,58 @@ function loadSettingListeners(){
 
 	//for each selected item, find corresponding in personal, updare
 	document.getElementById('setUpdateSelected').addEventListener('click',async ()=>{
-		const checkedItemIds = getCheckedItems();
-		// @Milestone3 ADD POPUP
-		for(let i=0; i<checkedItemIds.length; i++){
+        //console.log('update selected');
+        const checkedItemIds = getCheckedItems();
+        console.log('checkedItems', checkedItemIds);
+		for(let i=0; i< checkedItemIds.length; i++){
+            let currentParent = checkedItemIds[i];
 			//Send in the item ids to be pulled across. If any don't resolve, stop trying
-			const response = await  fetch('/api/users/'+user_id+'/calendar/pull', {
-				method: 'PUT',
-				headers: {'Content-type':'application/json'},
-				body: JSON.stringify({item_id:checkedItemIds[i]})
-			});
-			if(!response.ok){
-				alert('Unable to update item(s) at this time.');
-				//don't then try to do the rest!
-				return;
-			}
+            //FIND THE USER'S PERSONAL CALENDAR
+            const personalResponse = await fetch('/api/cals/'+user_id+'/all');
+            if (!personalResponse.ok) {
+                console.log(personalResponse.error);
+                return;
+            }
+            let listCalendars = await personalResponse.json();
+            let personalCalendar = listCalendars[0];
+            for(let calendar of listCalendars) {
+                if(calendar.personal === 1) {
+                    personalCalendar = calendar;
+                }
+            } 
+            //console.log('personalCalendar', personalCalendar);
+            //FIND THE CHECKED ITEM
+            const itemResponse = await fetch('/api/item/'+currentParent);
+            if (!itemResponse.ok) {
+                console.log(itemResponse.error);
+                return;
+            }
+            let itemData = await itemResponse.json();
+            let currentItem = itemData[0];
+            //console.log('found current Item', currentItem);
+            //FIND THE ITEMS ON THE PERSONAL CALENDAR
+            const personItemsResponse = await fetch('/api/items/'+personalCalendar.id);
+            if(!personItemsResponse.ok) {
+                console.log(personItemsResponse.error);
+                return;
+            }
+            let allCalItems = await personItemsResponse.json();
+            //console.log('all calendar items', allCalItems);
+            for(let i = 0; i < allCalItems.length; i++) {
+                if(allCalItems[i].parent_id === currentParent) {
+                    //console.log('hit match', personalCalendar.id, allCalItems[i].id);
+                    let updatedInfo = {name: currentItem.name, type: currentItem.item_type, start: currentItem.start_time, end: currentItem.end_time, description: currentItem.description, status: currentItem.item_status, related_links: currentItem.related_links};
+                    fetch('/api/items/'+personalCalendar.id+'/'+allCalItems[i].id, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedInfo)
+                    });
+                }
+            }
+            //FIND THE ITEM FROM THE PERSONAL CALENDAR WHO'S PARENT ID MATCHES THE ID OF THE CHECKED ITEM
+                //FOR A MATCH, UPDATE THE ITEM FROM THE PERSONAL CALENDAR WITH THE INFORMATION FROM THE PARENT ITEM
 
 		}
 	});
@@ -250,8 +288,7 @@ function loadSettingListeners(){
         const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
         $('#editConfirmation').modal('show');
 	    document.getElementById('confirmBtn').addEventListener('click', async ()=> {    
-            //$('#editConfirmation').modal('hide');
-            let notifMessage = document.getElementById('message').value;
+            /*let notifMessage = document.getElementById('message').value;
             console.log('notifMessage', notifMessage);
             const subResponse = await fetch ('/api/listsubs/'+cal_id);
             if(!subResponse) {
@@ -261,7 +298,7 @@ function loadSettingListeners(){
             let listOfSubs = await subResponse.json();
             console.log('listOfSubs', listOfSubs);
             for(let sub of listOfSubs) {
-                fetch('/api/notifications/'+user_id+'/'+sub.id, {
+                await fetch('/api/notifications/'+user_id+'/'+sub.id, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -269,6 +306,13 @@ function loadSettingListeners(){
                     body: JSON.stringify({'content': notifMessage})
                 });
             }
+            fetch('/api/notifications/'+user_id+'/'+user_id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'content': notifMessage})
+            });*/
             $('#editConfirmation').modal('hide');
             for(let i = 0; i < checkedItemIds.length; i++) {
                 fetch('/api/items/'+cal_id+'/'+checkedItemIds[i], {
@@ -292,7 +336,7 @@ function loadSettingListeners(){
         console.log('calId', cal_id);
         document.getElementById('confirmBtn').addEventListener('click', async ()=> {    
             //$('#editConfirmation').modal('hide');
-            let notifMessage = document.getElementById('message').value;
+            /*let notifMessage = document.getElementById('message').value;
             console.log('notifMessage', notifMessage);
             const subResponse = await fetch ('/api/listsubs/'+cal_id);
             if(!subResponse) {
@@ -310,6 +354,13 @@ function loadSettingListeners(){
                     body: JSON.stringify({'content': notifMessage})
                 });
             }
+            fetch('/api/notifications/'+user_id+'/'+user_id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({'content': notifMessage})
+            });*/
             $('#editConfirmation').modal('hide');
             //FIRST DELETE SUBSCRITPIONS
             const response = await fetch('/api/subscriptionlist/'+cal_id);
@@ -351,18 +402,6 @@ function loadSettingListeners(){
             });
             loadAll(user_id);
         });
-		/*alert('Deleting calendars is permanant. Are you sure that you want to delete this calendar?');
-
-		try{
-			await fetch('/api/cals/'+cal_id, {
-				method: 'DELETE'
-			});
-		} catch(e){
-			console.log('Unable to delete calendar at this time.');
-			return;
-		}*/
-
-
 	});
 
 	//if there is already a share code, make it visible, set toggle to checked
@@ -482,8 +521,16 @@ function getCheckedItems(){
  * @Milestone3
  */
 async function loadNotifications(){
-	//clear out notifications
-	while (document.getElementById('allNotes').childNodes.length>0){
+    console.log('enter notifs');
+    //clear out notifications
+    /*const notificationResponse = await fetch('/api/notifications/'+user_id);
+    if(!notificationResponse.ok) {
+        console.log(notificationResponse.error);
+        return;
+    }
+    let listOfNotifs = await notificationResponse.json();
+    console.log('notifications', listOfNotifs);*/
+	/*while (document.getElementById('allNotes').childNodes.length>0){
 		document.getElementById('allNotes').removeChild(document.getElementById('allNotes').childNodes[0]);
 	}
 	const GNotifs = await fetch('/api/users/'+user_id+'/notifications');
@@ -491,7 +538,7 @@ async function loadNotifications(){
 		console.log('Unable to load notifications');
 		return;
 	}
-	//document.getElementById('num-Notifications').value = numNotifs;
+	document.getElementById('num-Notifications').value = 3;
 	//temporarily hard coded
 	document.getElementById('num-Notifications').innerHTML = 1;
 	let noti = document.createElement('button');
@@ -534,31 +581,7 @@ async function loadNotifications(){
 	else{
 		document.getElementById('notificationCenter').setAttribute('hidden', true);
 
-	}
-
-	/*
-	//Get all of the notifications, use the number to set the notification bell
-	let notifs = GNotifs.json();
-	let numNotifs = notifs.length();
-	document.getElementById('num-Notifications').value = numNotifs;
-
-	//Make a list of notifications for the dropdown
-	let notList = document.createElement('ul');
-	for(let i=0; i<numNotifs; i++){
-		let noti = document.createElement('button');
-		noti.innerHTML=GNotifs[i].cal_id;
-		noti.classList.add('subscribed', 'btn', 'btn-light');
-		noti.addEventListener('click', () =>{
-			while( document.getElementById('eventTable').childNodes.length>0){
-				document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
-			}
-			loadTable(=GNotifs[i].cal_id);
-		});
-		document.getElementById('allNotes').appendChild(noti);
-	}
-
-	*/
-
+	}*/
 
 }
 
@@ -599,10 +622,11 @@ async function loadCalendars(){
 			loadTable(cal.id, true);
 		});
 		if(admin){
-			let adminIndic = document.createElement('btn'); //btn btn-outline-secondary btn-sm float-right
+			/*let adminIndic = document.createElement('btn'); //btn btn-outline-secondary btn-sm float-right
 			adminIndic.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'float-right', 'disabled');
-			adminIndic.innerText = 'ADMIN';
-			aCal.appendChild(adminIndic);
+            adminIndic.innerText = 'ADMIN';*/
+            aCal.innerHTML += ' - ADMIN';
+			//aCal.appendChild(adminIndic);
 		}
 
 		subs.appendChild(aCal);
@@ -617,7 +641,7 @@ async function loadCalendars(){
 		window.localStorage.removeItem('newSubscription');
 	}
 
-	loadTable(subs.childNodes[1].getAttribute('cal_id'), true);
+	loadTable(subs.childNodes[0].getAttribute('cal_id'), true);
 
 }
 
@@ -1369,7 +1393,7 @@ async function sendItemChanges(itemId) {
     $('#editConfirmation').modal('show');
 	document.getElementById('confirmBtn').addEventListener('click', async ()=> {
         //$('#editConfirmation').modal('hide');
-        let notifMessage = document.getElementById('message').value;
+        /*let notifMessage = document.getElementById('message').value;
         console.log('notifMessage', notifMessage);
         const subResponse = await fetch ('/api/listsubs/'+cal_id);
         if(!subResponse) {
@@ -1377,16 +1401,18 @@ async function sendItemChanges(itemId) {
             return;
         }
         let listOfSubs = await subResponse.json();
+        listOfSubs.push({id: 1});
         console.log('listOfSubs', listOfSubs);
         for(let sub of listOfSubs) {
-            fetch('/api/notifications/'+user_id+'/'+sub.id, {
+            console.log(sub);
+            fetch('/api/notifications/'+user_id+'/'+sub.user_id, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({'content': notifMessage})
             });
-        }
+        }*/
         $('#editConfirmation').modal('hide');
         let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: cal_id, related_links: null};
 	    updatedItem.name = document.getElementById('itemName').value;

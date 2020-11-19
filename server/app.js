@@ -17,7 +17,7 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 
 const pgp = require('pg-promise')({
 	connect(client) {
-		console.log('Connected to database:', client.connectionParameters.database);
+		//console.log('Connected to database:', client.connectionParameters.database);
 	},
 	/*disconnect(client) {
         console.log('Disconnected from database:', client.connectionParameters.database);
@@ -127,6 +127,7 @@ app.delete('/api/users/:user', users.remove);
 app.post('/api/users/:user/notifications', users.notify);*/
 
 app.post('/api/notifications/:user/:sub', notifs.create);
+app.get('/api/notifications/:user', notifs.list);
 
 app.get('/api/todos/:user', todos.list);
 app.post('/api/todos/:user', todos.create);
