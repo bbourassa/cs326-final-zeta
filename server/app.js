@@ -149,7 +149,7 @@ app.post('/signup',
 app.get('/api/users', users.list);
 app.post('/api/users', users.create);
 app.use('/api/users/:user', users.load);
-app.get('/api/username/:username', users.find); //EDITED ENDPOINT
+app.get('/api/username/:username', users.findById); //EDITED ENDPOINT
 app.delete('/api/users/:user', users.remove);
 
 /*app.get('/api/users/:user/notifications', users.notifications);
