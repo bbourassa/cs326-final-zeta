@@ -16,7 +16,7 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 
 
 const pgp = require('pg-promise')({
-	connect(client) {
+	connect() {
 		//console.log('Connected to database:', client.connectionParameters.database);
 	},
 	/*disconnect(client) {
@@ -49,7 +49,7 @@ app.use('/html', express.static(path.join(dir, 'html')));
 
 //session configuration
 const session = {
-    secret: process.env.SECRET || dbconnection.secret,
+	secret: process.env.SECRET || dbconnection.secret,
 	resave: false,
 	saveUninitialized: false
 };
