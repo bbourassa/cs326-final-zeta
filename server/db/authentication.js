@@ -101,21 +101,24 @@ exports.check = async function checkCreds(username, pwd){
 //otherwise, check password
 	// let user;
 	console.log('checking credentials');
-	const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
-	if(!user.ok){
+	try{
+		const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
+
+		if(user === undefined || user === '[]'){
+			console.log('no user');
+			return false;
+		}
+		else if(!mc.check(pwd, user[0].salt, user[0].hash)){
+			console.log('wrong pass');
+			return false;
+		}
+		console.log('logging in');
+		// next();
+		return true;
+	}catch(error){
+		console.log(error);
 		return false;
 	}
-	if(user === '[]'){
-		console.log('no user');
-		return false;
-	}
-	else if(!mc.check(pwd, user[0].salt, user[0].hash)){
-		console.log('wrong pass');
-		return false;
-	}
-	console.log('logging in');
-	// next();
-	return true;
 };
 
 
