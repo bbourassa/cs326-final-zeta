@@ -12,7 +12,6 @@ db.none('CREATE TABLE IF NOT EXISTS calendars(id INTEGER PRIMARY KEY, name VARCH
 
 exports.listAll = async function(req, res) {
     //res.json(cals);
-    console.log('enter');
     res.json(await db.any('SELECT * FROM public."calendars";'));
 };
 
@@ -50,7 +49,6 @@ exports.load = async function(req, res, next) {
 
 //NOT SURE WE EVEN USE THIS
 exports.find = async function(req, res) {
-    console.log('hit find');
 	const id = parseInt(req.params.cal, 10);
 	res.json(await db.any('SELECT * from calendars WHERE id=$1;', [id]));
 };

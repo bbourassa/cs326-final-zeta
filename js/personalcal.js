@@ -65,7 +65,6 @@ FUTURE:  -will associate appropriate item data with each
           day on calendar
 */
 function setUpCalendar(month, year) {
-    console.log('hit setup calendar');
 	let firstDay = (new Date(year, month)).getDay();
 
 	let days = document.getElementById('days');
@@ -100,9 +99,7 @@ function setUpCalendar(month, year) {
 }
 
 async function checkForItems(month, year) {
-    console.log('hit');
     let listOfItems = await searchForCalendarItems();
-    console.log('list of items', listOfItems);
     //(JSON.parse(window.localStorage.getItem('personalCalItems')));
 	for(let i = 0; i < listOfItems.length; i++) {
         let startTime = listOfItems[i].start_time;
@@ -148,20 +145,16 @@ FUTURE:  will update item information based on status in
          for what is due on which day
 */
 async function setUpDayCard(day, month, year) {
-    console.log('hit setup day card');
 	let dayViewTitle = document.getElementById('dayViewTitle');
 	dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[month-1] + ' ' + day + ' ' + year;
     let calendarItems = await searchForCalendarItems();
-    console.log('calendarItems', calendarItems);
     let dayEvents = [];
     //console.log('personalCalItems', JSON.parse(window.localStorage.getItem('personalCalItems')));
     resetDayCard();
 	for(let i = 0; i < calendarItems.length; i++) {
-        console.log(calendarItems[i]);
 		let thisYear = parseInt(calendarItems[i].start_time.slice(0, 4));
 		let thisMonth = parseInt(calendarItems[i].start_time.slice(5, 7));
         let thisDay = parseInt(calendarItems[i].start_time.slice(8, 10));
-        console.log(thisYear, thisMonth, thisDay);
 		if(thisYear === parseInt(year) && thisMonth === month && thisDay === day) {
 			dayEvents.push(calendarItems[i].id);
 			let newDayItem = document.createElement('div');
@@ -169,24 +162,28 @@ async function setUpDayCard(day, month, year) {
 			newDayItem.setAttribute('data-toggle', 'modal');
             newDayItem.setAttribute('data-target', '#itemEditCenter');
             newDayItem.id = 'item'+calendarItems[i].id;
-            console.log('parent id', calendarItems[i].parent_id);
-            const firstResponse = await fetch('/api/item/'+calendarItems[i].parent_id);
+            let thisParentId = calendarItems[i].parent_id;
+            const firstResponse = await fetch('/api/item/'+thisParentId);
             if (!firstResponse.ok) {
 		        console.log(firstResponse.error);
 		    return;
 	        }
             let parentItem = await firstResponse.json();
-            console.log('parentItem', parentItem);
-            const response = await fetch('/api/cals/'+parentItem[0].calendar_id);
-	        if (!response.ok) {
-		        console.log(response.error);
-		        return;
-	        }
-            let parentCalendar = await response.json();
-            console.log('parentCalendar', parentCalendar);
-			newDayItem.innerHTML = parentCalendar[0].name + ': ';
-			newDayItem.innerHTML += calendarItems[i].name;
-            newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, parentCalendar[0].name));
+            if(parentItem[0] === undefined) {
+                newDayItem.innerHTML = 'no related calendar: ';
+                newDayItem.innerHTML += calendarItems[i].name;
+                newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, 'no related calendar:'));
+            } else {
+                const response = await fetch('/api/cals/'+parentItem[0].calendar_id);
+	            if (!response.ok) {
+		            console.log(response.error);
+		            return;
+	            }
+                let parentCalendar = await response.json();
+                newDayItem.innerHTML = parentCalendar[0].name + ': ';
+                newDayItem.innerHTML += calendarItems[i].name;
+                newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, parentCalendar[0].name));
+            }
 			let thisStatus = calendarItems[i].item_status;
 			let thisType = calendarItems[i].item_type;
 			if(thisType === 2) {
@@ -377,9 +374,7 @@ async function switchToDoLocation(toDo) {
             body: JSON.stringify(archiveInfo)
         });
     } else {
-        console.log('hit');
         let thisId = toDo.getElementsByTagName('label')[0].id;
-        console.log(thisId);
         let archiveInfo = {archived: 0, timeArchived: null};
         fetch('/api/todos/'+userInfo.id+'/'+thisId, {
             method: 'PUT',
@@ -472,13 +467,11 @@ daily view
 */
 
 const dayItems = document.getElementsByClassName('day-item');
-console.log('dayItems', dayItems);
 for (let item of dayItems) {
 	item.addEventListener('click', () => switchItem(item.textContent));
 }
 
 const calSelections = document.getElementsByClassName('calendar-selection');
-console.log('calSelections', calSelections);
 for (let item of calSelections) {
 	item.addEventListener('change', updateCalendar);
 }
@@ -492,14 +485,12 @@ let addToDoItem = document.getElementById('addToDo');
 addToDoItem.addEventListener('click', setNewToDo);
 
 /*const toDoItems = document.getElementsByName('to-do-item');
-console.log('toDoItems', toDoItems[0])
 for (let item of toDoItems) {
     console.log('parent item', item.parentElement.nodeName);
 	item.addEventListener('click', () => switchToDoLocation(item));
 }*/
 
 let userInfo = {'id': 1, 'username': 'LifeOnTrack', 'password': 'password'}; //placeholder
-console.log(userInfo);
 
 let saveItemChanges = document.getElementById('saveItemChanges');
 let deleteItemBtn = document.getElementById('deleteItemBtn');
@@ -507,12 +498,9 @@ let deleteItemBtn = document.getElementById('deleteItemBtn');
 let tempId = 0;
 
 function checkRequiredFields() {
-    console.log('hit check required');
     let itemNameVal = document.getElementById('itemName').value;
     let itemType = document.getElementById('itemType').value;
-    console.log('itemNameVal', itemNameVal, 'itemType', itemType);
     if(itemType === 'Action Item') {
-        console.log('hit action check');
         let dueDateVal = document.getElementById('itemDueDate').value;
         if(itemNameVal !== '' && dueDateVal !== '') {
             saveItemChanges.disabled = false;
@@ -538,7 +526,6 @@ let itemInputElements = document.getElementById('itemForm').getElementsByTagName
 
 for(let item of itemInputElements) {
     if(item.id === 'itemName') {
-        console.log('add keyup');
         item.addEventListener('keyup', checkRequiredFields);
     } else {
         item.addEventListener('change', checkRequiredFields);
@@ -578,7 +565,6 @@ async function updateItemChanges(itemId) {
 		updatedItem.end = document.getElementById('endTime').value;
 	}
     updatedItem.related_links = document.getElementById('itemLinks').value;
-    console.log(updatedItem);
 	fetch('/api/items/'+personalCalId+'/'+itemId, {
 		method: 'PUT',
 		headers: {
@@ -588,7 +574,6 @@ async function updateItemChanges(itemId) {
     });
     searchForCalendarItems();
     let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
-    console.log(dayInfo);
     let itemToMove = document.getElementById('item'+itemId);
     document.getElementById('item'+itemId).remove();
     //FIND THE ITEM
@@ -603,15 +588,10 @@ async function updateItemChanges(itemId) {
     itemToMove.innerText = currentItemName + thisUpdatedItem[0].name;
     //console.log('itemToMoveName', itemToMove.innerText.substring(indexOfSplit+2));
     if(thisUpdatedItem[0].item_status === 1) {
-        console.log('hit not started');
         let notStartedDiv = document.getElementById('notStarted');
-        console.log(notStartedDiv);
         notStartedDiv.appendChild(itemToMove);
-        console.log(notStartedDiv);
     } else if(thisUpdatedItem[0].item_status === 2) {
-        console.log('hit in progress');
         let inProgressDiv = document.getElementById('inProgress');
-        console.log('inProgressDiv', inProgressDiv);
         inProgressDiv.appendChild(itemToMove);
     } else if(thisUpdatedItem[0].item_status === 3) {
         let completedDiv = document.getElementById('completed');
@@ -644,7 +624,6 @@ async function deleteItem(itemId) {
     });
     searchForCalendarItems();
     let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
-    console.log(dayInfo);
     setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
     $('#confirmItemDelete').modal('hide');
     $('#itemEditCenter').modal('hide');
@@ -659,7 +638,6 @@ async function loadPersonalCalendar() {
     let calendarData = await response.json();
 	for(let i = 0; i < calendarData.length; i++) {
 		if(calendarData[i].owner_id === userInfo.id && calendarData[i].personal === 1) {
-            console.log('hit set personal calid');
 			window.localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
 		}
     }
@@ -669,21 +647,18 @@ async function loadPersonalCalendar() {
 
 async function searchForCalendarItems() {
     let personalCalId = window.localStorage.getItem('personalCalId');
-    console.log('personalCalId', personalCalId);
 	const response = await fetch('/api/items/'+personalCalId);
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
     let itemData = await response.json();
-    console.log(itemData);
     return itemData;
     //window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
     //console.log('items is ' + JSON.stringify(window.localStorage.getItem('personalCalItems')));
 }
 
 async function populateToDoList() {
-  console.log('hit populate todo list');
 	const response = await fetch('/api/todos/'+userInfo.id); 
 	if(!response.ok) {
 		console.log(response.error);
@@ -708,7 +683,6 @@ function buildCurrentToDos(toDoData) {
 			let newToDoInput = document.createElement('input');
 			newToDoInput.classList.add('checkbox', 'to-do-item');
             newToDoInput.setAttribute('type', 'checkbox');
-            console.log(newToDoInput);
 			let newInputHelper = document.createElement('i');
 			newInputHelper.classList.add('input-helper');
 			newToDoLabel.appendChild(newToDoInput);
@@ -727,7 +701,6 @@ function checkArchiveTime(toDoItem) {
     let archiveTime = new Date(toDoItem.time_of_archive);
     let maxTimeWindow = new Date(new Date(archiveTime).getTime() + 60 * 60 * 24 * 1000);
     let currentTime = new Date();
-    console.log(currentTime < maxTimeWindow);
     if(currentTime > maxTimeWindow) {
         return true;
     }
@@ -780,17 +753,16 @@ async function buildArchivedToDos(toDoData) {
  * It is currently hard coded to be set to 1, as the GET response does
  * not yet hold the information we need it to.
  */
-async function loadNotificationBell(){
+/*async function loadNotificationBell(){
 	const user_id = userInfo.id;
 	const GNotifs = await fetch(`/api/users/${user_id}/notifications`);
 	if(!GNotifs.ok){
-		console.log('Unable to load notifications');
 		return;
 	}
 	//document.getElementById('num-Notifications').value = numNotifs;
 	//temporarily hard coded
 	document.getElementById('num-Notifications').innerHTML = 1;
-}
+}*/
 
 window.addEventListener('load', async () => {
     loadPersonalCalendar();
@@ -801,5 +773,5 @@ window.addEventListener('load', setUpCalendarSelection);
 window.addEventListener('load', setUpdateForm);
 window.addEventListener('load', searchForCalendarItems);
 window.addEventListener('load', populateToDoList);
-window.addEventListener('load', loadNotificationBell());
+//window.addEventListener('load', loadNotificationBell());
 window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth, 'year': currentYear}));
