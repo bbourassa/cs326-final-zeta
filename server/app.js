@@ -154,9 +154,9 @@ app.delete('/api/users/:user', users.remove);
 
 /*app.get('/api/users/:user/notifications', users.notifications);
 app.post('/api/users/:user/notifications', users.notify);*/
-
-app.post('/api/notifications/:user/:sub', notifs.create);
-app.get('/api/notifications/:user', notifs.list);
+// 
+// app.post('/api/notifications/:user/:sub', notifs.create);
+// app.get('/api/notifications/:user', notifs.list);
 
 app.get('/api/todos/:user', todos.list);
 app.post('/api/todos/:user', todos.create);
