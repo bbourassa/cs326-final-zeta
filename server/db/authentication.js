@@ -6,7 +6,7 @@ require('dotenv').config(); //Should be as high up as possible-- does the .env s
 const express = require('express');                 // express routing
 const expressSession = require('express-session');  // for managing session state
 const passport = require('passport');               // handles authentication
-const LocalStrategy = require('passport-local').Strategy; // username/password strategy
+//const LocalStrategy = require('passport-local').Strategy; // username/password strategy
 
 const db = require('../app.js').db;
 
@@ -34,7 +34,7 @@ app.use(passport.session());
 exports.findUser = async function findUser(username){
 	// let exists;
 	try {
-		const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
+		//const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
 		return true;
 	} catch(e){
 		console.log(e);

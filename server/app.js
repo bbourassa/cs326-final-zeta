@@ -152,8 +152,11 @@ app.use('/api/users/:user', users.load);
 app.get('/api/username/:username', users.findById); //EDITED ENDPOINT
 app.delete('/api/users/:user', users.remove);
 
-app.get('/api/users/:user/notifications', users.notifications);
-app.post('/api/users/:user/notifications', users.notify);
+/*app.get('/api/users/:user/notifications', users.notifications);
+app.post('/api/users/:user/notifications', users.notify);*/
+
+app.post('/api/notifications/:user/:sub', notifs.create);
+app.get('/api/notifications/:user', notifs.list);
 
 app.get('/api/todos/:user', todos.list);
 app.post('/api/todos/:user', todos.create);
@@ -162,13 +165,13 @@ app.put('/api/todos/:user/:todo', todos.edit);
 app.delete('/api/todos/:user/:todo', todos.remove);
 
 app.use('/api/users/:user/subscriptions', subs.loadUser);
-app.get('/api/users/:user/subscriptions', subs.list);
+app.get('/api/listsubs/:cal', subs.list);
 app.post('/api/users/:user/subscriptions', subs.create);
 app.use('/api/subscriptions/:user', subs.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars', cals.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
 app.get('/api/subscriptionlist/:cal', subs.find);
-app.delete('/api/subscriptions/:sub', subs.remove);
+app.delete('/api/subscription/:sub', subs.remove);
 
 app.put('/api/users/:user/calendar/pull', cals.updatePersonal);
 

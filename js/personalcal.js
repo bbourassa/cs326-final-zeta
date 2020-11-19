@@ -37,11 +37,11 @@ TEMP ID TO USE
 //let userInfo = {'id': 0};
 /*
 FOR NOW: -this function updates the DayView Title
-          when a day is clicked on the calendar
-         -it also updates the calendar to show which
-          date has been clicked
+		  when a day is clicked on the calendar
+		 -it also updates the calendar to show which
+		  date has been clicked
 FUTURE:  -will update ALL card date for daily view on date
-          button click
+		  button click
 */
 function switchDate(day, month, year) {
 	//let dayViewTitle = document.getElementById('dayViewTitle');
@@ -58,8 +58,8 @@ function switchDate(day, month, year) {
 			}
 		}
 	}
-    setUpDayCard(day, month+1, year);
-    window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': day, 'month': month+1, 'year': year}));
+	setUpDayCard(day, month+1, year);
+	window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': day, 'month': month+1, 'year': year}));
 	if(day === currentDay.getDate() && month === currentMonth && parseInt(year) === currentYear) {
 		lastDay = day;
 	} else {
@@ -67,7 +67,7 @@ function switchDate(day, month, year) {
 			currentDate.classList.add('btn-secondary');
 			currentDate.style.color = 'white';
 			/*currentDate.className = 'btn-secondary';
-            currentDate.classList.add('btn', 'date');*/
+			currentDate.classList.add('btn', 'date');*/
 			lastDay = day;
 		}
 	}
@@ -75,12 +75,12 @@ function switchDate(day, month, year) {
 
 /*
 FOR NOW: -sets calendar body based on the current day
-          information which comes from getting the current
-          date as well as accounting for the number of days
-          in the current month (daysInMonth() accounts for
-          this)
+		  information which comes from getting the current
+		  date as well as accounting for the number of days
+		  in the current month (daysInMonth() accounts for
+		  this)
 FUTURE:  -will associate appropriate item data with each
-          day on calendar
+		  day on calendar
 */
 function setUpCalendar(month, year) {
 	let firstDay = (new Date(year, month)).getDay();
@@ -117,16 +117,16 @@ function setUpCalendar(month, year) {
 }
 
 async function checkForItems(month, year) {
-    let listOfItems = await searchForCalendarItems();
-    //(JSON.parse(window.localStorage.getItem('personalCalItems')));
+	let listOfItems = await searchForCalendarItems();
+	//(JSON.parse(window.localStorage.getItem('personalCalItems')));
 	for(let i = 0; i < listOfItems.length; i++) {
-        let startTime = listOfItems[i].start_time;
+		let startTime = listOfItems[i].start_time;
 		let itemYear = parseInt(startTime.slice(0, 4));
 		let itemMonth = parseInt(startTime.slice(5, 7));
-        let itemDay = parseInt(startTime.slice(8, 10));
+		let itemDay = parseInt(startTime.slice(8, 10));
 		if(itemYear === year && itemMonth === month+1) {
 			if(parseInt(itemDay) !== currentDay.getDate()) {
-                let dateItem = document.getElementById(itemDay.toString(10));
+				let dateItem = document.getElementById(itemDay.toString(10));
 				dateItem.classList.add('btn-outline-secondary');
 			}
 		}
@@ -135,7 +135,7 @@ async function checkForItems(month, year) {
 
 /*
 FOR NOW: assists in generating the correct number of days
-         based on the month and year that we are looking for
+		 based on the month and year that we are looking for
 */
 function daysInMonth(month, year) {
 	let thirtyDays = ['April', 'June', 'September', 'November'];
@@ -155,53 +155,53 @@ function daysInMonth(month, year) {
 
 /*
 FOR NOW: updates the Daily view with correct date header
-         for initial date --> anymore updates to the card
-         happen in switchDate() as of now but some of that
-         code may be pulled out to another method
+		 for initial date --> anymore updates to the card
+		 happen in switchDate() as of now but some of that
+		 code may be pulled out to another method
 FUTURE:  will update item information based on status in
-         order to demonstrate the correct information
-         for what is due on which day
+		 order to demonstrate the correct information
+		 for what is due on which day
 */
 async function setUpDayCard(day, month, year) {
 	let dayViewTitle = document.getElementById('dayViewTitle');
 	dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[month-1] + ' ' + day + ' ' + year;
-    let calendarItems = await searchForCalendarItems();
-    let dayEvents = [];
-    //console.log('personalCalItems', JSON.parse(window.localStorage.getItem('personalCalItems')));
-    resetDayCard();
+	let calendarItems = await searchForCalendarItems();
+	let dayEvents = [];
+	//console.log('personalCalItems', JSON.parse(window.localStorage.getItem('personalCalItems')));
+	resetDayCard();
 	for(let i = 0; i < calendarItems.length; i++) {
 		let thisYear = parseInt(calendarItems[i].start_time.slice(0, 4));
 		let thisMonth = parseInt(calendarItems[i].start_time.slice(5, 7));
-        let thisDay = parseInt(calendarItems[i].start_time.slice(8, 10));
+		let thisDay = parseInt(calendarItems[i].start_time.slice(8, 10));
 		if(thisYear === parseInt(year) && thisMonth === month && thisDay === day) {
 			dayEvents.push(calendarItems[i].id);
 			let newDayItem = document.createElement('div');
 			newDayItem.classList.add('list-group-item', 'list-group-item-action', 'day-item');
 			newDayItem.setAttribute('data-toggle', 'modal');
-            newDayItem.setAttribute('data-target', '#itemEditCenter');
-            newDayItem.id = 'item'+calendarItems[i].id;
-            let thisParentId = calendarItems[i].parent_id;
-            const firstResponse = await fetch('/api/item/'+thisParentId);
-            if (!firstResponse.ok) {
-		        console.log(firstResponse.error);
-		    return;
-	        }
-            let parentItem = await firstResponse.json();
-            if(parentItem[0] === undefined) {
-                newDayItem.innerHTML = 'no related calendar: ';
-                newDayItem.innerHTML += calendarItems[i].name;
-                newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, 'no related calendar:'));
-            } else {
-                const response = await fetch('/api/cals/'+parentItem[0].calendar_id);
-	            if (!response.ok) {
-		            console.log(response.error);
-		            return;
-	            }
-                let parentCalendar = await response.json();
-                newDayItem.innerHTML = parentCalendar[0].name + ': ';
-                newDayItem.innerHTML += calendarItems[i].name;
-                newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, parentCalendar[0].name));
-            }
+			newDayItem.setAttribute('data-target', '#itemEditCenter');
+			newDayItem.id = 'item'+calendarItems[i].id;
+			let thisParentId = calendarItems[i].parent_id;
+			const firstResponse = await fetch('/api/item/'+thisParentId);
+			if (!firstResponse.ok) {
+				console.log(firstResponse.error);
+				return;
+			}
+			let parentItem = await firstResponse.json();
+			if(parentItem[0] === undefined) {
+				newDayItem.innerHTML = 'no related calendar: ';
+				newDayItem.innerHTML += calendarItems[i].name;
+				newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, 'no related calendar:'));
+			} else {
+				const response = await fetch('/api/cals/'+parentItem[0].calendar_id);
+				if (!response.ok) {
+					console.log(response.error);
+					return;
+				}
+				let parentCalendar = await response.json();
+				newDayItem.innerHTML = parentCalendar[0].name + ': ';
+				newDayItem.innerHTML += calendarItems[i].name;
+				newDayItem.addEventListener('click', () => fillModalInfo(calendarItems[i].id, parentCalendar[0].name));
+			}
 			let thisStatus = calendarItems[i].item_status;
 			let thisType = calendarItems[i].item_type;
 			if(thisType === 2) {
@@ -221,19 +221,19 @@ async function setUpDayCard(day, month, year) {
 			}
 		}
 	}
-    window.localStorage.setItem('currentDayItemInfo', JSON.stringify(dayEvents));
+	window.localStorage.setItem('currentDayItemInfo', JSON.stringify(dayEvents));
 }
 
 async function fillModalInfo(itemId, parentCalendar) {
 	tempId = itemId;
-    let personalCalId = window.localStorage.getItem('personalCalId');
+	let personalCalId = window.localStorage.getItem('personalCalId');
 	const response = await fetch('/api/items/'+personalCalId+'/'+itemId);
 	if (!response.ok) {
 		console.log(response.error);
 		return;
 	}
-    let itemData = await response.json();
-    let currentItem = itemData[0];
+	let itemData = await response.json();
+	let currentItem = itemData[0];
 	let itemName = document.getElementById('itemName');
 	itemName.value = currentItem.name;
 	let calendarName = document.getElementById('calendarName');
@@ -256,7 +256,7 @@ async function fillModalInfo(itemId, parentCalendar) {
 		itemDueDate.value = currentItem.start_time.slice(0, 16);
 	} else {
 		itemType.value = 'Event';
-        setUpdateForm();
+		setUpdateForm();
 		let itemStartTime = document.getElementById('startTime');
 		itemStartTime.value = currentItem.start_time.slice(0, 16);
 		let itemEndTime = document.getElementById('endTime');
@@ -279,7 +279,7 @@ function resetDayCard() {
 	notStartedDiv.innerHTML = '';
 	let notStartedHeader = document.createElement('div');
 	notStartedHeader.classList.add('list-group-item', 'text-uppercase', 'font-weight-bold', 'bg-danger');
-    notStartedHeader.innerHTML = 'Not Started';
+	notStartedHeader.innerHTML = 'Not Started';
 	notStartedDiv.appendChild(notStartedHeader);
 
 	let inProgressDiv = document.getElementById('inProgress');
@@ -300,7 +300,7 @@ function resetDayCard() {
 /*
 FOR NOW: only updates modal title
 FUTURE:  will update all modal information to reflect
-         the information for the item being stored
+		 the information for the item being stored
 */
 function switchItem(itemName) {
 	let itemTitle = document.getElementById('modalTitle');
@@ -379,38 +379,38 @@ function updateCalendar() {
 }
 
 async function switchToDoLocation(toDo) {
-    let toDoItem = toDo.getElementsByTagName('input');
-    if(toDoItem[0].checked === true) {
-        let thisId = toDo.getElementsByTagName('label')[0].id;
-        let currentTime = new Date().toISOString(); //ZULU TIME CURRENTLY
-        let archiveInfo = {archived: 1, timeArchived: currentTime};
-        fetch('/api/todos/'+userInfo.id+'/'+thisId, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(archiveInfo)
-        });
-    } else {
-        let thisId = toDo.getElementsByTagName('label')[0].id;
-        let archiveInfo = {archived: 0, timeArchived: null};
-        fetch('/api/todos/'+userInfo.id+'/'+thisId, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(archiveInfo)
-        });
-    }
-    populateToDoList();
+	let toDoItem = toDo.getElementsByTagName('input');
+	if(toDoItem[0].checked === true) {
+		let thisId = toDo.getElementsByTagName('label')[0].id;
+		let currentTime = new Date().toISOString(); //ZULU TIME CURRENTLY
+		let archiveInfo = {archived: 1, timeArchived: currentTime};
+		fetch('/api/todos/'+userInfo.id+'/'+thisId, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(archiveInfo)
+		});
+	} else {
+		let thisId = toDo.getElementsByTagName('label')[0].id;
+		let archiveInfo = {archived: 0, timeArchived: null};
+		fetch('/api/todos/'+userInfo.id+'/'+thisId, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(archiveInfo)
+		});
+	}
+	populateToDoList();
 	/*console.log('isChecked', toDoItem[0].checked);
 	let itemNum = toDo.id;
-    console.log(toDo);
-    let divForToDo = document.getElementById('toDo'+itemNum);
-    divForToDo.remove();
-    console.log(divForToDo);
-    if(toDo.checked === true) {
-    }*/
+	console.log(toDo);
+	let divForToDo = document.getElementById('toDo'+itemNum);
+	divForToDo.remove();
+	console.log(divForToDo);
+	if(toDo.checked === true) {
+	}*/
 }
 
 function setUpdateForm() {
@@ -423,14 +423,14 @@ function setUpdateForm() {
 		itemStatus.style.display = 'inline-block';
 		dueDateShow.style.display = 'inline-block';
 		startTimeShow.style.display = 'none';
-        endTimeShow.style.display = 'none';
-        saveItemChanges.disabled = true;
+		endTimeShow.style.display = 'none';
+		saveItemChanges.disabled = true;
 	} else if (currentType.value === 'Event') {
 		itemStatus.style.display = 'none';
 		dueDateShow.style.display = 'none';
 		startTimeShow.style.display = 'inline-block';
-        endTimeShow.style.display = 'inline-block';
-        saveItemChanges.disabled = true;
+		endTimeShow.style.display = 'inline-block';
+		saveItemChanges.disabled = true;
 	}
 }
 
@@ -451,10 +451,10 @@ async function setNewToDo() {
 	let inputHelper = document.createElement('i');
 	inputHelper.classList.add('input-helper');
 	formCheckLabel.appendChild(inputHelper);
-    addedToDo.appendChild(formCheckLabel);
-    addedToDo.addEventListener('click', () => switchToDoLocation(addedToDo));
+	addedToDo.appendChild(formCheckLabel);
+	addedToDo.addEventListener('click', () => switchToDoLocation(addedToDo));
 	listGroupItem.appendChild(addedToDo);
-    currentToDoList.appendChild(listGroupItem);
+	currentToDoList.appendChild(listGroupItem);
 	fetch('/api/todos/'+userInfo.id, {
 		method: 'POST',
 		headers: {
@@ -504,7 +504,7 @@ addToDoItem.addEventListener('click', setNewToDo);
 
 /*const toDoItems = document.getElementsByName('to-do-item');
 for (let item of toDoItems) {
-    console.log('parent item', item.parentElement.nodeName);
+	console.log('parent item', item.parentElement.nodeName);
 	item.addEventListener('click', () => switchToDoLocation(item));
 }*/
 
@@ -516,43 +516,43 @@ let deleteItemBtn = document.getElementById('deleteItemBtn');
 let tempId = 0;
 
 function checkRequiredFields() {
-    let itemNameVal = document.getElementById('itemName').value;
-    let itemType = document.getElementById('itemType').value;
-    if(itemType === 'Action Item') {
-        let dueDateVal = document.getElementById('itemDueDate').value;
-        if(itemNameVal !== '' && dueDateVal !== '') {
-            saveItemChanges.disabled = false;
-        }
-    } else {
-        let startTimeVal = document.getElementById('startTime').value;
-        let endTimeVal = document.getElementById('endTime').value;
-        if(itemNameVal !== '') {
-            if(startTimeVal !== '' && endTimeVal !== '') {
-                saveItemChanges.disabled = false;
-            }
-        }
-    }
+	let itemNameVal = document.getElementById('itemName').value;
+	let itemType = document.getElementById('itemType').value;
+	if(itemType === 'Action Item') {
+		let dueDateVal = document.getElementById('itemDueDate').value;
+		if(itemNameVal !== '' && dueDateVal !== '') {
+			saveItemChanges.disabled = false;
+		}
+	} else {
+		let startTimeVal = document.getElementById('startTime').value;
+		let endTimeVal = document.getElementById('endTime').value;
+		if(itemNameVal !== '') {
+			if(startTimeVal !== '' && endTimeVal !== '') {
+				saveItemChanges.disabled = false;
+			} 
+		}
+	}
 }
 
-function disableSave() {
-    saveItemChanges.disabled = true;
-    $('#itemEditCenter').modal('hide');
+function disableSave() {   
+	saveItemChanges.disabled = true;
+	$('#itemEditCenter').modal('hide');
 }
 
 saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
 let itemInputElements = document.getElementById('itemForm').getElementsByTagName('input');
 
 for(let item of itemInputElements) {
-    if(item.id === 'itemName') {
-        item.addEventListener('keyup', checkRequiredFields);
-    } else {
-        item.addEventListener('change', checkRequiredFields);
-    }
+	if(item.id === 'itemName') {
+		item.addEventListener('keyup', checkRequiredFields);
+	} else {
+		item.addEventListener('change', checkRequiredFields);
+	}
 }
 
 let itemTextAreaElements = document.getElementById('itemForm').getElementsByTagName('textarea');
 for(let item of itemTextAreaElements) {
-    item.addEventListener('keyup', checkRequiredFields);
+	item.addEventListener('keyup', checkRequiredFields);
 }
 
 deleteItemBtn.addEventListener('click', confirmDelete);
@@ -561,7 +561,7 @@ let closeItemBtn = document.getElementById('closeItemBtn');
 closeItemBtn.addEventListener('click', disableSave());
 
 async function updateItemChanges(itemId) {
-    let personalCalId = window.localStorage.getItem('personalCalId');
+	let personalCalId = window.localStorage.getItem('personalCalId');
 	let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: personalCalId, related_links: null};
 	updatedItem.name = document.getElementById('itemName').value;
 	updatedItem.description = document.getElementById('itemDescription').value;
@@ -582,70 +582,70 @@ async function updateItemChanges(itemId) {
 		updatedItem.start = document.getElementById('startTime').value;
 		updatedItem.end = document.getElementById('endTime').value;
 	}
-    updatedItem.related_links = document.getElementById('itemLinks').value;
+	updatedItem.related_links = document.getElementById('itemLinks').value;
 	fetch('/api/items/'+personalCalId+'/'+itemId, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(updatedItem)
-    });
-    searchForCalendarItems();
-    let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
-    let itemToMove = document.getElementById('item'+itemId);
-    document.getElementById('item'+itemId).remove();
-    //FIND THE ITEM
-    const updateItemResponse = await fetch('/api/item/'+itemId);
-    if (!updateItemResponse.ok) {
-        console.log(updateItemResponse.error);
-        return;
-    }
-    let thisUpdatedItem = await updateItemResponse.json();
-    let indexOfSplit = itemToMove.innerText.indexOf(':');
-    let currentItemName = itemToMove.innerText.substring(0, indexOfSplit+2);
-    itemToMove.innerText = currentItemName + thisUpdatedItem[0].name;
-    //console.log('itemToMoveName', itemToMove.innerText.substring(indexOfSplit+2));
-    if(thisUpdatedItem[0].item_status === 1) {
-        let notStartedDiv = document.getElementById('notStarted');
-        notStartedDiv.appendChild(itemToMove);
-    } else if(thisUpdatedItem[0].item_status === 2) {
-        let inProgressDiv = document.getElementById('inProgress');
-        inProgressDiv.appendChild(itemToMove);
-    } else if(thisUpdatedItem[0].item_status === 3) {
-        let completedDiv = document.getElementById('completed');
-        completedDiv.appendChild(itemToMove);
-    } else {
-        let todaysScheduleDiv = document.getElementById('todaysSchedule');
-        todaysScheduleDiv.appendChild(itemToMove);
-    }
-    //CHECK ITS STATUS
-    //setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
-    $('#itemEditCenter').modal('hide');
-    //setUpDayCard();
+	});
+	searchForCalendarItems();
+	//let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
+	let itemToMove = document.getElementById('item'+itemId);
+	document.getElementById('item'+itemId).remove();
+	//FIND THE ITEM
+	const updateItemResponse = await fetch('/api/item/'+itemId);
+	if (!updateItemResponse.ok) {
+		console.log(updateItemResponse.error);
+		return;
+	}
+	let thisUpdatedItem = await updateItemResponse.json();
+	let indexOfSplit = itemToMove.innerText.indexOf(':');
+	let currentItemName = itemToMove.innerText.substring(0, indexOfSplit+2);
+	itemToMove.innerText = currentItemName + thisUpdatedItem[0].name;
+	//console.log('itemToMoveName', itemToMove.innerText.substring(indexOfSplit+2));
+	if(thisUpdatedItem[0].item_status === 1) {
+		let notStartedDiv = document.getElementById('notStarted');
+		notStartedDiv.appendChild(itemToMove);
+	} else if(thisUpdatedItem[0].item_status === 2) {
+		let inProgressDiv = document.getElementById('inProgress');
+		inProgressDiv.appendChild(itemToMove);
+	} else if(thisUpdatedItem[0].item_status === 3) {
+		let completedDiv = document.getElementById('completed');
+		completedDiv.appendChild(itemToMove);
+	} else {
+		let todaysScheduleDiv = document.getElementById('todaysSchedule');
+		todaysScheduleDiv.appendChild(itemToMove);
+	}
+	//CHECK ITS STATUS
+	//setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
+	$('#itemEditCenter').modal('hide');
+	//setUpDayCard();
 }
 
 let confirmDeletionBtn = document.getElementById('confirmDeletionBtn');
 confirmDeletionBtn.addEventListener('click', () => deleteItem(tempId));
 
 function confirmDelete() {
-    $('#confirmItemDelete').modal('show');
+	$('#confirmItemDelete').modal('show');
 }
 
 async function deleteItem(itemId) {
-    let personalCalId = window.localStorage.getItem('personalCalId');
-    fetch('/api/items/'+personalCalId+'/'+itemId, {
+	let personalCalId = window.localStorage.getItem('personalCalId');
+	fetch('/api/items/'+personalCalId+'/'+itemId, {
 		method: 'DELETE',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		//body: JSON.stringify(updatedItem)
-    });
-    searchForCalendarItems();
-    let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
-    setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
-    $('#confirmItemDelete').modal('hide');
-    $('#itemEditCenter').modal('hide');
-}
+	});
+	searchForCalendarItems();
+	let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
+	setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
+	$('#confirmItemDelete').modal('hide');
+	$('#itemEditCenter').modal('hide');
+} 
 
 async function loadPersonalCalendar() {
 	const response = await fetch('/api/cals/'+userInfo.id+'/all');
@@ -653,27 +653,27 @@ async function loadPersonalCalendar() {
 		console.log(response.error);
 		return;
 	}
-    let calendarData = await response.json();
+	let calendarData = await response.json();
 	for(let i = 0; i < calendarData.length; i++) {
 		if(calendarData[i].owner_id === userInfo.id && calendarData[i].personal === 1) {
 			window.localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
 		}
-    }
-    setUpCalendar(currentMonth, currentYear);
-    setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
+	}
+	setUpCalendar(currentMonth, currentYear);
+	setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
 }
 
 async function searchForCalendarItems() {
-    let personalCalId = window.localStorage.getItem('personalCalId');
+	let personalCalId = window.localStorage.getItem('personalCalId');
 	const response = await fetch('/api/items/'+personalCalId);
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
-    let itemData = await response.json();
-    return itemData;
-    //window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
-    //console.log('items is ' + JSON.stringify(window.localStorage.getItem('personalCalItems')));
+	let itemData = await response.json();
+	return itemData;
+	//window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
+	//console.log('items is ' + JSON.stringify(window.localStorage.getItem('personalCalItems')));
 }
 
 async function populateToDoList() {
@@ -683,7 +683,7 @@ async function populateToDoList() {
 		console.log(response.error);
 		return;
 	}
-    let toDoData = await response.json();
+	let toDoData = await response.json();
 	buildCurrentToDos(toDoData);
 	buildArchivedToDos(toDoData);
 }
@@ -696,20 +696,20 @@ function buildCurrentToDos(toDoData) {
 			let newToDoDiv = document.createElement('div');
 			newToDoDiv.classList.add('list-group-item', 'list-group-item-action');
 			let newToDoFormCheck = document.createElement('div');
-            newToDoFormCheck.classList.add('form-check');
+			newToDoFormCheck.classList.add('form-check');
 			let newToDoLabel = document.createElement('label');
 			newToDoLabel.classList.add('form-check-label');
 			let newToDoInput = document.createElement('input');
 			newToDoInput.classList.add('checkbox', 'to-do-item');
-            newToDoInput.setAttribute('type', 'checkbox');
+			newToDoInput.setAttribute('type', 'checkbox');
 			let newInputHelper = document.createElement('i');
 			newInputHelper.classList.add('input-helper');
 			newToDoLabel.appendChild(newToDoInput);
-            newToDoLabel.innerHTML += ' ' + toDoData[i].content;
-            newToDoLabel.id = toDoData[i].id;
+			newToDoLabel.innerHTML += ' ' + toDoData[i].content;
+			newToDoLabel.id = toDoData[i].id;
 			newToDoLabel.appendChild(newInputHelper);
-            newToDoFormCheck.appendChild(newToDoLabel);
-            newToDoFormCheck.addEventListener('click', () => switchToDoLocation(newToDoFormCheck));
+			newToDoFormCheck.appendChild(newToDoLabel);
+			newToDoFormCheck.addEventListener('click', () => switchToDoLocation(newToDoFormCheck));
 			newToDoDiv.appendChild(newToDoFormCheck);
 			toDoItems.appendChild(newToDoDiv);
 		}
@@ -717,13 +717,13 @@ function buildCurrentToDos(toDoData) {
 }
 
 function checkArchiveTime(toDoItem) {
-    let archiveTime = new Date(toDoItem.time_of_archive);
-    let maxTimeWindow = new Date(new Date(archiveTime).getTime() + 60 * 60 * 24 * 1000);
-    let currentTime = new Date();
-    if(currentTime > maxTimeWindow) {
-        return true;
-    }
-    return false;
+	let archiveTime = new Date(toDoItem.time_of_archive);
+	let maxTimeWindow = new Date(new Date(archiveTime).getTime() + 60 * 60 * 24 * 1000);
+	let currentTime = new Date();
+	if(currentTime > maxTimeWindow) {
+		return true;
+	}
+	return false;
 }
 
 async function buildArchivedToDos(toDoData) {
@@ -731,37 +731,37 @@ async function buildArchivedToDos(toDoData) {
 	archivedToDos.innerHTML = '';
 	for(let i = 0; i < toDoData.length; i++) {
 		if(toDoData[i].archived === 1) {
-            if (checkArchiveTime(toDoData[i]) === false) {
-                let newToDoDiv = document.createElement('div');
-                newToDoDiv.classList.add('list-group-item');
-                let newToDoFormCheck = document.createElement('div');
-                newToDoFormCheck.classList.add('form-check');
-                let newToDoLabel = document.createElement('label');
-                newToDoLabel.classList.add('form-check-label', 'item-checked', 'text-muted');
-                let newToDoInput = document.createElement('input');
-                newToDoInput.classList.add('checkbox', 'to-do-item');
-                newToDoInput.setAttribute('type', 'checkbox');
-                newToDoInput.setAttribute('checked', true);
-                let newInputHelper = document.createElement('i');
-                newInputHelper.classList.add('input-helper');
-                newToDoLabel.appendChild(newToDoInput);
-                newToDoLabel.innerHTML += ' ' + toDoData[i].content;
-                newToDoLabel.id = toDoData[i].id;
-                newToDoLabel.appendChild(newInputHelper);
-                newToDoFormCheck.appendChild(newToDoLabel);
-                newToDoFormCheck.addEventListener('click', () => switchToDoLocation(newToDoFormCheck));
-                newToDoDiv.appendChild(newToDoFormCheck);
-                archivedToDos.appendChild(newToDoDiv);
-            } else {
-                //FILL IN FOR DELETE TODOS
-                fetch('/api/todos/'+userInfo.id+'/'+toDoData[i].id, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    //body: JSON.stringify(updatedItem)
-                });
-            }
+			if (checkArchiveTime(toDoData[i]) === false) {
+				let newToDoDiv = document.createElement('div');
+				newToDoDiv.classList.add('list-group-item');
+				let newToDoFormCheck = document.createElement('div');
+				newToDoFormCheck.classList.add('form-check');
+				let newToDoLabel = document.createElement('label');
+				newToDoLabel.classList.add('form-check-label', 'item-checked', 'text-muted');
+				let newToDoInput = document.createElement('input');
+				newToDoInput.classList.add('checkbox', 'to-do-item');
+				newToDoInput.setAttribute('type', 'checkbox');
+				newToDoInput.setAttribute('checked', true);
+				let newInputHelper = document.createElement('i');
+				newInputHelper.classList.add('input-helper');
+				newToDoLabel.appendChild(newToDoInput);
+				newToDoLabel.innerHTML += ' ' + toDoData[i].content;
+				newToDoLabel.id = toDoData[i].id;
+				newToDoLabel.appendChild(newInputHelper);
+				newToDoFormCheck.appendChild(newToDoLabel);
+				newToDoFormCheck.addEventListener('click', () => switchToDoLocation(newToDoFormCheck));
+				newToDoDiv.appendChild(newToDoFormCheck);
+				archivedToDos.appendChild(newToDoDiv);
+			} else {
+				//FILL IN FOR DELETE TODOS
+				fetch('/api/todos/'+userInfo.id+'/'+toDoData[i].id, {
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					//body: JSON.stringify(updatedItem)
+				});
+			}
 		}
 	}
 }
@@ -784,7 +784,7 @@ async function buildArchivedToDos(toDoData) {
 }*/
 
 window.addEventListener('load', async () => {
-    loadPersonalCalendar();
+	loadPersonalCalendar();
 });
 //window.addEventListener('load', () => setUpCalendar(currentMonth, currentYear));
 window.addEventListener('load', () => setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear));
