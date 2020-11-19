@@ -49,7 +49,6 @@ exports.create = async function(req, res) {
 };
 
 exports.find = async function(req, res) {
-    console.log('hit find item');
     let calendarId = req.params.cal;
     let itemId = req.params.item;
     res.json(await db.any('SELECT * FROM public."items_for_calendars" WHERE calendar_id=$1 AND id=$2;', [calendarId, itemId]));
@@ -75,7 +74,9 @@ exports.findUnlinked = function(req, res){
 
 exports.edit = function(req, res) {
     let itemId = req.params.item;
+    console.log('item id is ' + itemId);
     let name = req.body.name;
+    console.log('name is ' + name);
     let itemType = req.body.type;
     let startTime = req.body.start;
     console.log('start time is ' + startTime);
@@ -98,7 +99,6 @@ exports.edit = function(req, res) {
 };
 
 exports.remove = function(req, res) {
-    console.log('hit remove item');
     let calendarId = req.params.cal;
     let itemId = req.params.item;
     db.none('DELETE from public."items_for_calendars" WHERE calendar_id=$1 AND id=$2;', [calendarId, itemId]);
