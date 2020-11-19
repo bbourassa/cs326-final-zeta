@@ -11,9 +11,9 @@ ENUM FOR PERSONAL VALUES:
 db.none('CREATE TABLE IF NOT EXISTS calendars(id INTEGER PRIMARY KEY, name VARCHAR, owner_id INT, personal INT, description TEXT);');
 
 exports.listAll = async function(req, res) {
-	//res.json(cals);
-	console.log('enter');
-	res.json(await db.any('SELECT * FROM public."calendars";'));
+
+    //res.json(cals);
+    res.json(await db.any('SELECT * FROM public."calendars";'));
 };
 
 exports.getUsersCals = async function(req, res) {
@@ -50,7 +50,7 @@ exports.load = async function(req, res, next) {
 
 //NOT SURE WE EVEN USE THIS
 exports.find = async function(req, res) {
-	console.log('hit find');
+
 	const id = parseInt(req.params.cal, 10);
 	res.json(await db.any('SELECT * from calendars WHERE id=$1;', [id]));
 };
