@@ -7,7 +7,6 @@ let currentItemId = 0;
 window.addEventListener('load', loadAll(user_id));
 window.localStorage.clear();
 function loadAll(userId){
-    console.log('userId', userId);
 	loadCalendars(userId);
 	loadSettingListeners();
     loadNotifications();
@@ -21,14 +20,11 @@ let createItemChanges = document.getElementById('createItemBtn');
 createItemChanges.addEventListener('click', addNewItem);
 
 let saveChangesBtn = document.getElementById('saveChanges');
-console.log('saveChangesBtn', saveChangesBtn);
 saveChangesBtn.addEventListener('click', () => sendItemChanges(currentItemId));
 
 let itemInputEditElements = document.getElementById('editForm').getElementsByTagName('input');
-console.log('editelems', itemInputEditElements);
 for(let item of itemInputEditElements) {
     if(item.id === 'itemName') {
-        console.log('add keyup');
         item.addEventListener('keyup', checkRequiredFieldsForEdit);
     } else {
         item.addEventListener('change', checkRequiredFieldsForEdit);
@@ -58,7 +54,6 @@ function loadSettingListeners(){
         const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
         const checkedItemIds = getCheckedItems();
         let personalCalId = 0;
-        //console.log('checkedItemIds', checkedItemIds);
         if(checkedItemIds !== null) {
             const response = await fetch('/api/cals/'+user_id+'/all');
             if (!response.ok) {
@@ -68,12 +63,10 @@ function loadSettingListeners(){
             let userCalendars = await response.json();
             for(let i = 0; i < userCalendars.length; i++) {
                 if(userCalendars[i].personal === 1) {
-                    //console.log('userCalendars', userCalendars[i]);
                     personalCalId = userCalendars[i].id;
                 }
             }
             for(let i = 0; i < checkedItemIds.length; i++) {
-                //console.log(checkedItemIds[i]);
                 const itemResponse = await fetch('/api/items/'+cal_id+'/'+checkedItemIds[i]);
                 if (!itemResponse.ok) {
                     console.log(itemResponse.error);
@@ -82,7 +75,6 @@ function loadSettingListeners(){
                 let prepItem = await itemResponse.json();
                 let addThisItem = prepItem[0];
                 let thisPersonalItem = {name: addThisItem.name, itemType: addThisItem.item_type, startTime: addThisItem.start_time, endTime: addThisItem.end_time, description: addThisItem.description, itemStatus: addThisItem.item_status, relatedLinks: addThisItem.related_links, isParent: false, oldId: addThisItem.id};
-                console.log(thisPersonalItem);
                 addToPersonal(personalCalId, thisPersonalItem);
             }
         }
@@ -110,7 +102,6 @@ function loadSettingListeners(){
 
 	//for every action in the calendar, add it to personal
 	document.getElementById('setAddAllActions').addEventListener('click', async ()=> {
-        console.log('hit add all actions');
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 		const response = await fetch('/api/items/'+cal_id);
 		if(!response.ok){
@@ -127,7 +118,6 @@ function loadSettingListeners(){
                 let userCalendars = await calResponse.json();
                 for(let i = 0; i < userCalendars.length; i++) {
                     if(userCalendars[i].personal === 1) {
-                        //console.log('userCalendars', userCalendars[i]);
                         personalCalId = userCalendars[i].id;
                     }
                 }
@@ -141,7 +131,6 @@ function loadSettingListeners(){
                 let prepItem = await itemResponse.json();
                 let addThisItem = prepItem[0];
                 let thisPersonalItem = {name: addThisItem.name, itemType: addThisItem.item_type, startTime: addThisItem.start_time, endTime: addThisItem.end_time, description: addThisItem.description, itemStatus: addThisItem.item_status, relatedLinks: addThisItem.related_links, isParent: false, oldId: addThisItem.id};
-                console.log(thisPersonalItem);
                 addToPersonal(personalCalId, thisPersonalItem);
             }
         }
@@ -149,7 +138,6 @@ function loadSettingListeners(){
 
 	//for every event in cal, add it to personal
 	document.getElementById('setAddAllEvents').addEventListener('click', async()=>{
-        console.log('hit add all events');
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 		const response = await fetch('/api/items/'+cal_id);
 		if(!response.ok){
@@ -166,7 +154,6 @@ function loadSettingListeners(){
                 let userCalendars = await calResponse.json();
                 for(let i = 0; i < userCalendars.length; i++) {
                     if(userCalendars[i].personal === 1) {
-                        //console.log('userCalendars', userCalendars[i]);
                         personalCalId = userCalendars[i].id;
                     }
                 }
@@ -180,7 +167,6 @@ function loadSettingListeners(){
                 let prepItem = await itemResponse.json();
                 let addThisItem = prepItem[0];
                 let thisPersonalItem = {name: addThisItem.name, itemType: addThisItem.item_type, startTime: addThisItem.start_time, endTime: addThisItem.end_time, description: addThisItem.description, itemStatus: addThisItem.item_status, relatedLinks: addThisItem.related_links, isParent: false, oldId: addThisItem.id};
-                console.log(thisPersonalItem);
                 addToPersonal(personalCalId, thisPersonalItem);
             }
         }
@@ -189,9 +175,7 @@ function loadSettingListeners(){
 
 	//for each selected item, find corresponding in personal, updare
 	document.getElementById('setUpdateSelected').addEventListener('click',async ()=>{
-        //console.log('update selected');
         const checkedItemIds = getCheckedItems();
-        console.log('checkedItems', checkedItemIds);
 		for(let i=0; i< checkedItemIds.length; i++){
             let currentParent = checkedItemIds[i];
 			//Send in the item ids to be pulled across. If any don't resolve, stop trying
@@ -208,7 +192,6 @@ function loadSettingListeners(){
                     personalCalendar = calendar;
                 }
             } 
-            //console.log('personalCalendar', personalCalendar);
             //FIND THE CHECKED ITEM
             const itemResponse = await fetch('/api/item/'+currentParent);
             if (!itemResponse.ok) {
@@ -217,7 +200,6 @@ function loadSettingListeners(){
             }
             let itemData = await itemResponse.json();
             let currentItem = itemData[0];
-            //console.log('found current Item', currentItem);
             //FIND THE ITEMS ON THE PERSONAL CALENDAR
             const personItemsResponse = await fetch('/api/items/'+personalCalendar.id);
             if(!personItemsResponse.ok) {
@@ -225,10 +207,8 @@ function loadSettingListeners(){
                 return;
             }
             let allCalItems = await personItemsResponse.json();
-            //console.log('all calendar items', allCalItems);
             for(let i = 0; i < allCalItems.length; i++) {
                 if(allCalItems[i].parent_id === currentParent) {
-                    //console.log('hit match', personalCalendar.id, allCalItems[i].id);
                     let updatedInfo = {name: currentItem.name, type: currentItem.item_type, start: currentItem.start_time, end: currentItem.end_time, description: currentItem.description, status: currentItem.item_status, related_links: currentItem.related_links};
                     fetch('/api/items/'+personalCalendar.id+'/'+allCalItems[i].id, {
                         method: 'PUT',
@@ -251,9 +231,7 @@ function loadSettingListeners(){
         $('#itemAdditionCenter').modal('show');
         let currentCalendar = document.getElementById('parentCal');
         let calName = document.getElementById('cal-name').textContent;
-        console.log('currentCalendar', currentCalendar, 'calName', calName);
         currentCalendar.placeholder = calName;
-        console.log(currentCalendar.placeholder);
         setTimeFields();
         let typeSet = document.getElementById('newItemType');
         typeSet.addEventListener('change', setTimeFields);
@@ -282,8 +260,6 @@ function loadSettingListeners(){
 	//delete selected items
 	document.getElementById('setDeleteItem').addEventListener('click', async()=>{
         const checkedItemIds = getCheckedItems();
-        console.log(checkedItemIds);
-        //console.log('checkedItemIds', checkedItemIds);
 		//assumes the appropriate cal is the one you are on currently
         const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
         $('#editConfirmation').modal('show');
@@ -331,9 +307,7 @@ function loadSettingListeners(){
 	document.getElementById('setDeleteCal').addEventListener('click', async ()=>{
 		//assumes the appropriate cal is the one you are on currently
 		//@Milestone3 make a confirmation screen
-        console.log('hit delete cal');
         const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-        console.log('calId', cal_id);
         document.getElementById('confirmBtn').addEventListener('click', async ()=> {    
             //$('#editConfirmation').modal('hide');
             /*let notifMessage = document.getElementById('message').value;
@@ -369,7 +343,6 @@ function loadSettingListeners(){
                 return;
             }
             let listSubscriptions = await response.json();
-            console.log('listSubscriptions', listSubscriptions);
             for(let i = 0; i < listSubscriptions.length; i++) {
                 fetch('/api/subscription/'+listSubscriptions[i].id, {
                     method: 'DELETE',
@@ -485,7 +458,6 @@ function generateNewId(field){
 	else if(field === 'shareCode'){
 		let letterMap = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 0};
 		let mappedString ='';
-		// console.log(cal_id, JSON.stringify(cal_id).length);
 		for(let i=0; i<JSON.stringify(cal_id).length; i++){
 			let digit = parseInt(JSON.stringify(cal_id)[i]);
 			let enLetter = Object.keys(letterMap).find(key => letterMap[key] === digit);
@@ -521,7 +493,6 @@ function getCheckedItems(){
  * @Milestone3
  */
 async function loadNotifications(){
-    console.log('enter notifs');
     //clear out notifications
     /*const notificationResponse = await fetch('/api/notifications/'+user_id);
     if(!notificationResponse.ok) {
@@ -607,7 +578,6 @@ async function loadCalendars(){
     document.getElementById('subscribed-cals').innerHTML = '';
 	cals.forEach((cal) =>{
 		const admin = (cal.owner_id === user_id);
-        console.log('admin', admin);
 		//makke the button for the calendar
 		let aCal = document.createElement('button');
 		aCal.innerHTML=cal.name;
@@ -618,7 +588,6 @@ async function loadCalendars(){
 			while( document.getElementById('eventTable').childNodes.length>0){
 				document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
             }
-            console.log('hit load table');
 			loadTable(cal.id, true);
 		});
 		if(admin){
@@ -656,8 +625,6 @@ async function loadTable(calId, rebuild) {
 	const response = await fetch('/api/cals/'+calId+'/');
     let calData = await response.json();
 	calData = calData[0];
-    console.log('calData', calData);
-	// console.log(calData);
 	//make this work with r
 	const admin = (calData.owner_id === user_id);
 
@@ -696,12 +663,9 @@ async function loadTable(calId, rebuild) {
 		return;
 	}
 	let calItems = await items.json();
-	console.log(calItems);
-
     //load each item in this calendar
     if(rebuild === true) {
         calItems.forEach((item) => {
-            console.log(item);
             let anItem = document.createElement('tr');
     
             anItem.setAttribute('id', item.id);
@@ -721,10 +685,8 @@ async function loadTable(calId, rebuild) {
     
             //load duedate/start date
             let date = document.createElement('td');
-            console.log('hit start time');
             if(item.start_time !== ''){
                 let time = new Date(item.start_time).toDateString();
-                console.log('time', time);
                 date.innerHTML = time;
             } 
             /*else if(item.end_time !== ''){
@@ -778,30 +740,30 @@ async function loadTable(calId, rebuild) {
                 for(let item of detailAttributes) {
                     item.innerText = '';
                 }
-                document.getElementById('detailsName').innerText += 'Item Name: ' + item.name;
-                document.getElementById('detailsDescription').innerText += 'Item Description: ' + item.description;
+                document.getElementById('detailsName').innerText += 'ITEM NAME: ' + item.name;
+                document.getElementById('detailsDescription').innerText += 'ITEM DESCRIPTION: ' + item.description;
                 if(item.item_type === 1) {
-                    document.getElementById('detailsType').innerText += 'Item Type: Action Item';
+                    document.getElementById('detailsType').innerText += 'ITEM TYPE: Action Item';
                 }
                 else {
-                    document.getElementById('detailsType').innerText += 'Item Type: Event';
+                    document.getElementById('detailsType').innerText += 'ITEM TYPE: Event';
                 }
                 if(item.item_status === 1) {
-                    document.getElementById('detailsStatus').innerText += 'Item Status: Not Started';
+                    document.getElementById('detailsStatus').innerText += 'ITEM STATUS: Not Started';
                 } else if(item.item_status === 2) {
-                    document.getElementById('detailsStatus').innerText += 'Item Status: In Progress';
+                    document.getElementById('detailsStatus').innerText += 'ITEM STATUS: In Progress';
                 } else if(item.item_status === 3) {
-                    document.getElementById('detailsStatus').innerText += 'Item Status: Completed';
+                    document.getElementById('detailsStatus').innerText += 'ITEM STATUS: Completed';
                 } else {
-                    document.getElementById('detailsStatus').innerText += 'Item Status: N/A'
+                    document.getElementById('detailsStatus').innerText += 'ITEM STATUS: N/A'
                 } 
-                document.getElementById('detailsStartTime').innerText += 'Item Start Time: ' + new Date(item.start_time).toDateString();
+                document.getElementById('detailsStartTime').innerText += 'ITEM START TIME: ' + new Date(item.start_time).toDateString();
                 if(item.end_time !== null) {
-                    document.getElementById('detailsEndTime').innerText += 'Item End Time: ' +new Date(item.end_time).toDateString();
+                    document.getElementById('detailsEndTime').innerText += 'ITEM END TIME: ' +new Date(item.end_time).toDateString();
                 } else {
-                    document.getElementById('detailsEndTime').innerText += 'Item End Time: N/A';
+                    document.getElementById('detailsEndTime').innerText += 'ITEM END TIME: N/A';
                 } 
-                document.getElementById('detailsLinks').innerText += 'Item Related Links: ' + item.related_links;
+                document.getElementById('detailsLinks').innerText += 'ITEM RELATED LINKS: ' + item.related_links;
                 //fillModalInfo(item, document.getElementById('cal-name').textContent);
                 //loadCommit();
                 //document.getElementById('btnsForEdits').setAttribute('hidden', true);
@@ -825,7 +787,6 @@ async function loadTable(calId, rebuild) {
                 editBtn.setAttribute('type', 'button');
                 editBtn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
                 editBtn.innerHTML = 'Edit';
-                console.log('cal-name', document.getElementById('cal-name').textContent);
                 editBtn.addEventListener('click', ()=> {
                     fillModalInfo(item, document.getElementById('cal-name').textContent);
                 });
@@ -845,7 +806,6 @@ async function loadTable(calId, rebuild) {
                 newItem = calItems[i];
             }
         }
-        console.log(newItem);
             let anItem = document.createElement('tr');
     
             anItem.setAttribute('id', 'item'+newItem.id);
@@ -865,10 +825,8 @@ async function loadTable(calId, rebuild) {
     
             //load duedate/start date
             let date = document.createElement('td');
-            console.log('hit start time');
             if(newItem.start_time !== ''){
                 let time = new Date(newItem.start_time).toDateString();
-                console.log('time', time);
                 date.innerHTML = time;
             } 
             /*else if(item.end_time !== ''){
@@ -922,30 +880,30 @@ async function loadTable(calId, rebuild) {
                 for(let item of detailAttributes) {
                     item.innerText = '';
                 }
-                document.getElementById('detailsName').innerText += 'Item Name: ' + newItem.name;
-                document.getElementById('detailsDescription').innerText += 'Item Description: ' + newItem.description;
+                document.getElementById('detailsName').innerText += 'ITEM NAME: ' + newItem.name;
+                document.getElementById('detailsDescription').innerText += 'ITEM DESCRIPTION: ' + newItem.description;
                 if(newItem.item_type === 1) {
-                    document.getElementById('detailsType').innerText += 'Item Type: Action Item';
+                    document.getElementById('detailsType').innerText += 'ITEM TYPE: Action Item';
                 }
                 else {
-                    document.getElementById('detailsType').innerText += 'Item Type: Event';
+                    document.getElementById('detailsType').innerText += 'ITEM TYPE: Event';
                 }
                 if(newItem.item_status === 1) {
-                    document.getElementById('detailsStatus').innerText += 'Item Status: Not Started';
+                    document.getElementById('detailsStatus').innerText += 'ITEM STATUS: Not Started';
                 } else if(newItem.item_status === 2) {
-                    document.getElementById('detailsStatus').innerText += 'Item Status: In Progress';
+                    document.getElementById('detailsStatus').innerText += 'ITEM STATUS: In Progress';
                 } else if(newItem.item_status === 3) {
-                    document.getElementById('detailsStatus').innerText += 'Item Status: Completed';
+                    document.getElementById('detailsStatus').innerText += 'ITEM STATUS: Completed';
                 } else {
-                    document.getElementById('detailsStatus').innerText += 'Item Status: N/A'
+                    document.getElementById('detailsStatus').innerText += 'ITEM STATUS: N/A'
                 } 
-                document.getElementById('detailsStartTime').innerText += 'Item Start Time: ' + new Date(newItem.start_time).toDateString();
+                document.getElementById('detailsStartTime').innerText += 'ITEM START TIME: ' + new Date(newItem.start_time).toDateString();
                 if(newItem.end_time !== null) {
-                    document.getElementById('detailsEndTime').innerText += 'Item End Time: ' + new Date(newItem.end_time).toDateString();
+                    document.getElementById('detailsEndTime').innerText += 'ITEM END TIME: ' + new Date(newItem.end_time).toDateString();
                 } else {
-                    document.getElementById('detailsEndTime').innerText += 'Item End Time: N/A';
+                    document.getElementById('detailsEndTime').innerText += 'ITEM END TIME: N/A';
                 } 
-                document.getElementById('detailsLinks').innerText += 'Item Related Links: ' + newItem.related_links;
+                document.getElementById('detailsLinks').innerText += 'ITEM RELATED LINKS: ' + newItem.related_links;
             });
             info.appendChild(infoBtn);
             anItem.appendChild(info);
@@ -961,7 +919,6 @@ async function loadTable(calId, rebuild) {
                 editBtn.setAttribute('type', 'button');
                 editBtn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
                 editBtn.innerHTML = 'Edit';
-                console.log('cal-name', document.getElementById('cal-name').textContent);
                 editBtn.addEventListener('click', ()=> {
                     fillModalInfo(item, document.getElementById('cal-name').textContent);
                 });
@@ -980,7 +937,6 @@ async function loadTable(calId, rebuild) {
 
 async function fillModalInfo(item, parentCalendar) {
     currentItemId = item.id;
-    console.log('itemId', item);
     //let personalCalId = window.localStorage.getItem('personalCalId');
 	const response = await fetch('/api/items/'+item.calendar_id+'/'+item.id);
 	if (!response.ok) {
@@ -989,13 +945,11 @@ async function fillModalInfo(item, parentCalendar) {
 	}
     let itemData = await response.json();
     let currentItem = itemData[0];
-    console.log('currentItem', currentItem);
 	let itemName = document.getElementById('itemName');
     itemName.value = currentItem.name;
     let editHeader = document.getElementById('editItemTitle');
     editHeader.innerHTML = 'Edit ' + currentItem.name;
     let calendarName = document.getElementById('calendarName');
-    console.log('parentCalendar', parentCalendar);
 	calendarName.setAttribute('placeholder', parentCalendar);
 	let itemDescription = document.getElementById('itemDescription');
 	itemDescription.value = currentItem.description;
@@ -1013,7 +967,6 @@ async function fillModalInfo(item, parentCalendar) {
 			itemStatus.value = 'Completed';
 		}
         let itemDueDate = document.getElementById('itemDueDate');
-        console.log('start time', currentItem.start_time);
 		itemDueDate.value = currentItem.start_time.slice(0, 16);
 	} else {
 		itemType.value = 'Event';
@@ -1126,7 +1079,6 @@ function getInfo(){
  * Function to switch between date settings in the edit modal
  */
 function setUpdateForm(item) {
-    console.log('item', item);
 	let currentType = document.getElementById('itemType');
 	let itemStatus = document.getElementById('showStatus');
 	let dueDateShow = document.getElementById('showDueDate');
@@ -1145,7 +1097,6 @@ function setUpdateForm(item) {
         endTimeShow.style.display = 'inline-block';
         document.getElementById('saveChanges').disabled = true;
 	}
-    console.log('currentType', item.item_type);
 	/*if(item.item_type === 1) {
         console.log('hit');
         currentType.value = 'Action Item';
@@ -1294,12 +1245,9 @@ function setTimeFields() {
 
 
 function checkRequiredFieldsForEdit() {
-    console.log('hit check required');
     let itemNameVal = document.getElementById('itemName').value;
     let itemType = document.getElementById('itemType').value;
-    console.log('itemNameVal', itemNameVal, 'itemType', itemType);
     if(itemType === 'Action Item') {
-        console.log('hit action check');
         let dueDateVal = document.getElementById('itemDueDate').value;
         if(itemNameVal !== '' && dueDateVal !== '') {
             let saveItemChanges = document.getElementById('saveChanges');
@@ -1321,7 +1269,6 @@ let itemInputAddElements = document.getElementById('newItemForm').getElementsByT
 
 for(let item of itemInputAddElements) {
     if(item.id === 'newName') {
-        console.log('add keyup');
         item.addEventListener('keyup', checkRequiredFieldsForAddition);
     } else {
         item.addEventListener('change', checkRequiredFieldsForAddition);
@@ -1329,12 +1276,9 @@ for(let item of itemInputAddElements) {
 }
 
 function checkRequiredFieldsForAddition() {
-    console.log('hit check required');
     let itemNameVal = document.getElementById('newName').value;
     let itemType = document.getElementById('newItemType').value;
-    console.log('itemNameVal', itemNameVal, 'newItemType', itemType);
     if(itemType === 'Action Item') {
-        console.log('hit action check');
         let dueDateVal = document.getElementById('newItemDueDate').value;
         if(itemNameVal !== '' && dueDateVal !== '') {
             let createItemChanges = document.getElementById('createItemBtn');
@@ -1354,7 +1298,6 @@ function checkRequiredFieldsForAddition() {
 
 async function addNewItem() {
     const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-    console.log('cal id', cal_id);
     let newItemToAdd = {name: '', description: '', itemType: 0, itemStatus: 0, startTime: '', endTime: null, relatedLinks: '', isParent: true};
     newItemToAdd.name = document.getElementById('newName').value;
     newItemToAdd.description = document.getElementById('newDescription').value;
@@ -1375,7 +1318,6 @@ async function addNewItem() {
         newItemToAdd.endTime = document.getElementById('newEndTime').value;
     }
     newItemToAdd.relatedLinks = document.getElementById('newItemLinks').value;
-    console.log('newItemToAdd', newItemToAdd);
     fetch('/api/items/'+cal_id, {
 		method: 'POST',
 		headers: {
@@ -1435,7 +1377,6 @@ async function sendItemChanges(itemId) {
 		    updatedItem.end = document.getElementById('endTime').value;
 	    }
         updatedItem.related_links = document.getElementById('itemLinks').value;
-        console.log(updatedItem);
 	    fetch('/api/items/'+cal_id+'/'+itemId, {
 		    method: 'PUT',
 		    headers: {
@@ -1449,7 +1390,6 @@ async function sendItemChanges(itemId) {
 }
 
 async function addToPersonal(personalCalId, newPersonalItem) {
-    console.log('new hit');
     fetch('/api/items/'+personalCalId, {
         method: 'POST',
         headers: {
