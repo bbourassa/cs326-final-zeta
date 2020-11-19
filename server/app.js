@@ -169,13 +169,13 @@ app.put('/api/todos/:user/:todo', todos.edit);
 app.delete('/api/todos/:user/:todo', todos.remove);
 
 app.use('/api/users/:user/subscriptions', subs.loadUser);
-app.get('/api/users/:user/subscriptions', subs.list);
+app.get('/api/listsubs/:cal', subs.list);
 app.post('/api/users/:user/subscriptions', subs.create);
 app.use('/api/subscriptions/:user', subs.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars', cals.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
 app.get('/api/subscriptionlist/:cal', subs.find);
-app.delete('/api/subscriptions/:sub', subs.remove);
+app.delete('/api/subscription/:sub', subs.remove);
 
 app.put('/api/users/:user/calendar/pull', cals.updatePersonal);
 
