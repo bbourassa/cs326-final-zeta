@@ -46,14 +46,13 @@ exports.findUser = async function findUser(username){
 exports.addNewUser = async function addUser(fname, lname, Email,Username, password) {
 	let exists = true;
 	const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [Username])));
-
 	if(user === '[]'){
 		// console.log('not exst');
 		exists= false;
 	} else {
 		exists = true;
 	}
-	console.log('checked for user');
+	// console.log('checked for user');
 	// Check for user
 	if(!exists){
 		let lastId = await db.any('SELECT MAX(id) FROM public."users";');
@@ -97,22 +96,11 @@ exports.check = async function checkCreds(username, pwd){
 // if it fails, return false
 //otherwise, check password
 	// let user;
-<<<<<<< HEAD
 	const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
 	if(user === '[]'){
 		return false;
 	}
 	else if(user[0].password_val !== pwd){ //TODO not failing where it is supposed to
-=======
-	console.log('checking cred');
-	try { //check that user exists by username, returns user
-		const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
-		//then check password
-		if(user[0].password_val !== pwd){
-			return false;
-		}
-	} catch (e){
->>>>>>> b6aaf9e528596b48c851f49ef7f560ba552dc8cf
 		return false;
 	}
 	return true;
