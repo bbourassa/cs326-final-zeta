@@ -3,6 +3,7 @@ require('dotenv').config(); //loading environmen variables; should be as high as
 const express = require('express');
 const path = require('path');
 const app = express();
+const cookieSession = require('cookie-session');
 
 //SECRET
 const dbconnection = require('./secret.json');
@@ -61,10 +62,12 @@ const strategy = new LocalStrategy(
 		}
 		if(await auth.check(username, password) ==false){
 			//creates a 2 sec delay between failed attempts
+			console.log('cant log it');
 			await new Promise((r) => setTimeout(r, 2000));
 			return done(null, false, {'message':'Wrong username or password'});
 		}
 		console.log('completed strategy');
+
 		// currently: user object is username string
 		return done(null, username);
 	}
@@ -89,7 +92,7 @@ app.use(passport.session());
 // app.get('/user',
 // 	auth.checkLoggedIn,
 // 	(req, res) => {
-// 		res.json(req.user);
+// 		req.session.user;
 // 	}
 // );
 
@@ -108,7 +111,7 @@ passport.deserializeUser((uid, done) => { //takes the ID and looks up user,
 app.get('/',
 	auth.checkLoggedIn,
 	(req, res) => {
-		console.log('user ' + req.user);
+		console.log('user ' + req.session.user);
 		res.redirect('../html/personalcal.html');
 	});
 // app.get('/html/personalcal.html',
@@ -122,10 +125,10 @@ app.get('/',
 // Handle post data from the login.html form.
 app.post('/login',
 	passport.authenticate('local' , {     // use username/password authentication
-		successRedirect : '../html/personalcal.html',   // when we login, go to /private
+		successRedirect : '../html/personalcal.html',   // when we login, go to main page
 		failureRedirect : '../html/index.html'      // otherwise, back to login
 	})
-);
+); //LOGIN cannot currently redirect; however, it returns the correct routing destination
 
 
 // Handle logging out (takes us back to the login page).
@@ -155,8 +158,8 @@ app.use('/api/users/:user', users.load);
 app.get('/api/username/:username', users.findById); //EDITED ENDPOINT
 app.delete('/api/users/:user', users.remove);
 
-app.get('/api/users/:user/notifications', users.notifications);
-app.post('/api/users/:user/notifications', users.notify);
+// app.get('/api/users/:user/notifications', users.notifications);
+// app.post('/api/users/:user/notifications', users.notify);
 
 app.get('/api/todos/:user', todos.list);
 app.post('/api/todos/:user', todos.create);

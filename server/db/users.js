@@ -2,7 +2,7 @@
 
 const db = require('../app.js').db;
 
-db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCHAR, firstName VARCHAR, lastName VARCHAR, email VARCHAR, password_val VARCHAR, calendar_id INTEGER UNIQUE, notifications TEXT );');
+db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCHAR, firstName VARCHAR, lastName VARCHAR, email VARCHAR, calendar_id INTEGER UNIQUE,  salt VARCHAR, hash VARCHAR );');
 
 const users = [];
 
