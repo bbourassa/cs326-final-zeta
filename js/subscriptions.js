@@ -1,14 +1,30 @@
 'use strict';
 /* eslint-env jquery */ //this tag is needed so that the $in the modal
 //calls don't throw an error
-const user_id = 1; //PLACEHOLDER
+let userI;
+async function getSession(){
+	let user = await fetch('/user');
+	// console.log(user);
+	let us = await user.json();
+	console.log(us);
+	let mID = await fetch('/api/username/'+us);
+	let id = await mID.json();
+	console.log(id[0].id);
+	const test= JSON.stringify(id);
+	userI = test;
+	loadAll(id[0].id);
+	return us;
+}
+// getSession();
+console.log(userI);
+// const user_id = 1; //PLACEHOLDER
 let currentItemId = 0;
 // const user_id  =0;
-window.addEventListener('load', loadAll(user_id));
+window.addEventListener('load', getSession());
 window.localStorage.clear();
 function loadAll(userId){
 	loadCalendars(userId);
-	loadSettingListeners();
+	loadSettingListeners(userId);
 	loadNotifications();
 
 }
@@ -34,7 +50,7 @@ for(let item of itemInputEditElements) {
 /**
  * Loads the event listers for each setting button
  */
-function loadSettingListeners(){
+function loadSettingListeners(user_id){
 
 	//  the header checkbox will cause all other check oxes to check/uncheck
 	document.getElementById('checkAll').addEventListener('change', ()=> {
@@ -534,7 +550,7 @@ async function loadNotifications(){
  * Load all of the user's subscription calendars
  * @param {int} userId
  */
-async function loadCalendars(){
+async function loadCalendars(user_id){
 	//load all the calendars you have a subscription relationship with
 	//make the response into the cal list
 	//console.log('load fetch');
@@ -562,7 +578,7 @@ async function loadCalendars(){
 			while( document.getElementById('eventTable').childNodes.length>0){
 				document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
 			}
-			loadTable(cal.id, true);
+			loadTable(cal.id, true, user_id);
 		});
 		if(admin){
 			/**let adminIndic = document.createElement('btn'); //btn btn-outline-secondary btn-sm float-right
@@ -592,7 +608,7 @@ async function loadCalendars(){
  * Gets and renders all events and activities in a given calendar
  * @param {int} calId the id number for the calendar
  */
-async function loadTable(calId, rebuild) {
+async function loadTable(calId, rebuild, user_id) {
 	if(rebuild === true) {
 		document.getElementById('eventTable').innerHTML = '';
 	}
