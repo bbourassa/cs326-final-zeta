@@ -37,7 +37,8 @@ exports.listSubscribed = async function(req, res) {
 };
 
 exports.create = async function(req, res) {
-	res.sendStatus(201);
+    res.sendStatus(201);
+    console.log('hit add sub');
 	let lastId =  await db.any('SELECT MAX(id) FROM public."subscriptions";');
 	let newId = lastId[0].max + 1; 
 	let userId = req.params.user;
@@ -46,9 +47,9 @@ exports.create = async function(req, res) {
 };
 
 exports.find = async function(req, res) {
-	console.log('hit sub find');
+	//console.log('hit sub find');
 	let calId = req.params.cal;
-	console.log('calId', calId);
+	//console.log('calId', calId);
 	res.json(await db.any('SELECT * FROM public."subscriptions" WHERE calendar_id=$1;', [calId]));
 	/*if (subs[id] && subs[id].user_id === req.user.id) {
 		res.json(subs[id]);
@@ -58,7 +59,7 @@ exports.find = async function(req, res) {
 };
 
 exports.remove = function(req, res) {
-	console.log('hit remove sub');
+	//console.log('hit remove sub');
 	//let userId = req.params.user;
 	let subId = req.params.sub;
 	db.none('DELETE from public."subscriptions" WHERE id=$1;', [subId]);

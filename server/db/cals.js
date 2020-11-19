@@ -24,16 +24,21 @@ exports.getUsersCals = async function(req, res) {
 
 exports.create = async function(req, res) {
 	//INSERT STATEMENT
-	//console.log('hit');
+	console.log('hit create new cal');
 	let lastId = await db.any('SELECT MAX(id) FROM public."calendars";');
 	let newId = lastId[0].max + 1;
 	let name = req.body.name;
-	let ownerId = req.body.ownerId;
+	let ownerId = req.params.user;
 	let personal = req.body.personal;
-	let description = req.body.description;
-	db.none('INSERT INTO public."calendars"(id, name, owner_id, personal, description) VALUES($1, $2, $3, $4, $5);', [newId, name, ownerId, personal, description]);
-	res.sendStatus(201);
-	
+    let description = req.body.description;
+    console.log(req.body);
+    db.none('INSERT INTO public."calendars"(id, name, owner_id, personal, description) VALUES($1, $2, $3, $4, $5);', [newId, name, ownerId, personal, description]);
+    let subLastId = await db.any('SELECT MAX(id) FROM public."subscriptions";');
+    let newSubId = subLastId[0].max + 1;
+    let userId = req.params.user;
+    let calendar_id = newId;
+    db.none('INSERT INTO public."subscriptions"(id, user_id, calendar_id) VALUES ($1, $2, $3);', [newSubId, userId, calendar_id]);
+	res.sendStatus(201);	
 };
 
 exports.load = async function(req, res) {
@@ -65,7 +70,7 @@ exports.edit = function(req, res) {
 };
 
 exports.remove = function(req, res) {
-	//console.log('hit');
+	console.log('hit calendar remove');
 	let calendarId = req.params.cal;
 	db.none('DELETE from public."calendars" WHERE id=$1;', [calendarId]);
 	res.sendStatus(204);

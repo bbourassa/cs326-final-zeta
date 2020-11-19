@@ -21,3 +21,6 @@ textarea {
 label {
     margin-right: 10px;
 }
+.reqFields {
+    color: red;
+}
