@@ -2,7 +2,7 @@
 
 const db = require('../app.js').db;
 
-db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCHAR, firstName VARCHAR, lastName VARCHAR, email VARCHAR, password_val VARCHAR, calendar_id INTEGER UNIQUE, notifications TEXT );');
+db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCHAR, firstName VARCHAR, lastName VARCHAR, email VARCHAR, calendar_id INTEGER UNIQUE,  salt VARCHAR, hash VARCHAR );');
 
 const users = [];
 
@@ -12,7 +12,7 @@ const users = [];
 // };
 
 exports.list = async function(req, res) {
-	res.json(await db.any('SELECT * FROM public."users";'));
+    res.json(await db.any('SELECT * FROM public."users";'));
 };
 
 exports.create = async function(req, res) {
@@ -24,9 +24,20 @@ exports.create = async function(req, res) {
 	let lastName = req.body.lastName;
 	let email = req.body.email;
 	let password_val = req.body.password;
-	let calendar_id = req.body.calendar_id;
+	// let calendar_id = req.body.calendar_id;
 	let notifications = req.body.notifications;
-	db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, password_val, calendar_id, notifications]);
+
+	//create personal cal
+	let lastCal = await db.any('SELECT MAX(id) FROM public."calendars";');
+	let newCal = lastCal[0].max + 1;
+	let name = req.body.username;
+	let ownerId = newId;
+	let personal = true;
+	let description = 'User ' + username +'\'s personal calendar';
+	db.none('INSERT INTO public."calendars"(id, name, owner_id, personal, description) VALUES($1, $2, $3, $4, $5);', [newCal, name, ownerId, personal, description]);
+
+
+	db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, password_val, newCal, notifications]);
 };
 
 exports.load = async function(req, res, next) {
@@ -59,16 +70,16 @@ exports.findById = async function(req, res) {
 
 
 exports.remove = function(req, res) {
-	let userId = req.params.user;
-	db.none('DELETE from public."users" WHERE id=$1;', [userId]);
+    let userId = req.params.user;
+    db.none('DELETE from public."users" WHERE id=$1;', [userId]);
 	res.sendStatus(204);
 };
 
 //NEEDS TO BE WORKED MORE - MEGHAN CAN YOU ALTER THIS TO WORK CORRECTLY?
 //I FEEL YOU PROBABLY KNOW MORE ABOUT THIS FUNCTION
 exports.listSubscribed = async function(req, res) {
-	let userId = req.body.id;
-	res.json(await db.any('SELECT * FROM public."subscriptions" INNER JOIN public."calendars" ON calendars.id = subscriptions.calendar_id WHERE user_id=$1;', [userId]));
+    let userId = req.body.id;
+    res.json(await db.any('SELECT * FROM public."subscriptions" INNER JOIN public."calendars" ON calendars.id = subscriptions.calendar_id WHERE user_id=$1;', [userId]));
 	//res.json(req.subs.map(sub => users[sub.user_id]));
 };
 

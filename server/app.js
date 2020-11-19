@@ -3,6 +3,7 @@ require('dotenv').config(); //loading environmen variables; should be as high as
 const express = require('express');
 const path = require('path');
 const app = express();
+const cookieSession = require('cookie-session');
 
 //SECRET
 // const dbconnection = require('./secret.json');
@@ -18,8 +19,7 @@ const pgp = require('pg-promise')({
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
-const url = process.env.DATABASE_URL;
-//   || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+const url = process.env.DATABASE_URL; //   || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
 
 exports.db = pgp(url);
 
@@ -50,7 +50,7 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 //session configuration
 const session = {
 	secret: process.env.SECRET,
-	//   || dbconnection.secret,
+	//    || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
@@ -63,10 +63,12 @@ const strategy = new LocalStrategy(
 		}
 		if(await auth.check(username, password) ==false){
 			//creates a 2 sec delay between failed attempts
+			console.log('cant log it');
 			await new Promise((r) => setTimeout(r, 2000));
 			return done(null, false, {'message':'Wrong username or password'});
 		}
 		console.log('completed strategy');
+
 		// currently: user object is username string
 		return done(null, username);
 	}
@@ -91,7 +93,7 @@ app.use(passport.session());
 // app.get('/user',
 // 	auth.checkLoggedIn,
 // 	(req, res) => {
-// 		res.json(req.user);
+// 		req.session.user;
 // 	}
 // );
 
@@ -110,19 +112,24 @@ passport.deserializeUser((uid, done) => { //takes the ID and looks up user,
 app.get('/',
 	auth.checkLoggedIn,
 	(req, res) => {
-		console.log('user ' + req.user);
+		console.log('user ' + req.session.user);
 		res.redirect('../html/personalcal.html');
 	});
+// app.get('/html/personalcal.html',
+// 	auth.checkLoggedIn,
+// 	(req, res) => {
+// 		res.redirect('/personalcal.html');
+// 	});
 
 
 // app.post('/api/login', users.auth);
 // Handle post data from the login.html form.
 app.post('/login',
 	passport.authenticate('local' , {     // use username/password authentication
-		successRedirect : '../html/personalcal.html',   // when we login, go to /private
+		successRedirect : '../html/personalcal.html',   // when we login, go to main page
 		failureRedirect : '../html/index.html'      // otherwise, back to login
 	})
-);
+); //LOGIN cannot currently redirect; however, it returns the correct routing destination
 
 
 // Handle logging out (takes us back to the login page).

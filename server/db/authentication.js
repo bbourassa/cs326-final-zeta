@@ -12,8 +12,9 @@ const db = require('../app.js').db;
 
 const app = express();
 
-// const dbconnection = require('../secrets.json');
+const minicrypt = require('../miniCrypt');
 
+const mc = new minicrypt();
 
 
 //session configuration
@@ -61,8 +62,11 @@ exports.addNewUser = async function addUser(fname, lname, Email,Username, passwo
 		let firstName = fname;
 		let lastName = lname;
 		let email = Email;
-		let password_val = password;
-		// let notifications = req.body.notifications;
+
+		// let password_val = password;
+		const encrypt = mc.hash(password);
+		const salt = encrypt[0];
+		const hash = encrypt[1];
 
 		//create personal cal
 		let lastCal = await db.any('SELECT MAX(id) FROM public."calendars";');
@@ -72,9 +76,9 @@ exports.addNewUser = async function addUser(fname, lname, Email,Username, passwo
 		let personal = 1;
 		let description = 'User ' + username +'\'s personal calendar';
 		db.none('INSERT INTO public."calendars"(id, name, owner_id, personal, description) VALUES($1, $2, $3, $4, $5);', [newCal, name, ownerId, personal, description]);
-
+		// console.log(salt, hash);
 		//create user!
-		db.none('INSERT INTO public."users"(id, username, firstName, lastName, email, password_val, calendar_id) VALUES($1, $2, $3, $4, $5, $6, $7);', [newId, username, firstName, lastName, email, password_val, newCal]);
+		db.none('INSERT INTO public."users"(id, username, firstName, lastName, email, password_val, calendar_id, salt, hash) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9);', [newId, username, firstName, lastName, email, '',newCal, salt, hash]);
 
 		//user should be subscribed to their personal cal
 		let lastSub =  await db.any('SELECT MAX(id) FROM public."subscriptions";');
@@ -96,22 +100,30 @@ exports.check = async function checkCreds(username, pwd){
 // if it fails, return false
 //otherwise, check password
 	// let user;
+	console.log('checking credentials');
 	const user = (await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
 	if(user === '[]'){
+		console.log('no user');
 		return false;
 	}
-	else if(user[0].password_val !== pwd){ //TODO not failing where it is supposed to
+	else if(!mc.check(pwd, user[0].salt, user[0].hash)){
+		console.log('wrong pass');
 		return false;
 	}
+	console.log('logging in');
+	// next();
 	return true;
 };
 
 
 exports.checkLoggedIn = function checkLoggedIn(req, res, next) {
+	console.log('check logged in');
 	if(req.isAuthenticated()){
+		console.log(res.user, req.isAuthenticated());
 		//if you are logged/ authenticated, run next route
 		next();
 	} else {
+		console.log(res.user);
 		//otherwise, redirect to login
 		res.redirect('../html/index.html');
 	}

@@ -9,23 +9,24 @@
 	console.log(window.localStorage.getItem('userInfo'));
 }*/
 
-/**
- * async function loadUser(){
-	console.log('running');
-	const username = await fetch('/user');
-	if(!username.ok){
-		console.log(username.error);
-	}
-	const name = await username.json();
-	const userid = await fetch('/api/username/'+name);
-	if(!userid.ok){
-		console.log(userid.error);
-	}
-	const id = await userid.json();
-	const uid = id[0].id;
-	console.log(uid);
-}
- */
+
+// async function loadUser(){
+// 	console.log('running');
+// 	const username = await fetch('/user');
+// 	if(!username.ok){
+// 		console.log(username.error);
+// 	}
+// 	const name = await username.json();
+// 	console.log(name, ' CURRENT LOGGED IN');
+	// const userid = await fetch('/api/username/'+name);
+	// if(!userid.ok){
+	// 	console.log(userid.error);
+	// }
+	// const id = await userid.json();
+	// const uid = id[0].id;
+	// console.log(uid);
+// }
+//  loadUser();
 
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
@@ -682,7 +683,7 @@ async function searchForCalendarItems() {
 
 async function populateToDoList() {
 
-	const response = await fetch('/api/todos/'+userInfo.id); 
+	const response = await fetch('/api/todos/'+userInfo.id);
 	if(!response.ok) {
 		console.log(response.error);
 		return;

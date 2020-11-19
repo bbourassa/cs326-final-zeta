@@ -21,63 +21,27 @@ function checkHasInputs() {
 	}
 }
 
-// async function searchUsers(currUser, currPassword) {
-// 	const response = await fetch('/api/users');
-// 	if (!response.ok) {
-// 		console.log(response.error);
-// 		return;
-// 	}
-// 	let allUsers = await response.json();
-// 	console.log(allUsers);
-// 	for(let i = 0; i < allUsers.length; i++) {
-// 		if(allUsers[i].username === currUser) {
-// 			if(allUsers[i].password === currPassword) {
-// 				window.localStorage.setItem('userInfo', JSON.stringify({id: allUsers[i].id, username: allUsers[i].username, password: allUsers[i].password }));
-// 				return true;
-// 			}
-// 		}
-// 	}
-// 	return false;
-// }
 
-// /*
-// FOR NOW: redirects to the Personal Calendar
-//          page on sign-in
-// */
-// function redirectToCal() {
-// 	let currentUsername = document.getElementById('inputUsername');
-// 	let currentPassword = document.getElementById('inputPassword');
-// 	//let validUser = false;
-// 	searchUsers(currentUsername.value, currentPassword.value).then((res) => {if(res === true) { window.location = '../html/personalcal.html';} else {
-// 		if(document.getElementById('loginError') === null) {
-// 			let loginError = document.createElement('p');
-// 			loginError.classList.add('text-uppercase');
-// 			loginError.id = 'loginError';
-// 			loginError.innerHTML = 'Invalid Login Info';
-// 			document.getElementById('loginText').appendChild(loginError);
-// 		}
-// 	}});
-// }
 
 /**
  * posts the login data. Authentication handles the rest
  */
-async function validate(){
-	const usern = document.getElementById('inputUsername').value;
-	const pass = document.getElementById('inputPassword').value;
-	try {
-		console.log('validating');
-		await fetch('/login', {
-			method: 'POST',
-			headers:{
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({username: usern, password:pass })
-		});
-	} catch (e) {
-		console.log('Unable to login. ', e);
-	}
-}
+// async function validate(){
+// 	const usern = document.getElementById('inputUsername').value;
+// 	const pass = document.getElementById('inputPassword').value;
+// 	try {
+// 		console.log('validating');
+// 		await fetch('/login', {
+// 			method: 'POST',
+// 			headers:{
+// 				'Content-Type': 'application/json'
+// 			},
+// 			body: JSON.stringify({username: usern, password:pass })
+// 		});
+// 	} catch (e) {
+// 		console.log('Unable to login. ', e);
+// 	}
+// }
 
 /*
 FOR NOW: -sets methods for signInButton
@@ -85,7 +49,7 @@ FOR NOW: -sets methods for signInButton
 FUTURE:  TBD
 */
 const signInButton = document.getElementById('signIn');
-signInButton.addEventListener('click', validate);
+// signInButton.addEventListener('click', validate);
 
 const inputs = document.getElementsByTagName('input');
 for(let input of inputs) {
