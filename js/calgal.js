@@ -61,10 +61,6 @@ function checkLink() {
 
 async function redirectOnCreation(user_id) {
 	console.log('hit redirect');
-<<<<<<< HEAD
-=======
-	//console.log('newCalendarName', document.getElementById('calendarName').value);
->>>>>>> 8325371b0412c527772c09c04ea7f307b57af845
 	let newCalName = document.getElementById('calendarName').value;
 	let newCalDescription = 'new calendar titled - ' + newCalName;
 	let newCalInfo = {name: newCalName, personal: 0, description: newCalDescription};
