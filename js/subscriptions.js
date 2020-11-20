@@ -11,25 +11,37 @@ async function getSession(){
 	loadAll(id[0].id);
 	return us;
 }
-
-
+// getSession();
+//console.log(userI);
+// const user_id = 1; //PLACEHOLDER
+let currentItemId = 0;
+// const user_id  =0;
+let createItemChanges = document.getElementById('createItemBtn');
+let saveChangesBtn = document.getElementById('saveChanges');
 window.addEventListener('load', getSession());
 window.localStorage.clear();
 
 function loadAll(userId){
 	loadCalendars(userId);
 	loadSettingListeners(userId);
+    //loadNotifications();
+    createItemChanges.addEventListener('click', () => addNewItem(userId));
+    saveChangesBtn.addEventListener('click', () => sendItemChanges(currentItemId, userId));
+
 }
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
 
+<<<<<<< HEAD
+=======
 let createItemChanges = document.getElementById('createItemBtn');
 createItemChanges.addEventListener('click', addNewItem);
 
 // let saveChangesBtn = document.getElementById('saveChanges');
 // saveChangesBtn.addEventListener('click', () => sendItemChanges(currentItemId));
 
+>>>>>>> 34c9bf30db187c4532654cd509c2cba1d27eae31
 let itemInputEditElements = document.getElementById('editForm').getElementsByTagName('input');
 for(let item of itemInputEditElements) {
 	if(item.id === 'itemName') {
@@ -517,11 +529,11 @@ async function loadCalendars(user_id){
 	//this function assumes that the new subscription will be at the end
 	//of your list of subscriptions
 	if(window.localStorage.getItem('newSubscription')){
-		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'), true);
+		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'), true, user_id);
 		window.localStorage.removeItem('newSubscription');
 	}
 
-	loadTable(subs.childNodes[0].getAttribute('cal_id'), true);
+	loadTable(subs.childNodes[0].getAttribute('cal_id'), true, user_id);
 
 }
 
@@ -1217,7 +1229,7 @@ function checkRequiredFieldsForAddition() {
 	}
 }
 
-async function addNewItem() {
+async function addNewItem(userId) {
     document.getElementById('createItemBtn').setAttribute('data-dismiss', 'modal');
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 	let newItemToAdd = {name: '', description: '', itemType: 0, itemStatus: 0, startTime: '', endTime: null, relatedLinks: '', isParent: true};
@@ -1248,10 +1260,10 @@ async function addNewItem() {
 		body: JSON.stringify(newItemToAdd)
 	});
 	//ADD NEW ROW IN THE TABLE
-	loadTable(cal_id, false);
+	loadTable(cal_id, false, userId);
 }
 
-async function sendItemChanges(itemId) {
+async function sendItemChanges(itemId, userId) {
     document.getElementById('saveChanges').setAttribute('data-dismiss', 'modal');
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 	let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: cal_id, related_links: null};
@@ -1282,7 +1294,7 @@ async function sendItemChanges(itemId) {
 		},
 		body: JSON.stringify(updatedItem)
 	});
-	loadTable(cal_id, true);
+	loadTable(cal_id, true, userId);
 }
 
 async function addToPersonal(personalCalId, newPersonalItem) {
