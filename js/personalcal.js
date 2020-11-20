@@ -125,7 +125,9 @@ function switchDate(day, month, year) {
 	let currentDate = document.getElementById(day);
 	let lastDate;
 	if (lastDay !== 0) {
-		lastDate = document.getElementById(lastDay);
+        lastDate = document.getElementById(lastDay);
+        console.log('getDate()', currentDay.getDate());
+        let currentMonth = new Date();
 		if(lastDay !== currentDay.getDate()) {
 			lastDate.classList.remove('btn-secondary');
 			if (lastDate.classList.contains('btn-outline-secondary')) {
@@ -133,7 +135,14 @@ function switchDate(day, month, year) {
 			} else {
 				lastDate.style.color = 'black';
 			}
-		}
+		} else if(currentMonth.getMonth() !== month) {
+            lastDate.classList.remove('btn-secondary');
+			if (lastDate.classList.contains('btn-outline-secondary')) {
+				lastDate.style.color = 'grey';
+			} else {
+				lastDate.style.color = 'black';
+			}
+        }
 	}
 	setUpDayCard(day, month+1, year);
 	window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': day, 'month': month+1, 'year': year}));
@@ -202,10 +211,16 @@ async function checkForItems(month, year) {
 		let itemMonth = parseInt(startTime.slice(5, 7));
 		let itemDay = parseInt(startTime.slice(8, 10));
 		if(itemYear === year && itemMonth === month+1) {
+            console.log('currentDay', currentDay.getDate());
+            console.log('month', month);
+            console.log(parseInt(itemMonth));
 			if(parseInt(itemDay) !== currentDay.getDate()) {
 				let dateItem = document.getElementById(itemDay.toString(10));
 				dateItem.classList.add('btn-outline-secondary');
-			}
+			} else if(parseInt(itemMonth) !== month) {
+                let dateItem = document.getElementById(itemDay.toString(10));
+				dateItem.classList.add('btn-outline-secondary');
+            }
 		}
 	}
 }

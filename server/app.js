@@ -11,6 +11,7 @@ const cookieSession = require('cookie-session');
 // const password=dbconnection.password;
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
+
 const pgp = require('pg-promise')({
 	connect(client) {
 		console.log('Connected to database:', client.connectionParameters.database);
@@ -20,6 +21,7 @@ const pgp = require('pg-promise')({
     }*/
 });
 const url = process.env.DATABASE_URL;//   || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+
 
 exports.db = pgp(url);
 
