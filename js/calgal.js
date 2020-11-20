@@ -10,8 +10,8 @@ async function getSession(){
 	let id = await mID.json();
 	console.log(id[0].id);
 	//const test= JSON.stringify(id);
-    //user_id = test;
-    setAllForPage(id[0].id);
+	//user_id = test;
+	setAllForPage(id[0].id);
 	//return us;
 }
 window.addEventListener('load', getSession);
@@ -31,14 +31,14 @@ let calendarName = document.getElementById('calendarName');
 let calendarLink = document.getElementById('calendarLink');
 
 function setAllForPage(user_id) {
-    subscribeButton.addEventListener('click', () => redirectOnSubscription(user_id));
-    songOfDay.addEventListener('click', () => redirectSongOfDay(user_id));
-    dailyMantras.addEventListener('click', () => redirectDailyMantra(user_id));
-    dailyUpdates.addEventListener('click', () => redirectDailyUpdates(user_id));
-    dailyPodcast.addEventListener('click', () => redirectDailyPodcast(user_id));
-    createCalendar.addEventListener('click', () => redirectOnCreation(user_id));
-    calendarName.addEventListener('keyup', checkCalInput);
-    calendarLink.addEventListener('keyup', checkLink);
+	subscribeButton.addEventListener('click', () => redirectOnSubscription(user_id));
+	songOfDay.addEventListener('click', () => redirectSongOfDay(user_id));
+	dailyMantras.addEventListener('click', () => redirectDailyMantra(user_id));
+	dailyUpdates.addEventListener('click', () => redirectDailyUpdates(user_id));
+	dailyPodcast.addEventListener('click', () => redirectDailyPodcast(user_id));
+	createCalendar.addEventListener('click', () => redirectOnCreation(user_id));
+	calendarName.addEventListener('keyup', checkCalInput);
+	calendarLink.addEventListener('keyup', checkLink);
 
 }
 
@@ -90,10 +90,10 @@ async function redirectOnSubscription(user_id) {
 		return;
 	}
 
-    let newCalData = await response.json();
-    if(newCalData !== null) {
-        fetch('/api/subscriptions/'+user_id, {
-            method: 'POST',
+	let newCalData = await response.json();
+	if(newCalData !== null) {
+		fetch('/api/subscriptions/'+user_id, {
+			method: 'POST',
 		    headers: {
 			    'Content-Type': 'application/json'
 			},

@@ -3,13 +3,17 @@
 //calls don't throw an error
 
 async function getSession(){
-	let user = await fetch('/user');
-	// console.log(user);
-	let us = await user.json();
-	let mID = await fetch('/api/username/'+us);
-	let id = await mID.json();
-	loadAll(id[0].id);
-	return us;
+	try{
+		let user = await fetch('/user');
+		let us = await user.json();
+		let mID = await fetch('/api/username/'+us);
+		let id = await mID.json();
+		loadAll(id[0].id);
+	} catch (e){
+
+		window.location.replace('./index.html');
+	}
+
 }
 // getSession();
 //console.log(userI);
