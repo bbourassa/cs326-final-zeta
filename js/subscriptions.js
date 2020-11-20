@@ -1,7 +1,7 @@
 'use strict';
 /* eslint-env jquery */ //this tag is needed so that the $in the modal
 //calls don't throw an error
-let userI;
+//let userI;
 async function getSession(){
 	let user = await fetch('/user');
 	// console.log(user);
@@ -10,13 +10,13 @@ async function getSession(){
 	let mID = await fetch('/api/username/'+us);
 	let id = await mID.json();
 	console.log(id[0].id);
-	const test= JSON.stringify(id);
-	userI = test;
+	//const test= JSON.stringify(id);
+	//userI = test;
 	loadAll(id[0].id);
 	return us;
 }
 // getSession();
-console.log(userI);
+//console.log(userI);
 // const user_id = 1; //PLACEHOLDER
 let currentItemId = 0;
 // const user_id  =0;
