@@ -91,28 +91,31 @@ async function redirectOnSubscription(user_id) {
 	}
 	let newCalData = await response.json();
 	if(newCalData !== null) {
-		const subResponse = await fetch('/api/subscriptions/'+user_id);
-		//const subResponse = await fetch('/api/cals/'+calendarId);
-		if(!subResponse.ok) {
-			console.log(subResponse.error);
-			return;
-		}
-		let allSubs = await subResponse.json();
-		for(let i = 0; i < allSubs.length; i++) {
-			if(allSubs[i].calendar_id === parseInt(calendarId)) {
-				makeSubscription = false;
+		if(newCalData[0].personal !== 1 && newCalData[0].id !== 2 && newCalData[0].id !== 3 && newCalData[0].id !== 4 && newCalData[0].id !== 5) {
+			const subResponse = await fetch('/api/subscriptions/'+user_id);
+			if(!subResponse.ok) {
+				console.log(subResponse.error);
+				return;
 			}
-		}
-		if(makeSubscription === true) {
-			fetch('/api/subscriptions/'+user_id, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({'calendarId': calendarId})
-			});
-		}
-		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
+			let allSubs = await subResponse.json();
+			for(let i = 0; i < allSubs.length; i++) {
+				console.log(allSubs[i].id, parseInt(calendarId));
+				if(allSubs[i].id === parseInt(calendarId)) {
+					makeSubscription = false;
+				}
+			}
+			if(makeSubscription === true) {
+				console.log(true);
+				fetch('/api/subscriptions/'+user_id, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({'calendarId': calendarId})
+				});
+			}
+			setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
+		} 
 	}
 }
 
