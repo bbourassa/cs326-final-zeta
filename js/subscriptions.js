@@ -62,6 +62,7 @@ function loadSettingListeners(user_id){
 		document.getElementById('setAddItems').setAttribute('data-toggle', 'modal');
 		document.getElementById('setAddItems').setAttribute('data-target', '#additionConfirmation');
 		document.getElementById('confirmAddBtn').addEventListener('click', async ()=> {
+            document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
 			let personalCalId = 0;
 			if(checkedItemIds !== null) {
 				const response = await fetch('/api/cals/'+user_id+'/all');
@@ -87,7 +88,6 @@ function loadSettingListeners(user_id){
 					addToPersonal(personalCalId, thisPersonalItem);
 				}
 			}
-			document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
 		});
 
 		/*for(let i=0; i<checkedItemIds.length; i++){
@@ -117,6 +117,7 @@ function loadSettingListeners(user_id){
 		document.getElementById('setAddAllActions').setAttribute('data-toggle', 'modal');
 		document.getElementById('setAddAllActions').setAttribute('data-target', '#additionConfirmation');
 		document.getElementById('confirmAddBtn').addEventListener('click', async ()=> {
+            document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
 			const response = await fetch('/api/items/'+cal_id);
 			if(!response.ok){
 				alert('Unable to add selected item(s) to your calendar at this time.');
@@ -148,7 +149,6 @@ function loadSettingListeners(user_id){
 					addToPersonal(personalCalId, thisPersonalItem);
 				}
 			}
-			document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
 		});
 	});
 
@@ -158,6 +158,7 @@ function loadSettingListeners(user_id){
 		document.getElementById('setAddAllEvents').setAttribute('data-toggle', 'modal');
 		document.getElementById('setAddAllEvents').setAttribute('data-target', '#additionConfirmation');
 		document.getElementById('confirmAddBtn').addEventListener('click', async ()=> {
+            document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
 			const response = await fetch('/api/items/'+cal_id);
 			if(!response.ok){
 				alert('Unable to add selected item(s) to your calendar at this time.');
@@ -189,7 +190,6 @@ function loadSettingListeners(user_id){
 					addToPersonal(personalCalId, thisPersonalItem);
 				}
 			}
-			document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
 		});
 
 	});
@@ -1218,7 +1218,7 @@ function checkRequiredFieldsForAddition() {
 }
 
 async function addNewItem() {
-
+    document.getElementById('createItemBtn').setAttribute('data-dismiss', 'modal');
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 	let newItemToAdd = {name: '', description: '', itemType: 0, itemStatus: 0, startTime: '', endTime: null, relatedLinks: '', isParent: true};
 	newItemToAdd.name = document.getElementById('newName').value;
@@ -1249,10 +1249,10 @@ async function addNewItem() {
 	});
 	//ADD NEW ROW IN THE TABLE
 	loadTable(cal_id, false);
-	document.getElementById('createItemBtn').setAttribute('data-dismiss', 'modal');
 }
 
 async function sendItemChanges(itemId) {
+    document.getElementById('saveChanges').setAttribute('data-dismiss', 'modal');
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 	let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: cal_id, related_links: null};
 	updatedItem.name = document.getElementById('itemName').value;
@@ -1283,7 +1283,6 @@ async function sendItemChanges(itemId) {
 		body: JSON.stringify(updatedItem)
 	});
 	loadTable(cal_id, true);
-	document.getElementById('saveChanges').setAttribute('data-dismiss', 'modal');
 }
 
 async function addToPersonal(personalCalId, newPersonalItem) {
