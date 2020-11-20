@@ -9,29 +9,100 @@
 	console.log(window.localStorage.getItem('userInfo'));
 }*/
 
+/*
+helper variables to pass information about the date
+*/
+window.localStorage.clear();
+async function getSession(){
+	let user = await fetch('/user');
+	// console.log(user);
+	let us = await user.json();
+	console.log(us);
+	let mID = await fetch('/api/username/'+us);
+	let id = await mID.json();
+	console.log(id[0].id);
+	//const test= JSON.stringify(id);
+    //userId = test;
+    setAllForPage(id[0].id);
+	//return us;
+}
 
-// async function loadUser(){
-// 	console.log('running');
-// 	const username = await fetch('/user');
-// 	if(!username.ok){
-// 		console.log(username.error);
-// 	}
-// 	const name = await username.json();
-// 	console.log(name, ' CURRENT LOGGED IN');
-	// const userid = await fetch('/api/username/'+name);
-	// if(!userid.ok){
-	// 	console.log(userid.error);
-	// }
-	// const id = await userid.json();
-	// const uid = id[0].id;
-	// console.log(uid);
-// }
-//  loadUser();
+let currentDay = new Date();
+let currentMonth = currentDay.getMonth();
+let currentYear = currentDay.getFullYear();
+let lastDay = 0;
+
+/*
+months array is used to quickly access the correct
+month for the calendar in order to set month name
+as the part of calendar header appropriately
+*/
+let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+/*initial page setup for calendar and
+daily view
+*/
+
+const dayItems = document.getElementsByClassName('day-item');
+const calSelections = document.getElementsByClassName('calendar-selection');
+let dueDateInput = document.getElementById('itemType');
+let addToDoItem = document.getElementById('addToDo');
+let saveItemChanges = document.getElementById('saveItemChanges');
+let deleteItemBtn = document.getElementById('deleteItemBtn');
+let tempId = 0;
+let itemInputElements = document.getElementById('itemForm').getElementsByTagName('input');
+let itemTextAreaElements = document.getElementById('itemForm').getElementsByTagName('textarea');
+let closeItemBtn = document.getElementById('closeItemBtn');
+let confirmDeletionBtn = document.getElementById('confirmDeletionBtn');
+
+window.addEventListener('load', getSession);
+
+function setAllForPage(user_id) {
+    for (let item of dayItems) {
+        item.addEventListener('click', () => switchItem(item.textContent));
+    }
+    for (let item of calSelections) {
+        item.addEventListener('change', updateCalendar);
+    }
+    dueDateInput.addEventListener('change', setUpdateForm);
+    addToDoItem.addEventListener('click', () => setNewToDo(user_id));
+    
+    saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
+    
+    for(let item of itemInputElements) {
+        if(item.id === 'itemName') {
+            item.addEventListener('keyup', checkRequiredFields);
+        } else {
+            item.addEventListener('change', checkRequiredFields);
+        }
+    }
+    
+    for(let item of itemTextAreaElements) {
+        item.addEventListener('keyup', checkRequiredFields);
+    }
+    
+    deleteItemBtn.addEventListener('click', confirmDelete);
+    
+    closeItemBtn.addEventListener('click', disableSave());
+    
+    confirmDeletionBtn.addEventListener('click', () => deleteItem(tempId));
+    
+    loadPersonalCalendar(user_id);
+    //window.addEventListener('load', () => setUpCalendar(currentMonth, currentYear));
+    setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
+    setUpCalendarSelection();
+    setUpdateForm();
+    searchForCalendarItems();
+    populateToDoList(user_id);
+    //window.addEventListener('load', loadNotificationBell());
+    window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth, 'year': currentYear}));
+    
+}
+
 
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
-window.localStorage.clear();
 /*
 TEMP ID TO USE
 */
@@ -381,13 +452,13 @@ function updateCalendar() {
 	}
 }
 
-async function switchToDoLocation(toDo) {
+async function switchToDoLocation(toDo, user_id) {
 	let toDoItem = toDo.getElementsByTagName('input');
 	if(toDoItem[0].checked === true) {
 		let thisId = toDo.getElementsByTagName('label')[0].id;
 		let currentTime = new Date().toISOString(); //ZULU TIME CURRENTLY
 		let archiveInfo = {archived: 1, timeArchived: currentTime};
-		fetch('/api/todos/'+userInfo.id+'/'+thisId, {
+		fetch('/api/todos/'+user_id+'/'+thisId, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json'
@@ -397,7 +468,7 @@ async function switchToDoLocation(toDo) {
 	} else {
 		let thisId = toDo.getElementsByTagName('label')[0].id;
 		let archiveInfo = {archived: 0, timeArchived: null};
-		fetch('/api/todos/'+userInfo.id+'/'+thisId, {
+		fetch('/api/todos/'+user_id+'/'+thisId, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json'
@@ -405,7 +476,7 @@ async function switchToDoLocation(toDo) {
 			body: JSON.stringify(archiveInfo)
 		});
 	}
-	populateToDoList();
+	populateToDoList(user_id);
 	/*console.log('isChecked', toDoItem[0].checked);
 	let itemNum = toDo.id;
 	console.log(toDo);
@@ -437,7 +508,7 @@ function setUpdateForm() {
 	}
 }
 
-async function setNewToDo() {
+async function setNewToDo(user_id) {
 	let newToDo = document.getElementById('toDoName');
 	let currentToDoList = document.getElementById('toDoItems');
 	let listGroupItem = document.createElement('div');
@@ -455,68 +526,22 @@ async function setNewToDo() {
 	inputHelper.classList.add('input-helper');
 	formCheckLabel.appendChild(inputHelper);
 	addedToDo.appendChild(formCheckLabel);
-	addedToDo.addEventListener('click', () => switchToDoLocation(addedToDo));
+	addedToDo.addEventListener('click', () => switchToDoLocation(addedToDo, user_id));
 	listGroupItem.appendChild(addedToDo);
 	currentToDoList.appendChild(listGroupItem);
-	fetch('/api/todos/'+userInfo.id, {
+	fetch('/api/todos/'+user_id, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		body: JSON.stringify({content: newToDo.value, userId: userInfo.id, archived: false})
+		body: JSON.stringify({content: newToDo.value, userId: user_id, archived: false})
     });
     document.getElementById('addToDo').setAttribute('data-dismiss', 'modal');
 }
 
-/*
-helper variables to pass information about the date
-*/
-let currentDay = new Date();
-let currentMonth = currentDay.getMonth();
-let currentYear = currentDay.getFullYear();
-let lastDay = 0;
 
-/*
-months array is used to quickly access the correct
-month for the calendar in order to set month name
-as the part of calendar header appropriately
-*/
-let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+//let userInfo = {'id': 1, 'username': 'LifeOnTrack', 'password': 'password'}; //DELETE ONCE SWITCHING USER OVER
 
-/*initial page setup for calendar and
-daily view
-*/
-
-const dayItems = document.getElementsByClassName('day-item');
-for (let item of dayItems) {
-	item.addEventListener('click', () => switchItem(item.textContent));
-}
-
-const calSelections = document.getElementsByClassName('calendar-selection');
-for (let item of calSelections) {
-	item.addEventListener('change', updateCalendar);
-}
-
-let dueDateInput = document.getElementById('itemType');
-
-dueDateInput.addEventListener('change', setUpdateForm);
-
-let addToDoItem = document.getElementById('addToDo');
-
-addToDoItem.addEventListener('click', setNewToDo);
-
-/*const toDoItems = document.getElementsByName('to-do-item');
-for (let item of toDoItems) {
-	console.log('parent item', item.parentElement.nodeName);
-	item.addEventListener('click', () => switchToDoLocation(item));
-}*/
-
-let userInfo = {'id': 1, 'username': 'LifeOnTrack', 'password': 'password'}; //placeholder
-
-let saveItemChanges = document.getElementById('saveItemChanges');
-let deleteItemBtn = document.getElementById('deleteItemBtn');
-
-let tempId = 0;
 
 function checkRequiredFields() {
 	let itemNameVal = document.getElementById('itemName').value;
@@ -542,27 +567,6 @@ function checkRequiredFields() {
 function disableSave() {   
 	saveItemChanges.disabled = true;
 }
-
-saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
-let itemInputElements = document.getElementById('itemForm').getElementsByTagName('input');
-
-for(let item of itemInputElements) {
-	if(item.id === 'itemName') {
-		item.addEventListener('keyup', checkRequiredFields);
-	} else {
-		item.addEventListener('change', checkRequiredFields);
-	}
-}
-
-let itemTextAreaElements = document.getElementById('itemForm').getElementsByTagName('textarea');
-for(let item of itemTextAreaElements) {
-	item.addEventListener('keyup', checkRequiredFields);
-}
-
-deleteItemBtn.addEventListener('click', confirmDelete);
-
-let closeItemBtn = document.getElementById('closeItemBtn');
-closeItemBtn.addEventListener('click', disableSave());
 
 async function updateItemChanges(itemId) {
     document.getElementById('saveItemChanges').setAttribute('data-dismiss', 'modal');
@@ -628,9 +632,6 @@ async function updateItemChanges(itemId) {
 	//setUpDayCard();
 }
 
-let confirmDeletionBtn = document.getElementById('confirmDeletionBtn');
-confirmDeletionBtn.addEventListener('click', () => deleteItem(tempId));
-
 function confirmDelete() {
     document.getElementById('deleteItemBtn').setAttribute('data-dismiss', 'modal');
     document.getElementById('deleteItemBtn').setAttribute('data-toggle', 'modal');
@@ -652,15 +653,15 @@ async function deleteItem(itemId) {
 	setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
 } 
 
-async function loadPersonalCalendar() {
-	const response = await fetch('/api/cals/'+userInfo.id+'/all');
+async function loadPersonalCalendar(user_id) {
+	const response = await fetch('/api/cals/'+user_id+'/all');
 	if (!response.ok) {
 		console.log(response.error);
 		return;
 	}
 	let calendarData = await response.json();
 	for(let i = 0; i < calendarData.length; i++) {
-		if(calendarData[i].owner_id === userInfo.id && calendarData[i].personal === 1) {
+		if(calendarData[i].owner_id === user_id && calendarData[i].personal === 1) {
 			window.localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
 		}
 	}
@@ -681,19 +682,19 @@ async function searchForCalendarItems() {
 	//console.log('items is ' + JSON.stringify(window.localStorage.getItem('personalCalItems')));
 }
 
-async function populateToDoList() {
+async function populateToDoList(user_id) {
 
-	const response = await fetch('/api/todos/'+userInfo.id);
+	const response = await fetch('/api/todos/'+user_id);
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
 	let toDoData = await response.json();
-	buildCurrentToDos(toDoData);
-	buildArchivedToDos(toDoData);
+	buildCurrentToDos(toDoData, user_id);
+	buildArchivedToDos(toDoData, user_id);
 }
 
-function buildCurrentToDos(toDoData) {
+function buildCurrentToDos(toDoData, user_id) {
 	let toDoItems = document.getElementById('toDoItems');
 	toDoItems.innerHTML = '';
 	for(let i = 0; i < toDoData.length; i++) {
@@ -714,7 +715,7 @@ function buildCurrentToDos(toDoData) {
 			newToDoLabel.id = toDoData[i].id;
 			newToDoLabel.appendChild(newInputHelper);
 			newToDoFormCheck.appendChild(newToDoLabel);
-			newToDoFormCheck.addEventListener('click', () => switchToDoLocation(newToDoFormCheck));
+			newToDoFormCheck.addEventListener('click', () => switchToDoLocation(newToDoFormCheck, user_id));
 			newToDoDiv.appendChild(newToDoFormCheck);
 			toDoItems.appendChild(newToDoDiv);
 		}
@@ -731,7 +732,7 @@ function checkArchiveTime(toDoItem) {
 	return false;
 }
 
-async function buildArchivedToDos(toDoData) {
+async function buildArchivedToDos(toDoData, user_id) {
 	let archivedToDos = document.getElementById('archivedToDos');
 	archivedToDos.innerHTML = '';
 	for(let i = 0; i < toDoData.length; i++) {
@@ -754,12 +755,12 @@ async function buildArchivedToDos(toDoData) {
 				newToDoLabel.id = toDoData[i].id;
 				newToDoLabel.appendChild(newInputHelper);
 				newToDoFormCheck.appendChild(newToDoLabel);
-				newToDoFormCheck.addEventListener('click', () => switchToDoLocation(newToDoFormCheck));
+				newToDoFormCheck.addEventListener('click', () => switchToDoLocation(newToDoFormCheck, user_id));
 				newToDoDiv.appendChild(newToDoFormCheck);
 				archivedToDos.appendChild(newToDoDiv);
 			} else {
 				//FILL IN FOR DELETE TODOS
-				fetch('/api/todos/'+userInfo.id+'/'+toDoData[i].id, {
+				fetch('/api/todos/'+user_id+'/'+toDoData[i].id, {
 					method: 'DELETE',
 					headers: {
 						'Content-Type': 'application/json'
@@ -770,32 +771,3 @@ async function buildArchivedToDos(toDoData) {
 		}
 	}
 }
-
-/**
- * This function loads the notification bell with the correct number
- * of notifications.
- * It is currently hard coded to be set to 1, as the GET response does
- * not yet hold the information we need it to.
- */
-/*async function loadNotificationBell(){
-	const user_id = userInfo.id;
-	const GNotifs = await fetch(`/api/users/${user_id}/notifications`);
-	if(!GNotifs.ok){
-		return;
-	}
-	//document.getElementById('num-Notifications').value = numNotifs;
-	//temporarily hard coded
-	document.getElementById('num-Notifications').innerHTML = 1;
-}*/
-
-window.addEventListener('load', async () => {
-	loadPersonalCalendar();
-});
-//window.addEventListener('load', () => setUpCalendar(currentMonth, currentYear));
-window.addEventListener('load', () => setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear));
-window.addEventListener('load', setUpCalendarSelection);
-window.addEventListener('load', setUpdateForm);
-window.addEventListener('load', searchForCalendarItems);
-window.addEventListener('load', populateToDoList);
-//window.addEventListener('load', loadNotificationBell());
-window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth, 'year': currentYear}));

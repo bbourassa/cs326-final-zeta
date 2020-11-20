@@ -1,6 +1,7 @@
 'use strict';
 /* eslint-env jquery */ //this tag is needed so that the $in the modal
 //calls don't throw an error
+
 async function getSession(){
 	try{
 		let user = await fetch('/user');
@@ -14,6 +15,7 @@ async function getSession(){
 	}
 
 }
+
 
 window.addEventListener('load', getSession());
 window.localStorage.clear();

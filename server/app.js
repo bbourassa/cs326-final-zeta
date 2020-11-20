@@ -170,7 +170,7 @@ app.delete('/api/todos/:user/:todo', todos.remove);
 
 app.use('/api/users/:user/subscriptions', subs.loadUser);
 app.get('/api/users/:user/subscriptions', subs.list);
-app.post('/api/users/:user/subscriptions', subs.create);
+app.post('/api/subscriptions/:user', subs.create);
 app.use('/api/subscriptions/:user', subs.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars', cals.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
@@ -181,7 +181,7 @@ app.put('/api/users/:user/calendar/pull', cals.updatePersonal);
 
 app.get('/api/cals', cals.listAll);
 app.get('/api/cals/:user/all', cals.getUsersCals);
-app.post('/api/cals', cals.create);
+app.post('/api/cals/:user', cals.create);
 app.get('/api/cals/ours', cals.listOurs);
 //app.use('/api/cals/:cal', cals.load);
 app.get('/api/cals/:cal/', cals.find);
