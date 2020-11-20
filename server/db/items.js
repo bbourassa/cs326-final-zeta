@@ -15,9 +15,9 @@ ENUM FOR STATUS:
 db.none('CREATE TABLE IF NOT EXISTS items_for_calendars(id INTEGER PRIMARY KEY, name VARCHAR, item_type INT, start_time VARCHAR, end_time VARCHAR, description TEXT, item_status INT, calendar_id INT, related_links TEXT, parent_id INT);');
 //db.none('UPDATE public."items_for_calendars" SET start_time=$1 WHERE id=$2 AND calendar_id=$3;', ['2020-11-18T10:23', 1, 0]);
 
-exports.listAll = async function(req, res) {
+/*exports.listAll = async function(req, res) {
 	res.json(await db.any('SELECT * FROM public."items_for_calendars";'));
-};
+};*/
 
 exports.list = async function(req, res) {
 	let calendarId = req.params.cal;
@@ -40,10 +40,8 @@ exports.create = async function(req, res) {
 	if (req.body.isParent === true) {
 		parentId = newId;
 	} else {
-		console.log('hit');
 		parentId = req.body.oldId;
 	}
-	console.log(lastId, newId, name, itemType, startTime, endTime, description, itemStatus, calendarId, relatedLinks, parentId);
 	db.none('INSERT INTO public."items_for_calendars"(id, name, item_type, start_time, end_time, description, item_status, calendar_id, related_links, parent_id) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);', [newId, name, itemType, startTime, endTime, description, itemStatus, calendarId, relatedLinks, parentId]);
 	res.sendStatus(201);
 };
@@ -55,41 +53,32 @@ exports.find = async function(req, res) {
 };
 
 exports.search = async function(req, res) {
-	//console.log('item locate');
 	let itemId = req.params.item;
 	res.json(await db.any('SELECT * FROM public."items_for_calendars" WHERE id=$1;', [itemId]));
 };
 
 //NOT SURE WE EVER USE THIS 
-exports.findUnlinked = function(req, res){
-	/*//get item id from the request
+/*exports.findUnlinked = function(req, res){
+	//get item id from the request
 	const id = parseInt(req.params.item, 10);
 	//if that item id exists in the array of items, send back item
 	if(items[id]){
 		res.json(items[id]);
 	} else{
 		res.status(404).send('Item Not Found');
-	}*/
-};
+	}
+};*/
 
 exports.edit = function(req, res) {
 	let itemId = req.params.item;
-	console.log('item id is ' + itemId);
 	let name = req.body.name;
-	console.log('name is ' + name);
 	let itemType = req.body.type;
 	let startTime = req.body.start;
-	console.log('start time is ' + startTime);
 	let endTime = req.body.end;
-	console.log('end time is ' + endTime);
 	let description = req.body.description;
-	console.log('descriptions is ' + description);
 	let itemStatus = req.body.status;
-	console.log('item status is ' + itemStatus);
 	let calendarId = req.params.cal;
-	console.log('calendar id is ' + calendarId);
 	let relatedLinks = req.body.related_links;
-	console.log('related links is ' + relatedLinks);
 	if(itemType === 2) {
 		itemStatus = 0;
 	}
@@ -99,7 +88,6 @@ exports.edit = function(req, res) {
 };
 
 exports.remove = function(req, res) {
-    console.log('hit item remove');
 	let calendarId = req.params.cal;
 	let itemId = req.params.item;
 	db.none('DELETE from public."items_for_calendars" WHERE calendar_id=$1 AND id=$2;', [calendarId, itemId]);
@@ -107,8 +95,8 @@ exports.remove = function(req, res) {
 };
 
 //NOT SURE ABOUT THIS FUNCTION
-exports.listSubscribed = function(req, res) {
-	/*res.json(req.cals.map(cal => {
+/*exports.listSubscribed = function(req, res) {
+	res.json(req.cals.map(cal => {
 		const itemList = items.filter(item => item.calendar_id === cal.id);
 		const obj = {
 			id: cal.id,
@@ -117,5 +105,5 @@ exports.listSubscribed = function(req, res) {
 			items: itemList
 		};
 		return obj;
-	}));*/
-};
+	}));
+};*/

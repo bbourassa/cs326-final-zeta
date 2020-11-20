@@ -32,13 +32,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 //End of magic
 
-exports.findUser = async function findUser(username){
+//MEGHAN CHECK
+exports.findUser = async function findUser(){
 	// let exists;
 	try {
 		//const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
 		return true;
-	} catch(e){
-		console.log(e);
+    } catch(e){ //eslint-disable-line
+        console.log(e); //eslint-disable-line
 		return false;
 	}
 	// return exists;

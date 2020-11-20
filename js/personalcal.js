@@ -1,13 +1,4 @@
 'use strict';
-/* eslint-env jquery */ //this tag is needed so that the $in the modal
-//calls don't throw an error
-//window.addEventListener('load', checkForUser());
-//console.log(window.localStorage.getItem('userInfo'));
-//window.localStorage.removeItem('personalCalId');
-//window.localStorage.removeItem('personalCalItems');
-/*function checkForUser() {
-	console.log(window.localStorage.getItem('userInfo'));
-}*/
 
 /*
 helper variables to pass information about the date
@@ -16,20 +7,14 @@ window.localStorage.clear();
 async function getSession(){
 	try {
 		let user = await fetch('/user');
-		// console.log(user);
 		let us = await user.json();
-		console.log(us);
 		let mID = await fetch('/api/username/'+us);
 		let id = await mID.json();
-		console.log(id[0].id);
-		//const test= JSON.stringify(id);
-		//userId = test;
 		setAllForPage(id[0].id);
 	} catch(e){
 		window.location.replace('./index.html');
 
 	}
-	//return us;
 }
 
 let currentDay = new Date();
@@ -43,10 +28,6 @@ month for the calendar in order to set month name
 as the part of calendar header appropriately
 */
 let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-/*initial page setup for calendar and
-daily view
-*/
 
 const dayItems = document.getElementsByClassName('day-item');
 const calSelections = document.getElementsByClassName('calendar-selection');
@@ -93,13 +74,11 @@ function setAllForPage(user_id) {
 	confirmDeletionBtn.addEventListener('click', () => deleteItem(tempId));
 
 	loadPersonalCalendar(user_id);
-	//window.addEventListener('load', () => setUpCalendar(currentMonth, currentYear));
 	setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
 	setUpCalendarSelection();
 	setUpdateForm();
 	searchForCalendarItems();
 	populateToDoList(user_id);
-	//window.addEventListener('load', loadNotificationBell());
 	window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth, 'year': currentYear}));
 
 }
@@ -108,10 +87,7 @@ function setAllForPage(user_id) {
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
-/*
-TEMP ID TO USE
-*/
-//let userInfo = {'id': 0};
+
 /*
 FOR NOW: -this function updates the DayView Title
 		  when a day is clicked on the calendar
@@ -121,13 +97,11 @@ FUTURE:  -will update ALL card date for daily view on date
 		  button click
 */
 function switchDate(day, month, year) {
-	//let dayViewTitle = document.getElementById('dayViewTitle');
 	let currentDate = document.getElementById(day);
 	let lastDate;
 	if (lastDay !== 0) {
-        lastDate = document.getElementById(lastDay);
-        console.log('getDate()', currentDay.getDate());
-        let currentMonth = new Date();
+		lastDate = document.getElementById(lastDay);
+		let currentMonth = new Date();
 		if(lastDay !== currentDay.getDate()) {
 			lastDate.classList.remove('btn-secondary');
 			if (lastDate.classList.contains('btn-outline-secondary')) {
@@ -136,13 +110,13 @@ function switchDate(day, month, year) {
 				lastDate.style.color = 'black';
 			}
 		} else if(currentMonth.getMonth() !== month) {
-            lastDate.classList.remove('btn-secondary');
+			lastDate.classList.remove('btn-secondary');
 			if (lastDate.classList.contains('btn-outline-secondary')) {
 				lastDate.style.color = 'grey';
 			} else {
 				lastDate.style.color = 'black';
 			}
-        }
+		}
 	}
 	setUpDayCard(day, month+1, year);
 	window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': day, 'month': month+1, 'year': year}));
@@ -152,8 +126,6 @@ function switchDate(day, month, year) {
 		if(lastDate !== currentDay.getDate()) {
 			currentDate.classList.add('btn-secondary');
 			currentDate.style.color = 'white';
-			/*currentDate.className = 'btn-secondary';
-			currentDate.classList.add('btn', 'date');*/
 			lastDay = day;
 		}
 	}
@@ -165,8 +137,6 @@ FOR NOW: -sets calendar body based on the current day
 		  date as well as accounting for the number of days
 		  in the current month (daysInMonth() accounts for
 		  this)
-FUTURE:  -will associate appropriate item data with each
-		  day on calendar
 */
 function setUpCalendar(month, year) {
 	let firstDay = (new Date(year, month)).getDay();
@@ -204,23 +174,19 @@ function setUpCalendar(month, year) {
 
 async function checkForItems(month, year) {
 	let listOfItems = await searchForCalendarItems();
-	//(JSON.parse(window.localStorage.getItem('personalCalItems')));
 	for(let i = 0; i < listOfItems.length; i++) {
 		let startTime = listOfItems[i].start_time;
 		let itemYear = parseInt(startTime.slice(0, 4));
 		let itemMonth = parseInt(startTime.slice(5, 7));
 		let itemDay = parseInt(startTime.slice(8, 10));
 		if(itemYear === year && itemMonth === month+1) {
-            console.log('currentDay', currentDay.getDate());
-            console.log('month', month);
-            console.log(parseInt(itemMonth));
 			if(parseInt(itemDay) !== currentDay.getDate()) {
 				let dateItem = document.getElementById(itemDay.toString(10));
 				dateItem.classList.add('btn-outline-secondary');
 			} else if(parseInt(itemMonth) !== month) {
-                let dateItem = document.getElementById(itemDay.toString(10));
+				let dateItem = document.getElementById(itemDay.toString(10));
 				dateItem.classList.add('btn-outline-secondary');
-            }
+			}
 		}
 	}
 }
@@ -259,7 +225,6 @@ async function setUpDayCard(day, month, year) {
 	dayViewTitle.innerHTML = 'The Day at a Glance: ' + months[month-1] + ' ' + day + ' ' + year;
 	let calendarItems = await searchForCalendarItems();
 	let dayEvents = [];
-	//console.log('personalCalItems', JSON.parse(window.localStorage.getItem('personalCalItems')));
 	resetDayCard();
 	for(let i = 0; i < calendarItems.length; i++) {
 		let thisYear = parseInt(calendarItems[i].start_time.slice(0, 4));
@@ -476,7 +441,7 @@ async function switchToDoLocation(toDo, user_id) {
 	let toDoItem = toDo.getElementsByTagName('input');
 	if(toDoItem[0].checked === true) {
 		let thisId = toDo.getElementsByTagName('label')[0].id;
-		let currentTime = new Date().toISOString(); //ZULU TIME CURRENTLY
+		let currentTime = new Date().toISOString();
 		let archiveInfo = {archived: 1, timeArchived: currentTime};
 		fetch('/api/todos/'+user_id+'/'+thisId, {
 			method: 'PUT',
@@ -497,14 +462,6 @@ async function switchToDoLocation(toDo, user_id) {
 		});
 	}
 	populateToDoList(user_id);
-	/*console.log('isChecked', toDoItem[0].checked);
-	let itemNum = toDo.id;
-	console.log(toDo);
-	let divForToDo = document.getElementById('toDo'+itemNum);
-	divForToDo.remove();
-	console.log(divForToDo);
-	if(toDo.checked === true) {
-	}*/
 }
 
 function setUpdateForm() {
@@ -560,10 +517,8 @@ async function setNewToDo(user_id) {
 }
 
 
-//let userInfo = {'id': 1, 'username': 'LifeOnTrack', 'password': 'password'}; //DELETE ONCE SWITCHING USER OVER
-
-
 function checkRequiredFields() {
+	console.log('checked fields');
 	let itemNameVal = document.getElementById('itemName').value;
 	let itemType = document.getElementById('itemType').value;
 	if(itemType === 'Action Item') {
@@ -577,9 +532,10 @@ function checkRequiredFields() {
 		let startTimeVal = document.getElementById('startTime').value;
 		let endTimeVal = document.getElementById('endTime').value;
 		if(itemNameVal === '' || startTimeVal === '' || endTimeVal === '') {
-			saveItemChanges.disabled = false;
-		} else {
 			saveItemChanges.disabled = true;
+		} else {
+			console.log('keep disabled');
+			saveItemChanges.disabled = false;
 		}
 	}
 }
@@ -620,7 +576,6 @@ async function updateItemChanges(itemId) {
 		body: JSON.stringify(updatedItem)
 	});
 	searchForCalendarItems();
-	//let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
 	let itemToMove = document.getElementById('item'+itemId);
 	document.getElementById('item'+itemId).remove();
 	//FIND THE ITEM
@@ -633,7 +588,6 @@ async function updateItemChanges(itemId) {
 	let indexOfSplit = itemToMove.innerText.indexOf(':');
 	let currentItemName = itemToMove.innerText.substring(0, indexOfSplit+2);
 	itemToMove.innerText = currentItemName + thisUpdatedItem[0].name;
-	//console.log('itemToMoveName', itemToMove.innerText.substring(indexOfSplit+2));
 	if(thisUpdatedItem[0].item_status === 1) {
 		let notStartedDiv = document.getElementById('notStarted');
 		notStartedDiv.appendChild(itemToMove);
@@ -648,8 +602,6 @@ async function updateItemChanges(itemId) {
 		todaysScheduleDiv.appendChild(itemToMove);
 	}
 	//CHECK ITS STATUS
-	//setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
-	//setUpDayCard();
 }
 
 function confirmDelete() {
@@ -666,7 +618,6 @@ async function deleteItem(itemId) {
 		headers: {
 			'Content-Type': 'application/json'
 		},
-		//body: JSON.stringify(updatedItem)
 	});
 	searchForCalendarItems();
 	let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
@@ -698,8 +649,6 @@ async function searchForCalendarItems() {
 	}
 	let itemData = await response.json();
 	return itemData;
-	//window.localStorage.setItem('personalCalItems', JSON.stringify(itemData));
-	//console.log('items is ' + JSON.stringify(window.localStorage.getItem('personalCalItems')));
 }
 
 async function populateToDoList(user_id) {
@@ -779,13 +728,11 @@ async function buildArchivedToDos(toDoData, user_id) {
 				newToDoDiv.appendChild(newToDoFormCheck);
 				archivedToDos.appendChild(newToDoDiv);
 			} else {
-				//FILL IN FOR DELETE TODOS
 				fetch('/api/todos/'+user_id+'/'+toDoData[i].id, {
 					method: 'DELETE',
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					//body: JSON.stringify(updatedItem)
 				});
 			}
 		}

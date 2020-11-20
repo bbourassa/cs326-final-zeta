@@ -9,9 +9,9 @@ ENUM FOR ARCHIVED:
 */
 db.none('CREATE TABLE IF NOT EXISTS to_dos(id INTEGER PRIMARY KEY, content VARCHAR, user_id INT, archived INT, time_of_archive VARCHAR);');
 
-exports.listAll = async function(req, res) {
+/*exports.listAll = async function(req, res) {
 	res.json(await db.any('SELECT * FROM public."to_dos";'));
-};
+};*/
 
 exports.list = async function(req, res) {
 	let userId = req.params.user;
@@ -25,11 +25,11 @@ exports.create = async function(req, res) {
 	let content = req.body.content;
 	let userId = req.params.user;
 	let archived = 0;
-	console.log(newId, content, userId, archived);
 	db.none('INSERT INTO public."to_dos"(id, content, user_id, archived) VALUES($1, $2, $3, $4);', [newId, content, userId, archived]);
+	res.sendStatus(201);
 };
 
-exports.find = async function(req, res) {
+/*exports.find = async function(req, res) {
 	let userId = req.params.user;
 	let toDoId = req.params.todo;
 	res.json(await db.any('SELECT * FROM public."to_dos" WHERE user_id=$1, id=$2;' [userId, toDoId]));
@@ -38,17 +38,14 @@ exports.find = async function(req, res) {
 		res.json(todos[id]);
 	} else {
 		res.status(404).send('Todo Not Found');
-	}*/
-};
+	}
+};*/
 
 exports.edit = function(req, res) {
-	console.log('hit');
 	let userId = req.params.user;
 	let toDoId = req.params.todo;
-	//let content = req.body.content;
 	let archived = req.body.archived;
 	let timeOfArchive = req.body.timeArchived;
-	console.log(userId, toDoId, archived, timeOfArchive);
 	db.none('UPDATE public."to_dos" SET archived=$1, time_of_archive=$2 WHERE id=$3 AND user_id=$4;', [archived, timeOfArchive, toDoId, userId]);
 	res.sendStatus(204);
 };

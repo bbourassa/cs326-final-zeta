@@ -11,37 +11,32 @@ ENUM FOR PERSONAL VALUES:
 db.none('CREATE TABLE IF NOT EXISTS calendars(id INTEGER PRIMARY KEY, name VARCHAR, owner_id INT, personal INT, description TEXT);');
 
 exports.listAll = async function(req, res) {
-	//res.json(cals);
 	res.json(await db.any('SELECT * FROM public."calendars";'));
 };
 
 exports.getUsersCals = async function(req, res) {
-	//console.log('hit');
 	let userId = req.params.user;
-	//console.log('user cals' + JSON.stringify(await db.any('SELECT * FROM public."calendars" WHERE owner_id=$1', [userId])));
 	res.json(await db.any('SELECT * FROM public."calendars" WHERE owner_id=$1', [userId]));
 };
 
 exports.create = async function(req, res) {
 	//INSERT STATEMENT
-	console.log('hit create new cal');
 	let lastId = await db.any('SELECT MAX(id) FROM public."calendars";');
 	let newId = lastId[0].max + 1;
 	let name = req.body.name;
 	let ownerId = req.params.user;
 	let personal = req.body.personal;
-    let description = req.body.description;
-    console.log(req.body);
-    db.none('INSERT INTO public."calendars"(id, name, owner_id, personal, description) VALUES($1, $2, $3, $4, $5);', [newId, name, ownerId, personal, description]);
-    let subLastId = await db.any('SELECT MAX(id) FROM public."subscriptions";');
-    let newSubId = subLastId[0].max + 1;
-    let userId = req.params.user;
-    let calendar_id = newId;
-    db.none('INSERT INTO public."subscriptions"(id, user_id, calendar_id) VALUES ($1, $2, $3);', [newSubId, userId, calendar_id]);
+	let description = req.body.description;
+	db.none('INSERT INTO public."calendars"(id, name, owner_id, personal, description) VALUES($1, $2, $3, $4, $5);', [newId, name, ownerId, personal, description]);
+	let subLastId = await db.any('SELECT MAX(id) FROM public."subscriptions";');
+	let newSubId = subLastId[0].max + 1;
+	let userId = req.params.user;
+	let calendar_id = newId;
+	db.none('INSERT INTO public."subscriptions"(id, user_id, calendar_id) VALUES ($1, $2, $3);', [newSubId, userId, calendar_id]);
 	res.sendStatus(201);	
 };
 
-exports.load = async function(req, res) {
+/*exports.load = async function(req, res) {
 	const id = parseInt(req.params.cal, 10);
 	//console.log('hit');
 	res.json(await db.any('SELECT * from calendars WHERE id=$1;', [id]));
@@ -49,41 +44,36 @@ exports.load = async function(req, res) {
 		next();
 	} else {
 		res.status(404).send('Calendar Not Found');
-	}*/
-};
+	}
+};*/
 
 //NOT SURE WE EVEN USE THIS
 exports.find = async function(req, res) {
-
 	const id = parseInt(req.params.cal, 10);
 	res.json(await db.any('SELECT * from calendars WHERE id=$1;', [id]));
 };
 
 exports.edit = function(req, res) {
-	//console.log('hit');
 	let calendarId = req.params.cal;
 	let name = req.body.name;
-	//let ownerId = req.body.ownerId;
-	//let personal = req.body.personal;
 	let description = req.body.description;
 	db.none('UPDATE public."calendars" SET name=$1, description=$2 WHERE id=$3;', [name, description, calendarId]);
 	res.sendStatus(204);
 };
 
 exports.remove = function(req, res) {
-	console.log('hit calendar remove');
 	let calendarId = req.params.cal;
 	db.none('DELETE from public."calendars" WHERE id=$1;', [calendarId]);
 	res.sendStatus(204);
 };
 
-exports.listOurs = async function(req, res) {
+/*exports.listOurs = async function(req, res) {
 	//console.log('hit');
 	res.json(await db.any('SELECT * from public."calendars" WHERE id BETWEEN 1 AND 4;'));
-};
+};*/
 
 //NOT SURE WE EVEN USE THIS
-exports.loadSubscribed = function(req, res, next) {
+/*exports.loadSubscribed = function(req, res, next) {
 	//console.log('hit');
 	//let subscribedCalendars = [];
 	//req.cals = req.subs.map(sub => cals[sub.calendar_id]);
@@ -101,4 +91,4 @@ exports.updatePersonal = async function(req, res) {
 	let userId = req.params.user;
 	res.json(await db.any('SELECT * from public."calendars" WHERE owner_id=$1 AND personal=1;', [userId]));
 	res.sendStatus(204);
-};
+};*/

@@ -1,16 +1,5 @@
 'use strict';
 
-/*
-FOR NOW: double checks that password and the confirmed
-         password are the same before allowing the
-         user to sign up
-FUTURE:  add some indication to user - right now it
-         is just button disabled but we should let
-         user know why --> i plan on adding this when
-         we add in tooltips for our forms which i have
-         in my head as its own separate task once we have
-         everything
-*/
 function checkPasswords() {
 	const password1 = document.getElementById('password');
 	const password2 = document.getElementById('passwordConfirmation');
@@ -42,7 +31,6 @@ function checkValidation() {
 	if (setActive === true) {
 		setActive = checkPasswords();
 		if(setActive === true) {
-			//if none of the other fields are empty
 			if(document.getElementById('firstName').value !== '' && document.getElementById('lastName').value !== ''&&
 			document.getElementById('email').value !== '' && document.getElementById('username').value !== ''){
 				signUpButton.disabled = false;
@@ -53,16 +41,6 @@ function checkValidation() {
 }
 
 
-
-// /*
-// redirect function on sign in to
-// personal calendar page
-// */
-// // function redirectToCal() {
-// // 	addNewUser();
-// // 	window.location = '../html/personalcal.html';
-// // }
-
 // /*
 // initial page setup
 // */
@@ -72,4 +50,3 @@ for(let input of inputs) {
 }
 
 const signUpButton = document.getElementById('signUp');
-// signUpButton.addEventListener('click', redirectToCal);
