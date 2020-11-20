@@ -2,13 +2,17 @@
 /* eslint-env jquery */ //this tag is needed so that the $in the modal
 //calls don't throw an error
 async function getSession(){
-	let user = await fetch('/user');
-	// console.log(user);
-	let us = await user.json();
-	let mID = await fetch('/api/username/'+us);
-	let id = await mID.json();
-	loadAll(id[0].id);
-	return us;
+	try{
+		let user = await fetch('/user');
+		let us = await user.json();
+		let mID = await fetch('/api/username/'+us);
+		let id = await mID.json();
+		loadAll(id[0].id);
+	} catch (e){
+
+		window.location.replace('./index.html');
+	}
+
 }
 
 window.addEventListener('load', getSession());
@@ -519,7 +523,7 @@ async function loadCalendars(user_id){
 		window.localStorage.removeItem('newSubscription');
 	}
 
-	loadTable(subs.childNodes[0].getAttribute('cal_id'), true);
+	loadTable(subs.childNodes[0].getAttribute('cal_id'), true, user_id);
 
 }
 
