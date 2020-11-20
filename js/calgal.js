@@ -43,34 +43,35 @@ function setAllForPage(user_id) {
 }
 
 function checkCalInput() {
-    if(document.getElementById('calendarName').value !== '') {
-        createCalendar.disabled = false;
-    } else {
-        createCalendar.disabled = true;
-    }
+	if(document.getElementById('calendarName').value !== '') {
+		createCalendar.disabled = false;
+	} else {
+		createCalendar.disabled = true;
+	}
 }
 
 function checkLink() {
-    if(document.getElementById('calendarLink').value !== '') {
-        subscribeButton.disabled = false;
-    } else {
-        subscribeButton.disabled = true;
-    }
+	if(document.getElementById('calendarLink').value !== '') {
+		subscribeButton.disabled = false;
+	} else {
+		subscribeButton.disabled = true;
+	}
 }
 
-async function redirectOnCreation(user_id) {
-    //console.log('newCalendarName', document.getElementById('calendarName').value);
-    let newCalName = document.getElementById('calendarName').value;
-    let newCalDescription = 'new calendar titled - ' + newCalName;
-    let newCalInfo = {name: newCalName, personal: 0, description: newCalDescription};
-    fetch('/api/cals/'+user_id, {
+async function redirectOnCreation() {
+	//console.log('newCalendarName', document.getElementById('calendarName').value);
+	let newCalName = document.getElementById('calendarName').value;
+	let newCalDescription = 'new calendar titled - ' + newCalName;
+	let newCalInfo = {name: newCalName, personal: 0, description: newCalDescription};
+	fetch('/api/cals/', {
+
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(newCalInfo)
-    });
-    setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
+	});
+	// setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 }
 
 //let userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
@@ -88,17 +89,18 @@ async function redirectOnSubscription(user_id) {
 		console.log(response.error);
 		return;
 	}
+
     let newCalData = await response.json();
     if(newCalData !== null) {
         fetch('/api/subscriptions/'+user_id, {
             method: 'POST',
 		    headers: {
 			    'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({'calendarId': calendarId})
-        });
-        setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
-    }
+			},
+			body: JSON.stringify({'calendarId': calendarId})
+		});
+		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
+	}
 }
 
 async function redirectSongOfDay(user_id) {
