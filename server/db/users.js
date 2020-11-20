@@ -23,7 +23,6 @@ exports.create = async function(req, res) {
 	let firstName = req.body.firstName;
 	let lastName = req.body.lastName;
 	let email = req.body.email;
-	let password_val = req.body.password;
 	// let calendar_id = req.body.calendar_id;
 	let notifications = req.body.notifications;
 
@@ -37,7 +36,7 @@ exports.create = async function(req, res) {
 	db.none('INSERT INTO public."calendars"(id, name, owner_id, personal, description) VALUES($1, $2, $3, $4, $5);', [newCal, name, ownerId, personal, description]);
 
 
-	db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, password_val, calendar_id, notifications) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, password_val, newCal, notifications]);
+	db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, calendar_id, ) VALUES($1, $2, $3, $4, $5, $6);', [newId, username, firstName, lastName, email, newCal]);
 };
 
 exports.load = async function(req, res, next) {
