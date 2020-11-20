@@ -63,7 +63,6 @@ exports.addNewUser = async function addUser(fname, lname, Email,Username, passwo
 		let lastName = lname;
 		let email = Email;
 
-		// let password_val = password;
 		const encrypt = mc.hash(password);
 		const salt = encrypt[0];
 		const hash = encrypt[1];
@@ -78,7 +77,7 @@ exports.addNewUser = async function addUser(fname, lname, Email,Username, passwo
 		db.none('INSERT INTO public."calendars"(id, name, owner_id, personal, description) VALUES($1, $2, $3, $4, $5);', [newCal, name, ownerId, personal, description]);
 		// console.log(salt, hash);
 		//create user!
-		db.none('INSERT INTO public."users"(id, username, firstName, lastName, email, password_val, calendar_id, salt, hash) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9);', [newId, username, firstName, lastName, email, '',newCal, salt, hash]);
+		db.none('INSERT INTO public."users"(id, username, firstName, lastName, email, calendar_id, salt, hash) VALUES($1, $2, $3, $4, $5, $6, $7, $8);', [newId, username, firstName, lastName, email, newCal, salt, hash]);
 
 		//user should be subscribed to their personal cal
 		let lastSub =  await db.any('SELECT MAX(id) FROM public."subscriptions";');
