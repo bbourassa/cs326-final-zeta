@@ -35,7 +35,7 @@ app.use(passport.session());
 exports.findUser = async function findUser(username){
 	// let exists;
 	try {
-		//const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
+		const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
 		return true;
 	} catch(e){
 		console.log(e);
