@@ -104,73 +104,81 @@ async function redirectOnSubscription(user_id) {
 }
 
 async function redirectSongOfDay(user_id) {
-	/*const response = await fetch('/api/calendars/20');
+    const response = await fetch('/api/cals/2');
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
-	let newCalData = await response.json();
-	fetch('/api/users/'+userInfo.id+'/subscriptions', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({user_id: userInfo.id, calId: newCalData.id})
-	});
-	window.localStorage.setItem('newSubscription', JSON.stringify(newCalData));
-	window.location = '../html/subscriptions.html';*/
+
+    let newCalData = await response.json();
+    if(newCalData !== null) {
+        fetch('/api/subscriptions/'+user_id, {
+            method: 'POST',
+		    headers: {
+			    'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({'calendarId': calendarId})
+		});
+		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
+	}
 }
 
 async function redirectDailyMantra(user_id) {
-	/*const response = await fetch('/api/calendars/21');
+    const response = await fetch('/api/cals/3');
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
-	let newCalData = await response.json();
-	fetch('/api/users/'+userInfo.id+'/subscriptions', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({user_id: userInfo.id, calId: newCalData.id})
-	});
-	window.localStorage.setItem('newSubscription', JSON.stringify(newCalData));
-	window.location = '../html/subscriptions.html';*/
+
+    let newCalData = await response.json();
+    if(newCalData !== null) {
+        fetch('/api/subscriptions/'+user_id, {
+            method: 'POST',
+		    headers: {
+			    'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({'calendarId': calendarId})
+		});
+		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
+	}
 }
 
 async function redirectDailyUpdates(user_id) {
-	/*const response = await fetch('/api/calendars/22');
+	const response = await fetch('/api/cals/4');
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
-	let newCalData = await response.json();
-	fetch('/api/users/'+userInfo.id+'/subscriptions', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({user_id: userInfo.id, calId: newCalData.id})
-	});
-	window.localStorage.setItem('newSubscription', JSON.stringify(newCalData));
-	window.location = '../html/subscriptions.html';*/
+
+    let newCalData = await response.json();
+    if(newCalData !== null) {
+        fetch('/api/subscriptions/'+user_id, {
+            method: 'POST',
+		    headers: {
+			    'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({'calendarId': calendarId})
+		});
+		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
+	}
 }
 
 async function redirectDailyPodcast(user_id) {
-	/*const response = await fetch('/api/calendars/23');
+	const response = await fetch('/api/cals/5');
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
-	let newCalData = await response.json();
-	fetch('/api/users/'+userInfo.id+'/subscriptions', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({user_id: userInfo.id, calId: newCalData.id})
-	});
-	window.localStorage.setItem('newSubscription', JSON.stringify(newCalData));
-	window.location = '../html/subscriptions.html';*/
+
+    let newCalData = await response.json();
+    if(newCalData !== null) {
+        fetch('/api/subscriptions/'+user_id, {
+            method: 'POST',
+		    headers: {
+			    'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({'calendarId': calendarId})
+		});
+		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
+	}
 }
