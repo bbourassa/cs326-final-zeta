@@ -58,12 +58,12 @@ function checkLink() {
 	}
 }
 
-async function redirectOnCreation() {
+async function redirectOnCreation(user_id) {
 	//console.log('newCalendarName', document.getElementById('calendarName').value);
 	let newCalName = document.getElementById('calendarName').value;
 	let newCalDescription = 'new calendar titled - ' + newCalName;
 	let newCalInfo = {name: newCalName, personal: 0, description: newCalDescription};
-	fetch('/api/cals/', {
+	fetch('/api/cals/'+user_id, {
 
 		method: 'POST',
 		headers: {
