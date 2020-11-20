@@ -367,12 +367,12 @@ function loadSettingListeners(user_id){
 	});
 
 	//if there is already a share code, make it visible, set toggle to checked
-	if(document.getElementById('shareCode')){
+	/*if(document.getElementById('shareCode')){
 		document.getElementById('shareCode').setAttribute('hidden', true);
 	} else {
 		document.getElementById('publicSwitch').setAttribute('checked', false);
-	}
-	document.getElementById('publicSwitch').addEventListener('change', async ()=>{
+	}*/
+	document.getElementById('publicSwitch').addEventListener('click', async ()=>{
 		//if you just turned it off, hide the share code
 		if(!document.getElementById('publicSwitch').checked){
 			document.getElementById('shareCode').setAttribute('hidden', true);
@@ -381,28 +381,36 @@ function loadSettingListeners(user_id){
 		//otherwise, make and display it
 		else {
 			if(document.getElementById('shareCode')){
-				document.getElementById('shareCode').removeAttribute('hidden');
+                document.getElementById('shareCode').removeAttribute('hidden');
+                console.log('hit');
+                let shareCode;
+                document.getElementById('shareCode').remove();
+				//otherwise, check for an existing code
+				//share code = mapping of ca_id, constant
+				shareCode = generateNewId('shareCode');
+
+				//make a list element for the code to live in
+				let code = document.createElement('li');
+				code.innerText = 'Your sharable code is:  ' + shareCode;
+				code.classList.add('list-group-item', 'list-group-item-action');
+				code.setAttribute('id', 'shareCode');
+				document.getElementById('adminSettings').appendChild(code);
+				//}
 			} else {
 				let shareCode;
+                //document.getElementById('shareCode').remove();
+				//otherwise, check for an existing code
+				//share code = mapping of ca_id, constant
+				shareCode = generateNewId('shareCode');
 
-				//if you aleady have a code html element, display
-				if(document.getElementById(shareCode)){
-					document.getElementById(shareCode).removeAttribute('hidden');
-
-				}else {
-					//therwise, check for an existing code
-					//share code = mapping of ca_id, constant
-					shareCode = generateNewId('shareCode');
-
-					//make a list element for the code to live in
-					let code = document.createElement('li');
-					code.innerText = 'Your sharable code is:  ' + shareCode;
-					code.classList.add('list-group-item', 'list-group-item-action');
-					code.setAttribute('id', 'shareCode');
-					document.getElementById('adminSettings').appendChild(code);
-				}
+				//make a list element for the code to live in
+				let code = document.createElement('li');
+				code.innerText = 'Your sharable code is:  ' + shareCode;
+				code.classList.add('list-group-item', 'list-group-item-action');
+				code.setAttribute('id', 'shareCode');
+				document.getElementById('adminSettings').appendChild(code);
 			}
-		}
+        }
 	});
 
 }

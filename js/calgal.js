@@ -117,7 +117,7 @@ async function redirectSongOfDay(user_id) {
 		    headers: {
 			    'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({'calendarId': calendarId})
+			body: JSON.stringify({'calendarId': 2})
 		});
 		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 	}
@@ -137,7 +137,7 @@ async function redirectDailyMantra(user_id) {
 		    headers: {
 			    'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({'calendarId': calendarId})
+			body: JSON.stringify({'calendarId': 3})
 		});
 		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 	}
@@ -157,7 +157,7 @@ async function redirectDailyUpdates(user_id) {
 		    headers: {
 			    'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({'calendarId': calendarId})
+			body: JSON.stringify({'calendarId': 4})
 		});
 		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 	}
@@ -177,7 +177,7 @@ async function redirectDailyPodcast(user_id) {
 		    headers: {
 			    'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({'calendarId': calendarId})
+			body: JSON.stringify({'calendarId': 5})
 		});
 		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 	}
