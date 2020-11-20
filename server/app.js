@@ -6,10 +6,10 @@ const app = express();
 const cookieSession = require('cookie-session');
 
 //SECRET
-// const dbconnection = require('./secret.json');
-// const username= dbconnection.username;
-// const password=dbconnection.password;
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+/*const dbconnection = require('./secrets.json');
+const username= dbconnection.username;
+const password=dbconnection.password;*/
+//process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const pgp = require('pg-promise')({
 	connect(client) {
@@ -19,7 +19,8 @@ const pgp = require('pg-promise')({
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
-const url = process.env.DATABASE_URL; //   || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
+const url = process.env.DATABASE_URL;
+// || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
 
 exports.db = pgp(url);
 
@@ -49,7 +50,8 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 
 //session configuration
 const session = {
-	secret: process.env.SECRET, //    || dbconnection.secret,
+    secret: process.env.SECRET,
+    // || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
@@ -170,7 +172,7 @@ app.delete('/api/todos/:user/:todo', todos.remove);
 
 app.use('/api/users/:user/subscriptions', subs.loadUser);
 app.get('/api/users/:user/subscriptions', subs.list);
-app.post('/api/users/:user/subscriptions', subs.create);
+app.post('/api/subscriptions/:user', subs.create);
 app.use('/api/subscriptions/:user', subs.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars', cals.listSubscribed);
 app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
@@ -181,7 +183,7 @@ app.put('/api/users/:user/calendar/pull', cals.updatePersonal);
 
 app.get('/api/cals', cals.listAll);
 app.get('/api/cals/:user/all', cals.getUsersCals);
-app.post('/api/cals', cals.create);
+app.post('/api/cals/:user', cals.create);
 app.get('/api/cals/ours', cals.listOurs);
 //app.use('/api/cals/:cal', cals.load);
 app.get('/api/cals/:cal/', cals.find);
