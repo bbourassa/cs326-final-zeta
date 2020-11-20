@@ -2,16 +2,21 @@
 
 window.localStorage.clear();
 async function getSession(){
-	let user = await fetch('/user');
-	// console.log(user);
-	let us = await user.json();
-	console.log(us);
-	let mID = await fetch('/api/username/'+us);
-	let id = await mID.json();
-	console.log(id[0].id);
-	//const test= JSON.stringify(id);
-	//user_id = test;
-	setAllForPage(id[0].id);
+	try{
+		let user = await fetch('/user');
+		// console.log(user);
+		let us = await user.json();
+		console.log(us);
+		let mID = await fetch('/api/username/'+us);
+		let id = await mID.json();
+		console.log(id[0].id);
+		//const test= JSON.stringify(id);
+		//user_id = test;
+		setAllForPage(id[0].id);
+	} catch(e){
+		window.location.replace('./index.html');
+
+	}
 	//return us;
 }
 window.addEventListener('load', getSession);
@@ -59,7 +64,7 @@ function checkLink() {
 }
 
 async function redirectOnCreation(user_id) {
-    console.log('hit redirect');
+	console.log('hit redirect');
 	//console.log('newCalendarName', document.getElementById('calendarName').value);
 	let newCalName = document.getElementById('calendarName').value;
 	let newCalDescription = 'new calendar titled - ' + newCalName;
@@ -80,8 +85,8 @@ async function redirectOnCreation(user_id) {
 async function redirectOnSubscription(user_id) {
 	let calendarLink = document.getElementById('calendarLink');
 	let calendarCode = calendarLink.value;
-    let calendarId = '';
-    let makeSubscription = true;
+	let calendarId = '';
+	let makeSubscription = true;
 	for(let i = 0; i < calendarCode.length; i++) {
 		let letterKey = calendarCode.charAt(i);
 		calendarId += letterMap[letterKey];
@@ -90,169 +95,169 @@ async function redirectOnSubscription(user_id) {
 	if(!response.ok) {
 		console.log(response.error);
 		return;
-    }
-    let newCalData = await response.json();
+	}
+	let newCalData = await response.json();
 	if(newCalData !== null) {
-        const subResponse = await fetch('/api/subscriptions/'+user_id);
-        //const subResponse = await fetch('/api/cals/'+calendarId);
-	    if(!subResponse.ok) {
-		    console.log(subResponse.error);
-		    return;
-	    }
-        let allSubs = await subResponse.json();
-        for(let i = 0; i < allSubs.length; i++) {
-            if(allSubs[i].calendar_id === parseInt(calendarId)) {
-                makeSubscription = false;
-            }
-        }
-        if(makeSubscription === true) {
-            fetch('/api/subscriptions/'+user_id, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({'calendarId': calendarId})
-            });
-        }
+		const subResponse = await fetch('/api/subscriptions/'+user_id);
+		//const subResponse = await fetch('/api/cals/'+calendarId);
+		if(!subResponse.ok) {
+			console.log(subResponse.error);
+			return;
+		}
+		let allSubs = await subResponse.json();
+		for(let i = 0; i < allSubs.length; i++) {
+			if(allSubs[i].calendar_id === parseInt(calendarId)) {
+				makeSubscription = false;
+			}
+		}
+		if(makeSubscription === true) {
+			fetch('/api/subscriptions/'+user_id, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({'calendarId': calendarId})
+			});
+		}
 		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 	}
 }
 
 async function redirectSongOfDay(user_id) {
-    let makeSubscription = true;
-    const response = await fetch('/api/cals/2');
+	let makeSubscription = true;
+	const response = await fetch('/api/cals/2');
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
-    let newCalData = await response.json();
-    if(newCalData !== null) {
-        const subResponse = await fetch('/api/subscriptions/'+user_id);
-        //const subResponse = await fetch('/api/cals/'+calendarId);
-	    if(!subResponse.ok) {
-		    console.log(subResponse.error);
-		    return;
-	    }
-        let allSubs = await subResponse.json();
-        for(let i = 0; i < allSubs.length; i++) {
-            if(allSubs[i].calendar_id === parseInt(2)) {
-                makeSubscription = false;
-            }
-        }
-        if(makeSubscription === true) {
-            fetch('/api/subscriptions/'+user_id, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({'calendarId': 2})
-            });
-        }
+	let newCalData = await response.json();
+	if(newCalData !== null) {
+		const subResponse = await fetch('/api/subscriptions/'+user_id);
+		//const subResponse = await fetch('/api/cals/'+calendarId);
+		if(!subResponse.ok) {
+			console.log(subResponse.error);
+			return;
+		}
+		let allSubs = await subResponse.json();
+		for(let i = 0; i < allSubs.length; i++) {
+			if(allSubs[i].calendar_id === parseInt(2)) {
+				makeSubscription = false;
+			}
+		}
+		if(makeSubscription === true) {
+			fetch('/api/subscriptions/'+user_id, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({'calendarId': 2})
+			});
+		}
 		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 	}
 }
 
 async function redirectDailyMantra(user_id) {
-    let makeSubscription = true;
-    const response = await fetch('/api/cals/3');
+	let makeSubscription = true;
+	const response = await fetch('/api/cals/3');
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
 
-    let newCalData = await response.json();
-    if(newCalData !== null) {
-        const subResponse = await fetch('/api/subscriptions/'+user_id);
-        //const subResponse = await fetch('/api/cals/'+calendarId);
-	    if(!subResponse.ok) {
-		    console.log(subResponse.error);
-		    return;
-	    }
-        let allSubs = await subResponse.json();
-        for(let i = 0; i < allSubs.length; i++) {
-            if(allSubs[i].calendar_id === parseInt(3)) {
-                makeSubscription = false;
-            }
-        }
-        if(makeSubscription === true) {
-            fetch('/api/subscriptions/'+user_id, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({'calendarId': 3})
-            });
-        }
+	let newCalData = await response.json();
+	if(newCalData !== null) {
+		const subResponse = await fetch('/api/subscriptions/'+user_id);
+		//const subResponse = await fetch('/api/cals/'+calendarId);
+		if(!subResponse.ok) {
+			console.log(subResponse.error);
+			return;
+		}
+		let allSubs = await subResponse.json();
+		for(let i = 0; i < allSubs.length; i++) {
+			if(allSubs[i].calendar_id === parseInt(3)) {
+				makeSubscription = false;
+			}
+		}
+		if(makeSubscription === true) {
+			fetch('/api/subscriptions/'+user_id, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({'calendarId': 3})
+			});
+		}
 		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 	}
 }
 
 async function redirectDailyUpdates(user_id) {
-    let makeSubscription = true;
+	let makeSubscription = true;
 	const response = await fetch('/api/cals/4');
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
 
-    let newCalData = await response.json();
-    if(newCalData !== null) {
-        const subResponse = await fetch('/api/subscriptions/'+user_id);
-        //const subResponse = await fetch('/api/cals/'+calendarId);
-	    if(!subResponse.ok) {
-		    console.log(subResponse.error);
-		    return;
-	    }
-        let allSubs = await subResponse.json();
-        for(let i = 0; i < allSubs.length; i++) {
-            if(allSubs[i].calendar_id === parseInt(4)) {
-                makeSubscription = false;
-            }
-        }
-        if(makeSubscription === true) {
-            fetch('/api/subscriptions/'+user_id, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({'calendarId': 4})
-            });
-        }
+	let newCalData = await response.json();
+	if(newCalData !== null) {
+		const subResponse = await fetch('/api/subscriptions/'+user_id);
+		//const subResponse = await fetch('/api/cals/'+calendarId);
+		if(!subResponse.ok) {
+			console.log(subResponse.error);
+			return;
+		}
+		let allSubs = await subResponse.json();
+		for(let i = 0; i < allSubs.length; i++) {
+			if(allSubs[i].calendar_id === parseInt(4)) {
+				makeSubscription = false;
+			}
+		}
+		if(makeSubscription === true) {
+			fetch('/api/subscriptions/'+user_id, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({'calendarId': 4})
+			});
+		}
 		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 	}
 }
 
 async function redirectDailyPodcast(user_id) {
-    let makeSubscription = true;
+	let makeSubscription = true;
 	const response = await fetch('/api/cals/5');
 	if(!response.ok) {
 		console.log(response.error);
 		return;
 	}
 
-    let newCalData = await response.json();
-    if(newCalData !== null) {
-        const subResponse = await fetch('/api/subscriptions/'+user_id);
-        //const subResponse = await fetch('/api/cals/'+calendarId);
-	    if(!subResponse.ok) {
-		    console.log(subResponse.error);
-		    return;
-	    }
-        let allSubs = await subResponse.json();
-        for(let i = 0; i < allSubs.length; i++) {
-            if(allSubs[i].calendar_id === parseInt(5)) {
-                makeSubscription = false;
-            }
-        }
-        if(makeSubscription === true) {
-            fetch('/api/subscriptions/'+user_id, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({'calendarId': 5})
-            });
-        }
+	let newCalData = await response.json();
+	if(newCalData !== null) {
+		const subResponse = await fetch('/api/subscriptions/'+user_id);
+		//const subResponse = await fetch('/api/cals/'+calendarId);
+		if(!subResponse.ok) {
+			console.log(subResponse.error);
+			return;
+		}
+		let allSubs = await subResponse.json();
+		for(let i = 0; i < allSubs.length; i++) {
+			if(allSubs[i].calendar_id === parseInt(5)) {
+				makeSubscription = false;
+			}
+		}
+		if(makeSubscription === true) {
+			fetch('/api/subscriptions/'+user_id, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({'calendarId': 5})
+			});
+		}
 		setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 	}
 }
