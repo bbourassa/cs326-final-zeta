@@ -1,17 +1,13 @@
 'use strict';
 /* eslint-env jquery */ //this tag is needed so that the $in the modal
 //calls don't throw an error
-//let userI;
+
 async function getSession(){
 	let user = await fetch('/user');
 	// console.log(user);
 	let us = await user.json();
-	console.log(us);
 	let mID = await fetch('/api/username/'+us);
 	let id = await mID.json();
-	console.log(id[0].id);
-	//const test= JSON.stringify(id);
-	//userI = test;
 	loadAll(id[0].id);
 	return us;
 }
@@ -24,10 +20,11 @@ let createItemChanges = document.getElementById('createItemBtn');
 let saveChangesBtn = document.getElementById('saveChanges');
 window.addEventListener('load', getSession());
 window.localStorage.clear();
+
 function loadAll(userId){
 	loadCalendars(userId);
 	loadSettingListeners(userId);
-    loadNotifications();
+    //loadNotifications();
     createItemChanges.addEventListener('click', () => addNewItem(userId));
     saveChangesBtn.addEventListener('click', () => sendItemChanges(currentItemId, userId));
 
@@ -36,6 +33,15 @@ document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
 
+<<<<<<< HEAD
+=======
+let createItemChanges = document.getElementById('createItemBtn');
+createItemChanges.addEventListener('click', addNewItem);
+
+// let saveChangesBtn = document.getElementById('saveChanges');
+// saveChangesBtn.addEventListener('click', () => sendItemChanges(currentItemId));
+
+>>>>>>> 34c9bf30db187c4532654cd509c2cba1d27eae31
 let itemInputEditElements = document.getElementById('editForm').getElementsByTagName('input');
 for(let item of itemInputEditElements) {
 	if(item.id === 'itemName') {
@@ -474,77 +480,6 @@ function getCheckedItems(){
 }
 
 /**
- * This will load the notification bell
- * It does not currently work due to API issues
- * For now, it just makes an empty GET request
- * Currently hardcoded with an example
- * @Milestone3
- */
-async function loadNotifications(){
-	//clear out notifications
-	/*const notificationResponse = await fetch('/api/notifications/'+user_id);
-	if(!notificationResponse.ok) {
-		console.log(notificationResponse.error);
-		return;
-	}
-	let listOfNotifs = await notificationResponse.json();
-	console.log('notifications', listOfNotifs);*/
-	/*while (document.getElementById('allNotes').childNodes.length>0){
-		document.getElementById('allNotes').removeChild(document.getElementById('allNotes').childNodes[0]);
-	}
-	const GNotifs = await fetch('/api/users/'+user_id+'/notifications');
-	if(!GNotifs.ok){
-		console.log('Unable to load notifications');
-		return;
-	}
-	document.getElementById('num-Notifications').value = 3;
-	//temporarily hard coded
-	document.getElementById('num-Notifications').innerHTML = 1;
-	let noti = document.createElement('button');
-	noti.innerHTML='Calendar CS 221 updated: This is an example notification';
-	noti.classList.add('subscribed', 'btn', 'btn-light');
-	noti.addEventListener('click', () =>{
-		while( document.getElementById('eventTable').childNodes.length>0){
-			document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
-		}
-		//currently hard coded
-		loadTable(1, true); // placeholder
-		//should send you to the right cal items);
-		noti.parentElement.removeChild(noti);
-		//if that was the last notification, hide the notification card
-		if(document.getElementById('allNotes').childNodes.length===0){
-			document.getElementById('notificationCenter').setAttribute('hidden', true);
-			//remove bell notification value
-			document.getElementById('num-Notifications').innerHTML ='';
-
-		}
-
-	});
-	document.getElementById('allNotes').appendChild(noti);
-
-	//Clear button removes all notifications without redirecting
-	document.getElementById('clearNoteCenter').addEventListener('click', ()=>{
-		while (document.getElementById('allNotes').childNodes.length>0){
-			document.getElementById('allNotes').removeChild(document.getElementById('allNotes').childNodes[0]);
-
-		}
-		document.getElementById('num-Notifications').innerHTML ='';
-		document.getElementById('notificationCenter').setAttribute('hidden', true);
-
-	});
-
-	//if you have no notifications, hide card
-	if(document.getElementById('allNotes').childNodes.length>0){
-		document.getElementById('notificationCenter').removeAttribute('hidden');
-	}
-	else{
-		document.getElementById('notificationCenter').setAttribute('hidden', true);
-
-	}*/
-
-}
-
-/**
  * Load all of the user's subscription calendars
  * @param {int} userId
  */
@@ -923,7 +858,9 @@ async function loadTable(calId, rebuild, user_id) {
 //let detailBtns = document.getElementById();
 
 async function fillModalInfo(item, parentCalendar) {
-	currentItemId = item.id;
+	let currentItemId = item.id;
+	let saveChangesBtn = document.getElementById('saveChanges');
+	saveChangesBtn.addEventListener('click', () => sendItemChanges(currentItemId));
 	//let personalCalId = window.localStorage.getItem('personalCalId');
 	const response = await fetch('/api/items/'+item.calendar_id+'/'+item.id);
 	if (!response.ok) {
