@@ -6,14 +6,11 @@ require('dotenv').config(); //Should be as high up as possible-- does the .env s
 const express = require('express');                 // express routing
 const expressSession = require('express-session');  // for managing session state
 const passport = require('passport');               // handles authentication
-//const LocalStrategy = require('passport-local').Strategy; // username/password strategy
 
+//Pull in the db and the encryption methods
 const db = require('../app.js').db;
-
 const app = express();
-
 const minicrypt = require('../miniCrypt');
-
 const mc = new minicrypt();
 
 
@@ -32,19 +29,33 @@ app.use(passport.initialize());
 app.use(passport.session());
 //End of magic
 
-//MEGHAN CHECK
-exports.findUser = async function findUser(){
+/**
+ * This function will check whether a user exists.
+ * @param {String} username of the user to check for
+ * @returns {boolean} True if username is in the db
+ */
+exports.findUser = async function findUser(username){
 	// let exists;
 	try {
-		//const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
+		JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [username])));
 		return true;
-    } catch(e){ //eslint-disable-line
-        console.log(e); //eslint-disable-line
+	} catch(e){
+		console.log(e);
 		return false;
 	}
 	// return exists;
 };
 
+/**
+ * Adds a new user to the database. Also creates the hash for their password and creates
+ * their personal calendar
+ * @param {String} fname User first name
+ * @param {String} lname User last name
+ * @param {String} Email User email
+ * @param {String} Username Username
+ * @param {String} password User password to be hashed
+ * @returns {Boolean} Whether the user was successfully created.
+ */
 exports.addNewUser = async function addUser(fname, lname, Email,Username, password) {
 	let exists = true;
 	const user = JSON.stringify(await(db.any('SELECT * FROM public."users" WHERE username=$1;', [Username])));
@@ -94,7 +105,12 @@ exports.addNewUser = async function addUser(fname, lname, Email,Username, passwo
 	}
 };
 
-
+/**
+ * Determines whether the user has input the correct password
+ * @param {String} username Username associated with the account
+ * @param {String} pwd password input
+ * @return {Boolean} true if they have the correct credentials
+ */
 exports.check = async function checkCreds(username, pwd){
 //get the user
 // if it fails, return false
@@ -121,18 +137,19 @@ exports.check = async function checkCreds(username, pwd){
 	}
 };
 
-
+/**
+ * Determines whether a user is logged in
+ * @param {Request} req
+ * @param {Response} res
+ * @param {Next} next
+ */
 exports.checkLoggedIn = function checkLoggedIn(req, res, next) {
 	console.log('check logged in');
 	if(req.isAuthenticated()){
-		// console.log(res.session.passport.user, req.isAuthenticated());
 		//if you are logged/ authenticated, run next route
 		next();
 	} else {
-		// console.log(res.user);
 		//otherwise, redirect to login
 		res.redirect('../html/index.html');
 	}
 };
-
-// module.exports {findUser};

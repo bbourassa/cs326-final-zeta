@@ -6,10 +6,7 @@ db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCH
 
 //const users = [];
 
-// //MEGHAN THIS MAY BE A YOU FUNCTION
-// exports.auth = function(req, res) {
-// 	res.redirect('/personalcal.html');
-// };
+
 
 /*exports.list = async function(req, res) {
     res.json(await db.any('SELECT * FROM public."users";'));
