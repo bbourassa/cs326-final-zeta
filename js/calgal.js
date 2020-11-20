@@ -2,13 +2,17 @@
 
 window.localStorage.clear();
 async function getSession(){
-	let user = await fetch('/user');
-	let us = await user.json();
-	console.log(us);
-	let mID = await fetch('/api/username/'+us);
-	let id = await mID.json();
-	console.log(id[0].id);
-	setAllForPage(id[0].id);
+    try{
+        let user = await fetch('/user');
+        let us = await user.json();
+        console.log(us);
+        let mID = await fetch('/api/username/'+us);
+        let id = await mID.json();
+        console.log(id[0].id);
+        setAllForPage(id[0].id);
+    } catch(e){
+        window.location.replace('./index.html');
+    }
 }
 
 window.addEventListener('load', getSession);
