@@ -38,6 +38,10 @@ document.getElementById('logoutBtn').addEventListener('click', ()=>{
 });
 
 let itemInputEditElements = document.getElementById('editForm').getElementsByTagName('input');
+document.getElementById('itemType').addEventListener('change', checkRequiredFieldsForEdit);
+document.getElementById('itemStatus').addEventListener('change', checkRequiredFieldsForEdit);
+document.getElementById('itemDescription').addEventListener('keyup', checkRequiredFieldsForEdit);
+document.getElementById('itemLinks').addEventListener('keyup', checkRequiredFieldsForEdit);
 for(let item of itemInputEditElements) {
 	if(item.id === 'itemName') {
 		item.addEventListener('keyup', checkRequiredFieldsForEdit);
@@ -1204,12 +1208,13 @@ function checkRequiredFieldsForEdit() {
 	}
 }
 
-let itemInputAddElements = document.getElementById('newItemForm').getElementsByTagName('input');
+let itemInputAddElements = document.getElementById('newItemForm');
 
 for(let item of itemInputAddElements) {
 	if(item.id === 'newName') {
 		item.addEventListener('keyup', checkRequiredFieldsForAddition);
 	} else {
+        console.log('item', item);
 		item.addEventListener('change', checkRequiredFieldsForAddition);
 	}
 }
