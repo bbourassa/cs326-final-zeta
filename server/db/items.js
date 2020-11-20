@@ -21,7 +21,7 @@ exports.listAll = async function(req, res) {
 
 exports.list = async function(req, res) {
 	let calendarId = req.params.cal;
-	res.json(await db.any('SELECT * FROM public."items_for_calendars" WHERE calendar_id=$1;', [calendarId]));
+	res.json(await db.any('SELECT * FROM public."items_for_calendars" WHERE calendar_id=$1 ORDER BY start_time;', [calendarId]));
 	//res.end(JSON.stringify(db.any('SELECT name FROM public."items_for_calendars" WHERE id=$1;', [calendarId])));
 };
 
