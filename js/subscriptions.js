@@ -37,15 +37,6 @@ document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
 
-<<<<<<< HEAD
-=======
-let createItemChanges = document.getElementById('createItemBtn');
-createItemChanges.addEventListener('click', addNewItem);
-
-// let saveChangesBtn = document.getElementById('saveChanges');
-// saveChangesBtn.addEventListener('click', () => sendItemChanges(currentItemId));
-
->>>>>>> 34c9bf30db187c4532654cd509c2cba1d27eae31
 let itemInputEditElements = document.getElementById('editForm').getElementsByTagName('input');
 for(let item of itemInputEditElements) {
 	if(item.id === 'itemName') {
