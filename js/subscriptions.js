@@ -504,28 +504,29 @@ async function loadCalendars(user_id){
 	//if you click that clanedar, it will load into the item table
 	document.getElementById('subscribed-cals').innerHTML = '';
 	cals.forEach((cal) =>{
-		const admin = (cal.owner_id === user_id);
-		//makke the button for the calendar
-		let aCal = document.createElement('button');
-		aCal.innerHTML=cal.name;
-		aCal.classList.add('subscribed', 'btn', 'btn-light');
-		aCal.setAttribute('cal_id', cal.id);
-		//add an event listen to the button to fill in the table of eventsf
-		aCal.addEventListener('click', () =>{
-			while( document.getElementById('eventTable').childNodes.length>0){
-				document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
-			}
-			loadTable(cal.id, true, user_id);
-		});
-		if(admin){
-			/**let adminIndic = document.createElement('btn'); //btn btn-outline-secondary btn-sm float-right
-			adminIndic.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'float-right', 'disabled');
-			adminIndic.innerText = 'ADMIN';*/
-			aCal.innerHTML += ' - ADMIN';
-			// aCal.appendChild(adminIndic);
-		}
-
-		subs.appendChild(aCal);
+        if(document.getElementById('calId'+cal.id) === null) {
+            const admin = (cal.owner_id === user_id);
+		    //makke the button for the calendar
+		    let aCal = document.createElement('button');
+		    aCal.innerHTML=cal.name;
+		    aCal.classList.add('subscribed', 'btn', 'btn-light');
+		    aCal.setAttribute('id', 'calId'+cal.id);
+		    //add an event listen to the button to fill in the table of eventsf
+		    aCal.addEventListener('click', () =>{
+			    while( document.getElementById('eventTable').childNodes.length>0){
+				    document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
+			    }
+			    loadTable(cal.id, true, user_id);
+		    });
+		    if(admin){
+			    /**let adminIndic = document.createElement('btn'); //btn btn-outline-secondary btn-sm float-right
+			    adminIndic.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'float-right', 'disabled');
+			    adminIndic.innerText = 'ADMIN';*/
+			    aCal.innerHTML += ' - ADMIN';
+			    // aCal.appendChild(adminIndic);
+            }
+            subs.appendChild(aCal);
+        }
 
 	});
 	// If you have been redirected because you have a new subscription,
@@ -535,9 +536,11 @@ async function loadCalendars(user_id){
 	if(window.localStorage.getItem('newSubscription')){
 		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'), true, user_id);
 		window.localStorage.removeItem('newSubscription');
-	}
-
-	loadTable(subs.childNodes[0].getAttribute('cal_id'), true, user_id);
+    }
+    let idPrep = subs.childNodes[0].getAttribute('id');
+    let idNum = parseInt(idPrep.substring(5));
+    //console.log('idPrep', idNum);
+	loadTable(idNum, true, user_id);
 
 }
 
