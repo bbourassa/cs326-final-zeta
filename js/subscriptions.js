@@ -714,7 +714,7 @@ async function loadTable(calId, rebuild, user_id) {
 				editBtn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
 				editBtn.innerHTML = 'Edit';
 				editBtn.addEventListener('click', ()=> {
-					fillModalInfo(item, document.getElementById('cal-name').textContent);
+					fillModalInfo(item, document.getElementById('cal-name').textContent, user_id);
 				});
 
 				editable.appendChild(editBtn);
@@ -846,7 +846,7 @@ async function loadTable(calId, rebuild, user_id) {
 			editBtn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
 			editBtn.innerHTML = 'Edit';
 			editBtn.addEventListener('click', ()=> {
-				fillModalInfo(newItem, document.getElementById('cal-name').textContent);
+				fillModalInfo(newItem, document.getElementById('cal-name').textContent, user_id);
 			});
 			editable.appendChild(editBtn);
 			anItem.appendChild(editable);
@@ -860,10 +860,10 @@ async function loadTable(calId, rebuild, user_id) {
 
 //let detailBtns = document.getElementById();
 
-async function fillModalInfo(item, parentCalendar) {
+async function fillModalInfo(item, parentCalendar, userId) {
 	let currentItemId = item.id;
 	let saveChangesBtn = document.getElementById('saveChanges');
-	saveChangesBtn.addEventListener('click', () => sendItemChanges(currentItemId));
+	saveChangesBtn.addEventListener('click', () => sendItemChanges(currentItemId, userId));
 	//let personalCalId = window.localStorage.getItem('personalCalId');
 	const response = await fetch('/api/items/'+item.calendar_id+'/'+item.id);
 	if (!response.ok) {
