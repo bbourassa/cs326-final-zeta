@@ -4,16 +4,16 @@ To set up our project and build it:
 2. Verify that node is installed and that you have the required dependencies.
 
 3. Take out the commenting out of the following in app.js which is in the folder “server”:
-  - “const dbconnection…” (around line 9)
-  - “const username…” (around line 10)
-  - “const password…” (around line 11)
-  - “|| postgres....” (around line 24)
-  - “|| dbconnection.secret…” (around line 56)
+    - “const dbconnection…” (around line 9)
+    - “const username…” (around line 10)
+    - “const password…” (around line 11)
+    - “|| postgres....” (around line 24)
+    - “|| dbconnection.secret…” (around line 56)
 
 4. Make sure that in const dbconnection you have “const dbconnection = require(‘./secrets.json’);
 
 5. The “secrets.json” file is set as a template currently with the following format:
-  - “{username: “username”, password: “password”, secret: “secret”}”
+    - “{username: “username”, password: “password”, secret: “secret”}”
 
 6. Replace the values with your local values for connecting to the database.
 
