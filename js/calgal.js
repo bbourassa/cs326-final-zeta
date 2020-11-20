@@ -92,10 +92,7 @@ async function redirectOnSubscription(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
-<<<<<<< HEAD
-=======
 		//const subResponse = await fetch('/api/cals/'+calendarId);
->>>>>>> 8325371b0412c527772c09c04ea7f307b57af845
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
@@ -129,10 +126,7 @@ async function redirectSongOfDay(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
-<<<<<<< HEAD
-=======
 		//const subResponse = await fetch('/api/cals/'+calendarId);
->>>>>>> 8325371b0412c527772c09c04ea7f307b57af845
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
@@ -167,10 +161,7 @@ async function redirectDailyMantra(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
-<<<<<<< HEAD
-=======
 		//const subResponse = await fetch('/api/cals/'+calendarId);
->>>>>>> 8325371b0412c527772c09c04ea7f307b57af845
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
@@ -205,10 +196,7 @@ async function redirectDailyUpdates(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
-<<<<<<< HEAD
-=======
 		//const subResponse = await fetch('/api/cals/'+calendarId);
->>>>>>> 8325371b0412c527772c09c04ea7f307b57af845
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
@@ -243,10 +231,7 @@ async function redirectDailyPodcast(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
-<<<<<<< HEAD
-=======
 		//const subResponse = await fetch('/api/cals/'+calendarId);
->>>>>>> 8325371b0412c527772c09c04ea7f307b57af845
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
