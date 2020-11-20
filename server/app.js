@@ -61,7 +61,7 @@ const session = {
 //configure passport
 const strategy = new LocalStrategy(
 	async(username, password, done) => {
-		if(await auth.findUser() === false){
+		if(await auth.findUser(username) === false){
 			return done(null, false, { 'message': 'Wrong username or password'});
 		}
 		if(await auth.check(username, password) ==false){
@@ -85,13 +85,6 @@ app.use(passport.session());
 //End of magic
 //END PASSPORT CONFIGS ---------------------------------------------------------
 
-
-// app.get('/html/subscriptions.html',
-// 	auth.checkLoggedIn,
-// 	console.log('checked'),
-// 	(req, res) =>{
-// 		res.redirect(express.static(path.join(dir, 'html')));
-// 	});
 
 app.get('/user',
 	auth.checkLoggedIn,
@@ -119,21 +112,14 @@ app.get('/',
 		console.log('user ' + req.session.user);
 		res.redirect('../html/personalcal.html');
 	});
-// app.get('/html/personalcal.html',
-// 	auth.checkLoggedIn,
-// 	(req, res) => {
-// 		res.redirect('/personalcal.html');
-// 	});
 
-
-// app.post('/api/login', users.auth);
 // Handle post data from the login.html form.
 app.post('/login',
 	passport.authenticate('local' , {     // use username/password authentication
 		successRedirect : '../html/personalcal.html',   // when we login, go to main page
 		failureRedirect : '../html/index.html'      // otherwise, back to login
 	})
-); //LOGIN cannot currently redirect; however, it returns the correct routing destination
+);
 
 
 // Handle logging out (takes us back to the login page).

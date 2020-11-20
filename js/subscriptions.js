@@ -1,5 +1,4 @@
 'use strict';
-/* eslint-env jquery */ //this tag is needed so that the $in the modal
 //calls don't throw an error
 let currentItemId = 0;
 async function getSession(){
@@ -89,7 +88,7 @@ function loadSettingListeners(user_id){
 					let prepItem = await itemResponse.json();
 					let addThisItem = prepItem[0];
 					let thisPersonalItem = {name: addThisItem.name, itemType: addThisItem.item_type, startTime: addThisItem.start_time, endTime: addThisItem.end_time, description: addThisItem.description, itemStatus: addThisItem.item_status, relatedLinks: addThisItem.related_links, isParent: false, oldId: addThisItem.id};
-					
+
 					setTimeout(function(){addToPersonal(personalCalId, thisPersonalItem);}, 500);
 				}
 			}

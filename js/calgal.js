@@ -2,13 +2,17 @@
 
 window.localStorage.clear();
 async function getSession(){
-	let user = await fetch('/user');
-	let us = await user.json();
-	console.log(us);
-	let mID = await fetch('/api/username/'+us);
-	let id = await mID.json();
-	console.log(id[0].id);
-	setAllForPage(id[0].id);
+	try{
+		let user = await fetch('/user');
+		let us = await user.json();
+		console.log(us);
+		let mID = await fetch('/api/username/'+us);
+		let id = await mID.json();
+		console.log(id[0].id);
+		setAllForPage(id[0].id);
+	} catch(e){
+		window.location.replace('./index.html');
+	}
 }
 
 window.addEventListener('load', getSession);
@@ -86,7 +90,6 @@ async function redirectOnSubscription(user_id) {
 		return;
 	}
 	let newCalData = await response.json();
-	console.log(newCalData);
 	if(newCalData !== null) {
 		if(newCalData[0].personal !== 1 && newCalData[0].id !== 2 && newCalData[0].id !== 3 && newCalData[0].id !== 4 && newCalData[0].id !== 5) {
 			const subResponse = await fetch('/api/subscriptions/'+user_id);
@@ -112,9 +115,7 @@ async function redirectOnSubscription(user_id) {
 				});
 			}
 			setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
-		} else {
-			console.log('no add');
-		}
+		} 
 	}
 }
 
@@ -128,6 +129,7 @@ async function redirectSongOfDay(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
+		//const subResponse = await fetch('/api/cals/'+calendarId);
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
@@ -162,6 +164,7 @@ async function redirectDailyMantra(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
+		//const subResponse = await fetch('/api/cals/'+calendarId);
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
@@ -196,6 +199,7 @@ async function redirectDailyUpdates(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
+		//const subResponse = await fetch('/api/cals/'+calendarId);
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
@@ -230,6 +234,7 @@ async function redirectDailyPodcast(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
+		//const subResponse = await fetch('/api/cals/'+calendarId);
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
