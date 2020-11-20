@@ -4,18 +4,18 @@ const db = require('../app.js').db;
 
 db.none('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username VARCHAR, firstName VARCHAR, lastName VARCHAR, email VARCHAR, calendar_id INTEGER UNIQUE,  salt VARCHAR, hash VARCHAR );');
 
-const users = [];
+//const users = [];
 
 // //MEGHAN THIS MAY BE A YOU FUNCTION
 // exports.auth = function(req, res) {
 // 	res.redirect('/personalcal.html');
 // };
 
-exports.list = async function(req, res) {
+/*exports.list = async function(req, res) {
     res.json(await db.any('SELECT * FROM public."users";'));
-};
+};*/
 
-exports.create = async function(req, res) {
+/*exports.create = async function(req, res) {
 	res.sendStatus(201);
 	let lastId = await db.any('SELECT MAX(id) FROM public."users";');
 	let newId = lastId[0].max + 1;
@@ -37,9 +37,9 @@ exports.create = async function(req, res) {
 
 
 	db.none('INSERT INTO public."user"(id, username, firstName, lastName, email, calendar_id, ) VALUES($1, $2, $3, $4, $5, $6);', [newId, username, firstName, lastName, email, newCal]);
-};
+};*/
 
-exports.load = async function(req, res, next) {
+/*exports.load = async function(req, res, next) {
 	const id = parseInt(req.params.user, 10);
 
 	res.json(await db.any('SELECT * FROM public."users" WHERE id=$1;', [id]));
@@ -53,7 +53,7 @@ exports.load = async function(req, res, next) {
 		// err.status = 404;
 		// next(err);
 	}
-};
+};*/
 
 //check if the username exists, return the user id
 exports.findById = async function(req, res) {
@@ -68,41 +68,16 @@ exports.findById = async function(req, res) {
 };
 
 
-exports.remove = function(req, res) {
+/*exports.remove = function(req, res) {
     let userId = req.params.user;
     db.none('DELETE from public."users" WHERE id=$1;', [userId]);
 	res.sendStatus(204);
-};
+};*/
 
 //NEEDS TO BE WORKED MORE - MEGHAN CAN YOU ALTER THIS TO WORK CORRECTLY?
 //I FEEL YOU PROBABLY KNOW MORE ABOUT THIS FUNCTION
-exports.listSubscribed = async function(req, res) {
+/*exports.listSubscribed = async function(req, res) {
     let userId = req.body.id;
     res.json(await db.any('SELECT * FROM public."subscriptions" INNER JOIN public."calendars" ON calendars.id = subscriptions.calendar_id WHERE user_id=$1;', [userId]));
 	//res.json(req.subs.map(sub => users[sub.user_id]));
-};
-
-//POST notification
-//MEGHAN FILL IN
-exports.notify = function(req, res){
-	let user = users.find( ({id}) => id === req.body.id);
-	user.notifcations.push(req.notification);
-	res.sendStatus(204);
-
-};
-
-//GET notifications
-//MEGHAN FILL IN
-exports.notifications = function(req, res){
-	//find the correct user
-	//get that user's notifications
-	res.sendStatus(204);
-};
-
-//MEGHAN FILL IN
-exports.removeNotif = function(req, res){
-	//take a notification object in the req?
-	//notifications.pop(...)
-	res.sendStatus(204);
-
-};
+};*/

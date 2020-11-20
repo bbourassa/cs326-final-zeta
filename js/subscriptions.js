@@ -15,23 +15,16 @@ async function getSession(){
 	}
 
 }
-// getSession();
-//console.log(userI);
-// const user_id = 1; //PLACEHOLDER
-//let currentItemId = 0;
-// const user_id  =0;
+
 let createItemChanges = document.getElementById('createItemBtn');
-let saveChangesBtn = document.getElementById('saveChanges');
+//let saveChangesBtn = document.getElementById('saveChanges');
 window.addEventListener('load', getSession());
 window.localStorage.clear();
 
 function loadAll(userId){
 	loadCalendars(userId);
 	loadSettingListeners(userId);
-    //loadNotifications();
-    createItemChanges.addEventListener('click', () => addNewItem(userId));
-    //saveChangesBtn.addEventListener('click', () => sendItemChanges(currentItemId, userId));
-
+	createItemChanges.addEventListener('click', () => addNewItem(userId));
 }
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
@@ -73,7 +66,7 @@ function loadSettingListeners(user_id){
 		document.getElementById('setAddItems').setAttribute('data-toggle', 'modal');
 		document.getElementById('setAddItems').setAttribute('data-target', '#additionConfirmation');
 		document.getElementById('confirmAddBtn').addEventListener('click', async ()=> {
-            document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
+			document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
 			let personalCalId = 0;
 			if(checkedItemIds !== null) {
 				const response = await fetch('/api/cals/'+user_id+'/all');
@@ -95,32 +88,12 @@ function loadSettingListeners(user_id){
 					}
 					let prepItem = await itemResponse.json();
 					let addThisItem = prepItem[0];
-                    let thisPersonalItem = {name: addThisItem.name, itemType: addThisItem.item_type, startTime: addThisItem.start_time, endTime: addThisItem.end_time, description: addThisItem.description, itemStatus: addThisItem.item_status, relatedLinks: addThisItem.related_links, isParent: false, oldId: addThisItem.id};
-                    
-                    setTimeout(function(){addToPersonal(personalCalId, thisPersonalItem);}, 500);
+					let thisPersonalItem = {name: addThisItem.name, itemType: addThisItem.item_type, startTime: addThisItem.start_time, endTime: addThisItem.end_time, description: addThisItem.description, itemStatus: addThisItem.item_status, relatedLinks: addThisItem.related_links, isParent: false, oldId: addThisItem.id};
+					
+					setTimeout(function(){addToPersonal(personalCalId, thisPersonalItem);}, 500);
 				}
 			}
 		});
-
-		/*for(let i=0; i<checkedItemIds.length; i++){
-			//for each checked item, get the item id
-			let itemID=  checkedItemIds[i];
-
-			//pull that item into your cal
-			const response = await fetch('/api/users/'+user_id+'/calendar/pull/', {
-				method: 'PUT',
-				headers:{
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({id:itemID})
-			});
-
-			if(!response.ok){
-				alert('Error: Unable to add specified item(s) to your personal calendar.');
-				return;
-			}
-
-		}*/
 	});
 
 	//for every action in the calendar, add it to personal
@@ -129,7 +102,7 @@ function loadSettingListeners(user_id){
 		document.getElementById('setAddAllActions').setAttribute('data-toggle', 'modal');
 		document.getElementById('setAddAllActions').setAttribute('data-target', '#additionConfirmation');
 		document.getElementById('confirmAddBtn').addEventListener('click', async ()=> {
-            document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
+			document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
 			const response = await fetch('/api/items/'+cal_id);
 			if(!response.ok){
 				alert('Unable to add selected item(s) to your calendar at this time.');
@@ -170,7 +143,7 @@ function loadSettingListeners(user_id){
 		document.getElementById('setAddAllEvents').setAttribute('data-toggle', 'modal');
 		document.getElementById('setAddAllEvents').setAttribute('data-target', '#additionConfirmation');
 		document.getElementById('confirmAddBtn').addEventListener('click', async ()=> {
-            document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
+			document.getElementById('confirmAddBtn').setAttribute('data-dismiss', 'modal');
 			const response = await fetch('/api/items/'+cal_id);
 			if(!response.ok){
 				alert('Unable to add selected item(s) to your calendar at this time.');
@@ -279,33 +252,9 @@ function loadSettingListeners(user_id){
 		document.getElementById('setDeleteItem').setAttribute('data-toggle', 'modal');
 		document.getElementById('setDeleteItem').setAttribute('data-target', '#editConfirmation');
 		document.getElementById('confirmBtn').addEventListener('click', async ()=> {
-			/*let notifMessage = document.getElementById('message').value;
-			console.log('notifMessage', notifMessage);
-			const subResponse = await fetch ('/api/listsubs/'+cal_id);
-			if(!subResponse) {
-				console.log(subResponse.error);
-				return;
-			}
-			let listOfSubs = await subResponse.json();
-			console.log('listOfSubs', listOfSubs);
-			for(let sub of listOfSubs) {
-				await fetch('/api/notifications/'+user_id+'/'+sub.id, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({'content': notifMessage})
-				});
-			}
-			fetch('/api/notifications/'+user_id+'/'+user_id, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({'content': notifMessage})
-            });*/
 			document.getElementById('confirmBtn').setAttribute('data-dismiss', 'modal');
 			for(let i = 0; i < checkedItemIds.length; i++) {
+				console.log(cal_id, checkedItemIds[i]);
 				fetch('/api/items/'+cal_id+'/'+checkedItemIds[i], {
 					method: 'DELETE',
 					headers: {
@@ -321,13 +270,11 @@ function loadSettingListeners(user_id){
 	//Delete current calendar
 	document.getElementById('setDeleteCal').addEventListener('click', async ()=>{
 		//assumes the appropriate cal is the one you are on currently
-		//@Milestone3 make a confirmation screen
 		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 		document.getElementById('setDeleteCal').setAttribute('data-toggle', 'modal');
 		document.getElementById('setDeleteCal').setAttribute('data-target', '#editConfirmation');
 		document.getElementById('confirmBtn').addEventListener('click', async ()=> {
 			document.getElementById('confirmBtn').setAttribute('data-dismiss', 'modal');
-			console.log('hit delete cal');
 			//FIRST DELETE SUBSCRITPIONS
 			const response = await fetch('/api/subscriptionlist/'+cal_id);
 			if (!response.ok) {
@@ -335,7 +282,6 @@ function loadSettingListeners(user_id){
 				return;
 			}
 			let listSubscriptions = await response.json();
-			console.log('listSubscriptions', listSubscriptions);
 			for(let i = 0; i < listSubscriptions.length; i++) {
 				fetch('/api/subscription/'+listSubscriptions[i].id, {
 					method: 'DELETE',
@@ -351,7 +297,6 @@ function loadSettingListeners(user_id){
 				return;
 			}
 			let listItems = await itemResponse.json();
-			console.log('listItems', listItems);
 			for(let i = 0; i < listItems.length; i++) {
 				fetch('/api/items/'+cal_id+'/'+listItems[i].id, {
 					method: 'DELETE',
@@ -372,11 +317,7 @@ function loadSettingListeners(user_id){
 	});
 
 	//if there is already a share code, make it visible, set toggle to checked
-	/*if(document.getElementById('shareCode')){
-		document.getElementById('shareCode').setAttribute('hidden', true);
-	} else {
-		document.getElementById('publicSwitch').setAttribute('checked', false);
-	}*/
+
 	document.getElementById('publicSwitch').addEventListener('click', async ()=>{
 		//if you just turned it off, hide the share code
 		if(!document.getElementById('publicSwitch').checked){
@@ -386,10 +327,9 @@ function loadSettingListeners(user_id){
 		//otherwise, make and display it
 		else {
 			if(document.getElementById('shareCode')){
-                document.getElementById('shareCode').removeAttribute('hidden');
-                console.log('hit');
-                let shareCode;
-                document.getElementById('shareCode').remove();
+				document.getElementById('shareCode').removeAttribute('hidden');
+				let shareCode;
+				document.getElementById('shareCode').remove();
 				//otherwise, check for an existing code
 				//share code = mapping of ca_id, constant
 				shareCode = generateNewId('shareCode');
@@ -400,10 +340,8 @@ function loadSettingListeners(user_id){
 				code.classList.add('list-group-item', 'list-group-item-action');
 				code.setAttribute('id', 'shareCode');
 				document.getElementById('adminSettings').appendChild(code);
-				//}
 			} else {
 				let shareCode;
-                //document.getElementById('shareCode').remove();
 				//otherwise, check for an existing code
 				//share code = mapping of ca_id, constant
 				shareCode = generateNewId('shareCode');
@@ -415,7 +353,7 @@ function loadSettingListeners(user_id){
 				code.setAttribute('id', 'shareCode');
 				document.getElementById('adminSettings').appendChild(code);
 			}
-        }
+		}
 	});
 
 }
@@ -494,7 +432,6 @@ function getCheckedItems(){
 async function loadCalendars(user_id){
 	//load all the calendars you have a subscription relationship with
 	//make the response into the cal list
-	//console.log('load fetch');
 	//this endpoint actually just gets every calendar the user owns
 	const response = await fetch('/api/subscriptions/'+user_id);
 	if(!response.ok){
@@ -508,29 +445,25 @@ async function loadCalendars(user_id){
 	//if you click that clanedar, it will load into the item table
 	document.getElementById('subscribed-cals').innerHTML = '';
 	cals.forEach((cal) =>{
-        if(document.getElementById('calId'+cal.id) === null) {
-            const admin = (cal.owner_id === user_id);
-		    //makke the button for the calendar
-		    let aCal = document.createElement('button');
-		    aCal.innerHTML=cal.name;
-		    aCal.classList.add('subscribed', 'btn', 'btn-light');
-		    aCal.setAttribute('id', 'calId'+cal.id);
-		    //add an event listen to the button to fill in the table of eventsf
-		    aCal.addEventListener('click', () =>{
-			    while( document.getElementById('eventTable').childNodes.length>0){
-				    document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
-			    }
-			    loadTable(cal.id, true, user_id);
-		    });
-		    if(admin){
-			    /**let adminIndic = document.createElement('btn'); //btn btn-outline-secondary btn-sm float-right
-			    adminIndic.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'float-right', 'disabled');
-			    adminIndic.innerText = 'ADMIN';*/
-			    aCal.innerHTML += ' - ADMIN';
-			    // aCal.appendChild(adminIndic);
-            }
-            subs.appendChild(aCal);
-        }
+		if(document.getElementById('calId'+cal.id) === null) {
+			const admin = (cal.owner_id === user_id);
+			//makke the button for the calendar
+			let aCal = document.createElement('button');
+			aCal.innerHTML=cal.name;
+			aCal.classList.add('subscribed', 'btn', 'btn-light');
+			aCal.setAttribute('id', 'calId'+cal.id);
+			//add an event listen to the button to fill in the table of eventsf
+			aCal.addEventListener('click', () =>{
+				while( document.getElementById('eventTable').childNodes.length>0){
+					document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
+				}
+				loadTable(cal.id, true, user_id);
+			});
+			if(admin){
+				aCal.innerHTML += ' - ADMIN';
+			}
+			subs.appendChild(aCal);
+		}
 
 	});
 	// If you have been redirected because you have a new subscription,
@@ -540,10 +473,9 @@ async function loadCalendars(user_id){
 	if(window.localStorage.getItem('newSubscription')){
 		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'), true, user_id);
 		window.localStorage.removeItem('newSubscription');
-    }
-    let idPrep = subs.childNodes[0].getAttribute('id');
-    let idNum = parseInt(idPrep.substring(5));
-    //console.log('idPrep', idNum);
+	}
+	let idPrep = subs.childNodes[0].getAttribute('id');
+	let idNum = parseInt(idPrep.substring(5));
 	loadTable(idNum, true, user_id);
 
 }
@@ -554,7 +486,6 @@ async function loadCalendars(user_id){
  */
 async function loadTable(calId, rebuild, user_id) {
 	if(rebuild === true) {
-        console.log('hit rebuild');
 		document.getElementById('eventTable').innerHTML = '';
 	}
 	const response = await fetch('/api/cals/'+calId+'/');
@@ -699,14 +630,6 @@ async function loadTable(calId, rebuild, user_id) {
 					document.getElementById('detailsEndTime').innerText += 'ITEM END TIME: N/A';
 				}
 				document.getElementById('detailsLinks').innerText += 'ITEM RELATED LINKS: ' + item.related_links;
-				//fillModalInfo(item, document.getElementById('cal-name').textContent);
-				//loadCommit();
-				//document.getElementById('btnsForEdits').setAttribute('hidden', true);
-				//document.getElementById('commitMessage').setAttribute('hidden', true);
-				//document.getElementById('confEditHeader').innerText = 'Details';
-				//document.getElementById('reviewMessage').setAttribute('hidden', true);
-
-
 			});
 			info.appendChild(infoBtn);
 			anItem.appendChild(info);
@@ -749,7 +672,6 @@ async function loadTable(calId, rebuild, user_id) {
 		let box = document.createElement('input');
 		box.type ='checkbox';
 		box.classList.add('itemCheck');
-		// box.setAttribute('name', 'itemCheck');
 		check.appendChild(box);
 		anItem.appendChild(check);
 
@@ -764,9 +686,6 @@ async function loadTable(calId, rebuild, user_id) {
 			let time = new Date(newItem.start_time).toDateString();
 			date.innerHTML = time;
 		}
-		/*else if(item.end_time !== ''){
-				date.innerHTML = item.end_time;
-			}*/
 		anItem.appendChild(date);
 
 		//load type of Event
@@ -867,15 +786,12 @@ async function loadTable(calId, rebuild, user_id) {
 
 }
 
-//let detailBtns = document.getElementById();
 
 async function fillModalInfo(item, parentCalendar, userId) {
-    //console.log('item', item, 'currentItemId', currentItemId);
-    currentItemId = item.id;
+	currentItemId = item.id;
 	let thisItemId = item.id;
 	let saveChangesBtn = document.getElementById('saveChanges');
 	saveChangesBtn.addEventListener('click', () => sendItemChanges(thisItemId, userId));
-	//let personalCalId = window.localStorage.getItem('personalCalId');
 	const response = await fetch('/api/items/'+item.calendar_id+'/'+item.id);
 	if (!response.ok) {
 		console.log(response.error);
@@ -915,103 +831,8 @@ async function fillModalInfo(item, parentCalendar, userId) {
 		itemEndTime.value = currentItem.end_time.slice(0, 16);
 	}
 	let itemLinks = document.getElementById('itemLinks');
-    itemLinks.value = currentItem.related_links;
+	itemLinks.value = currentItem.related_links;
 }
-
-/**
- * Fills the Edit center modal with the appropriate information
-
- * @param {Item object} item
- */
-/*
-function loadModal(item){
-	//set it to confirmation card values
-	document.getElementById('confEditHeader').innerText = 'Confirm Edits';
-	document.getElementById('reviewMessage').removeAttribute('hidden');
-
-	//make sure there are not extranous values by clearing modal
-	clearModals();
-	//@Milestone3 Check for null values?
-	document.getElementById('modalBodyItemId').setAttribute('item-id', item.id);
-	document.getElementById('itemName').value = item.name;
-	document.getElementById('statusModal').value = item.item_status;
-	document.getElementById('itemType').value = item.item_type;
-	document.getElementById('currCal').value = document.getElementById('cal-name').innerHTML;
-
-
-	//update the date within the form
-	setUpdateForm(item);
-	//check for details and links to prefill
-	if(item.details !== undefined){
-		document.getElementById('detailsText').value = item.details;
-	}
-	if(item.links !== undefined){
-		document.getElementById('itemLinks').value = item.links;
-	}
-	//listener to save
-	let svChanges = document.getElementById('saveChanges');
-
-	//save button should load the commit screen and close the edit modal
-	svChanges.addEventListener('click', () =>{
-		$('#itemEditCenter').modal('hide');
-		commitChanges();
-		//make sure the commit message input is visible
-		document.getElementById('commitMessage').removeAttribute('hidden');
-	});
-
-	//event listener to toggle between event and action inputs
-	let toggleType = document.getElementById('itemType');
-	toggleType.addEventListener('change', () =>{setUpdateForm(item);});
-
-
-}*/
-
-/**
- * Gets all of the information currently in the edit center,
- * formats it into item JSON, returns
- * to be sent as the body of a request.
- */
-/*function getInfo(){
-	let listField = document.getElementsByClassName('modal-editable-area');
-	let i, name, type, all_day, start, end, desc, status, cal, cal_title, rel_links;
-	let itemInfo = {
-		id: i,
-		name: name,
-		type: type,
-		all_day: all_day,
-		start: start,
-		end: end,
-		description: desc,
-		status: status,
-		calendar_id: cal,
-		calendar_title: cal_title,
-		related_links: rel_links,
-	};
-	//name should match the name of the current calendar
-	name = document.getElementById('cal-name').childNodes[0].data;
-	for(let i=0; i<listField.length; i++){
-		if(listField[i].value !== ''){
-			let category = listField[i].parentElement.textContent;
-			if(category === 'Item Name:'){
-				name = listField[i].value;
-			}  else if(category === 'Item Description:'){
-				desc = listField[i].value;
-			} else if(category === 'Item Type:'){
-				type = listField[i].value;
-			} else if(category === 'Item Status:'){
-				status = listField[i].value;
-			} else if(category === 'Start Time:'){
-				start = listField[i].value;
-			} else if(category === 'End Time:'){
-				end = listField[i].value;
-			}else if(category === 'Related Links:'){
-				rel_links = listField[i].value;
-			}
-			//each non-empty field will be added to the body
-		}
-	}
-	return JSON.stringify(itemInfo);
-}*/
 
 /**
  * Function to switch between date settings in the edit modal
@@ -1035,130 +856,7 @@ function setUpdateForm() {
 		endTimeShow.style.display = 'inline-block';
 		document.getElementById('saveChanges').disabled = true;
 	}
-	/*if(item.item_type === 1) {
-		console.log('hit');
-		currentType.value = 'Action Item';
-		itemStatus.style.display = 'inline-block';
-		dueDateShow.style.display = 'inline-block';
-		startTimeShow.style.display = 'none';
-		endTimeShow.style.display = 'none';
-		//when we decide whether we are storing duedate in start or end, do that one
-		if(item.start_time !== undefined){
-			document.getElementById('itemDueDate').value = item.start_time;
-		} else if(item.end_time !== undefined){
-			document.getElementById('itemDueDate').value = item.end_time;
-		} else{
-			document.getElementById('itemDueDate').value = '';
-		}
-
-	} else if (item.item_type === 2) {
-		console.log('hit');
-		itemStatus.style.display = 'none';
-		dueDateShow.style.display = 'none';
-		startTimeShow.style.display = 'inline-block';
-		endTimeShow.style.display = 'inline-block';
-
-		//if start time is not a defined value, the html value will
-		//still be the value it was last set to; this clears it out
-		if(item.start_time !== undefined){
-			document.getElementById('startTime').value = item.start_time;
-		} else{
-			document.getElementById('startTime').value = '';
-		}
-		if(item.end_time !== undefined){
-			document.getElementById('endTime').value = item.end_time;
-		} else{
-			document.getElementById('endTime').value ='';
-		}
-	}*/
 }
-
-/**
- * Load the information you are about to commit
- * This will reference the information that was just inserted into the
- * edit modal. The database has not been updated, so it has to reference the html
- */
-/*function loadCommit(){
-
-	//clear out any current list
-	if(document.getElementById('listOfInfo')){
-		document.getElementById('listOfInfo').parentElement.removeChild(document.getElementById('listOfInfo'));
-	}
-
-	//make it a list
-	let changeList = document.createElement('div');
-	changeList.classList.add('list-group');
-	changeList.setAttribute('id', 'listOfInfo');
-
-	let listField = document.getElementsByClassName('modal-editable-area');
-
-	//for each field, make a new list item
-	for(let i=0; i<listField.length; i++){
-		if(listField[i].value !== ''){
-			let li = document.createElement('li');
-			li.classList.add('list-group-item');
-			//the parent's text content is the category name
-			let category = (listField[i].parentElement.textContent);
-			//end it at the new line char. The select objects would otherwise
-			//print every optionss
-			category =category.substr(0, category.search('\n') );
-			// For unknown reasons, MUST be textContent, not innerText or innerHTML
-			li.textContent = category + ' ' + listField[i].value;
-			changeList.appendChild(li);
-		}
-	}
-	document.getElementById('editsToConfirm').appendChild(changeList);
-
-}*/
-
-/**
- * Closes editing modal and opens a new confirmation modal.
- */
-/*async function commitChanges(){
-	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-	const cal_nam = document.getElementById('cal-name').childNodes[0].data;
-	document.getElementById('btnsForEdits').removeAttribute('hidden');
-	const item_id = document.getElementById('modalBodyItemId').getAttribute('item-id');
-
-	//fill confirmation modal with information values from the edit modal
-	loadCommit();
-	//opens the confirmation modal
-		/*let bodyInfo = getInfo();
-		let notMess = document.getElementById('message').value;
-		let notification = JSON.stringify({id:user_id, cal_name: cal_nam, notification: notMess});
-		//PUT will update or add an item; don't need to check first
-		try{
-			await fetch('/api/items/'+cal_id+'/'+item_id, {
-				method: 'PUT',
-				headers:{
-					'Content-Type':'application/json'
-				},
-				body: bodyInfo
-			});
-			await fetch('/api/users/'+user_id+'/notifications', {
-				method: 'POST',
-				headers: {
-					'Content-Type':'application/json'
-				},
-				body: notification
-			});
-		} catch(e){
-			console.log(e);
-			return;
-		}*/
-
-// function newItem
-
-/*function clearModals(){
-	document.getElementById('modalBodyItemId').setAttribute('item-id', '');
-	let editFields = document.getElementsByClassName('modal-editable-area');
-	for(let i=0; i<editFields.length; i++){
-		if(editFields[i].value !== ''){
-			editFields[i].value= '';
-		}
-	}
-
-}*/
 
 function setTimeFields() {
 	let currentType = document.getElementById('newItemType');
@@ -1188,7 +886,6 @@ function checkRequiredFieldsForEdit() {
 	if(itemType === 'Action Item') {
 		let dueDateVal = document.getElementById('itemDueDate').value;
 		if(itemNameVal === '' || dueDateVal === '') {
-			console.log('hit no name');
 			let saveItemChanges = document.getElementById('saveChanges');
 			saveItemChanges.disabled = true;
 		} else {
@@ -1214,7 +911,6 @@ for(let item of itemInputAddElements) {
 	if(item.id === 'newName') {
 		item.addEventListener('keyup', checkRequiredFieldsForAddition);
 	} else {
-        console.log('item', item);
 		item.addEventListener('change', checkRequiredFieldsForAddition);
 	}
 }
@@ -1245,7 +941,7 @@ function checkRequiredFieldsForAddition() {
 }
 
 async function addNewItem(userId) {
-    document.getElementById('createItemBtn').setAttribute('data-dismiss', 'modal');
+	document.getElementById('createItemBtn').setAttribute('data-dismiss', 'modal');
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 	let newItemToAdd = {name: '', description: '', itemType: 0, itemStatus: 0, startTime: '', endTime: null, relatedLinks: '', isParent: true};
 	newItemToAdd.name = document.getElementById('newName').value;
@@ -1279,43 +975,40 @@ async function addNewItem(userId) {
 }
 
 async function sendItemChanges(itemId, userId) {
-    console.log('item', itemId, 'currentItemId', currentItemId);
-    if(itemId === currentItemId) {
-        document.getElementById('saveChanges').setAttribute('data-dismiss', 'modal');
-	    const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-        let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: cal_id, related_links: null};
-        //console.log('updatedItem', updatedItem);
-	    updatedItem.name = document.getElementById('itemName').value;
-	    updatedItem.description = document.getElementById('itemDescription').value;
-	    let itemType = document.getElementById('itemType');
-	    if(itemType.value === 'Action Item') {
-		    updatedItem.type = 1;
-		    let itemStatus = document.getElementById('itemStatus');
-		    if(itemStatus.value === 'Not Started') {
-			    updatedItem.status = 1;
-		    } else if(itemStatus.value === 'In Progress') {
-			    updatedItem.status = 2;
-		    } else if (itemStatus.value === 'Completed') {
-			    updatedItem.status = 3;
-		    }
-		    updatedItem.start = document.getElementById('itemDueDate').value;
-	    } else {
-		    updatedItem.type = 2;
-		    updatedItem.start = document.getElementById('startTime').value;
-		    updatedItem.end = document.getElementById('endTime').value;
-	    }
-        updatedItem.related_links = document.getElementById('itemLinks').value;
-        //console.log('updatedItem', updatedItem);
-	    fetch('/api/items/'+cal_id+'/'+itemId, {
-		    method: 'PUT',
-		    headers: {
-			    'Content-Type': 'application/json'
-		    },
-		    body: JSON.stringify(updatedItem)
-        });
-        itemId = null;
-        loadTable(cal_id, true, userId);
-    }
+	if(itemId === currentItemId) {
+		document.getElementById('saveChanges').setAttribute('data-dismiss', 'modal');
+		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+		let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: cal_id, related_links: null};
+		updatedItem.name = document.getElementById('itemName').value;
+		updatedItem.description = document.getElementById('itemDescription').value;
+		let itemType = document.getElementById('itemType');
+		if(itemType.value === 'Action Item') {
+			updatedItem.type = 1;
+			let itemStatus = document.getElementById('itemStatus');
+			if(itemStatus.value === 'Not Started') {
+				updatedItem.status = 1;
+			} else if(itemStatus.value === 'In Progress') {
+				updatedItem.status = 2;
+			} else if (itemStatus.value === 'Completed') {
+				updatedItem.status = 3;
+			}
+			updatedItem.start = document.getElementById('itemDueDate').value;
+		} else {
+			updatedItem.type = 2;
+			updatedItem.start = document.getElementById('startTime').value;
+			updatedItem.end = document.getElementById('endTime').value;
+		}
+		updatedItem.related_links = document.getElementById('itemLinks').value;
+		fetch('/api/items/'+cal_id+'/'+itemId, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(updatedItem)
+		});
+		itemId = null;
+		loadTable(cal_id, true, userId);
+	}
 }
 
 async function addToPersonal(personalCalId, newPersonalItem) {
