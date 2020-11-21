@@ -73,7 +73,7 @@ async function redirectOnCreation(user_id) {
 		},
 		body: JSON.stringify(newCalInfo)
 	});
-	setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
+	//setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 }
 
 async function redirectOnSubscription(user_id) {
