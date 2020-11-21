@@ -2,6 +2,7 @@
 
 ## Contributions
 Britney Bourassa: database set up; database implementation; 2 pre-made calendars; debugging
+
 Meghan Arnold: Authentication; 2 pre-made calendars; debugging. Please note that authentication ended up being very difficult, and Meghan spent most of a week trying to get it to work.
 
 ## Database Collections
