@@ -3,10 +3,17 @@
 ## Contributions
 Britney Bourassa: database set up; database implementation; 2 pre-made calendars; debugging
 
-Meghan Arnold: Authentication; 2 pre-made calendars; debugging. Please note that authentication ended up being very difficult, and Meghan spent most of a week trying to get it to work.
+Meghan Arnold: Authentication; 2 pre-made calendars; debugging. 
+
+Note on contributions: The group understood, going into the milestone, that authentication was going to be a big portion of the work. While at a glance the distribution may seem unequal, authentication was a lot of work, and took about a week t complete. The work between the two of us was equally distributed, and we want to stress that we have been communication throughout the project, and participation between the two of us was equal. 
+
+## Deployment
+
+To access our hosted application, please go to https://life-on-track.herokuapp.com and create an account. 
 
 ## Database Collections
 
+Our database was create with Postges.
 
 ### Users table
 | Column     | Data Type            | Description                          |
