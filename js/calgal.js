@@ -11,6 +11,7 @@ async function getSession(){
 	setAllForPage(id[0].id);
 }
 
+//onload function
 window.addEventListener('load', getSession);
 
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
