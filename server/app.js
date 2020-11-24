@@ -6,9 +6,9 @@ const app = express();
 //const cookieSession = require('cookie-session');
 
 //SECRET
-//const dbconnection = require('./secrets.json');
-//const username= dbconnection.username;
-//const password=dbconnection.password;
+// const dbconnection = require('../../secretRef.json');
+// const username= dbconnection.username;
+// const password=dbconnection.password;
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 
@@ -21,8 +21,8 @@ const pgp = require('pg-promise')({
     }*/
 });
 const url = process.env.DATABASE_URL;
-// || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?ssl=true`;
-
+// || `postgres://${username}:${password}@ec2-54-204-96-190.compute-1.amazonaws.com:5432/df94m1nctt69lo`;
+//
 
 exports.db = pgp(url);
 
