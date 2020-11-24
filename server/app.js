@@ -52,8 +52,8 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 
 //session configuration
 const session = {
-	secret: process.env.SECRET,
-	// || dbconnection.secret,
+    secret: process.env.SECRET,
+    // || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
