@@ -1,17 +1,16 @@
+/* eslint-disable linebreak-style */
 'use strict';
 require('dotenv').config(); //loading environmen variables; should be as high as possible
 const express = require('express');
 const path = require('path');
 const app = express();
-//const cookieSession = require('cookie-session');
 
 //SECRET
-const dbconnection = require('../secretRef.json');
-const username= dbconnection.username;
-const password=dbconnection.password;
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-// cs326-final-zeta-refactoring\secretRef.json
-
+// const dbconnection = require('../secretRef.json');
+// const username= dbconnection.username;
+// const password=dbconnection.password;
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// cs326-final-zeta-refactoring\secretRef.js
 const pgp = require('pg-promise')({
 	connect(client) {
 		console.log('Connected to database:', client.connectionParameters.database);
@@ -20,7 +19,8 @@ const pgp = require('pg-promise')({
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
-const url = process.env.DATABASE_URL || `postgres://${username}:${password}@ec2-54-204-96-190.compute-1.amazonaws.com:5432/df94m1nctt69lo`;
+const url = process.env.DATABASE_URL;
+// || `postgres://${username}:${password}@ec2-54-204-96-190.compute-1.amazonaws.com:5432/d7utfcodmnbrlt`;
 //
 
 exports.db = pgp(url);
@@ -51,7 +51,8 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 
 //session configuration
 const session = {
-	secret: process.env.SECRET || dbconnection.secret,
+	secret: process.env.SECRET,
+	// || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };

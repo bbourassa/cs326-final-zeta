@@ -1,3 +1,5 @@
+/* eslint-disable linebreak-style */
+
 'use strict';
 //calls don't throw an error
 let currentItemId = 0;
@@ -361,11 +363,12 @@ function loadSettingListeners(user_id){
 /**
  * Generates a sharable string for calendar
  * @param {String} field to generate an id for
+ * @returns {String} String of letters that map to the cal id
  */
 function generateNewId(field){
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 	let id = 0;
- 	//insecure mapping of calendar id to a string
+	//insecure mapping of calendar id to a string
 	if(field === 'shareCode'){
 		let letterMap = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 0};
 		let mappedString ='';
