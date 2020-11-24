@@ -25,10 +25,10 @@ exports.listAll = async function(req, res) {
 
 exports.listSubscribed = async function(req, res) {
 	let userId = req.params.user;
-	let subscriptionList = await db.any('SELECT * FROM public."subscriptions" WHERE user_id=$1', [userId]);
+	let subscriptionList = await db.any('SELECT * FROM public."subscriptions" WHERE user_id=$1 ORDER BY -id', [userId]);
 	let subCalendars = [];
 	for(let i = 0; i < subscriptionList.length; i++) {
-		let thisCalendar = await db.any('SELECT * FROM public."calendars" WHERE id=$1 AND personal=0', [subscriptionList[i].calendar_id]);
+		let thisCalendar = await db.any('SELECT * FROM public."calendars" WHERE id=$1 AND personal=0 ORDER BY -id', [subscriptionList[i].calendar_id]);
 		if(thisCalendar[0] !== undefined) {
 			subCalendars.push(thisCalendar[0]);
 		}
