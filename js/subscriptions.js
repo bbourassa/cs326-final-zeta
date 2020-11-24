@@ -1,5 +1,9 @@
+
+/* eslint-disable linebreak-style */
+
 //THIS IS THE COPY THAT I AM REFACTORING. IT IS ON MY FORK. IF IT IS IN MAIN, ERRORS HAVE BEEN MADE
 //unless I just forgot to remove this warning
+
 
 'use strict';
 let currentItemId = 0;
@@ -17,7 +21,7 @@ async function getSession(){
 
 }
 
-let createItemChanges = document.getElementById('createItemBtn');
+let createItemChanges = document.getElementById('createItemBtn'); //there is a seperate modal for creating anc changing
 //let saveChangesBtn = document.getElementById('saveChanges');
 window.addEventListener('load', getSession());
 window.localStorage.clear();
@@ -362,42 +366,15 @@ function loadSettingListeners(user_id){
 
 
 /**
- * Generates a new random set of digits, ensures that it does not already exist
+ * Generates a sharable string for calendar
  * @param {String} field to generate an id for
+ * @returns {String} String of letters that map to the cal id
  */
 function generateNewId(field){
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-
 	let id = 0;
-	//Calendar id's should have 5 digits, for now
-	if(field === 'cal'){
-		// id = Math.floor(Math.random() * (99999 - 10000) + 10000);
-		let unique = false;
-		while(!unique){
-			try {
-				id = Math.floor(Math.random() * (99999 - 10000) + 10000);
-				fetch('/api/items/'+id);
-			} catch(e){
-				unique = false;
-			}
-			unique = true;
-
-		}
-
-	} //item id's should have 7 digits, for now
-	else if(field === 'item'){
-		let unique = false;
-		while(!unique){
-			try {
-				id = Math.floor(Math.random() * (9999999 - 1000000) + 1000000);
-				fetch('/api/items/'+id);
-			} catch(e){
-				unique = false;
-			}
-			unique = true;
-		}
-	} //insecure mapping of calendar id to a string
-	else if(field === 'shareCode'){
+	//insecure mapping of calendar id to a string
+	if(field === 'shareCode'){
 		let letterMap = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 0};
 		let mappedString ='';
 		for(let i=0; i<JSON.stringify(cal_id).length; i++){
@@ -412,7 +389,9 @@ function generateNewId(field){
 }
 
 /**
- * Returns an array of every item id that has been checked
+ * This function looks at each checkbox, and if it is checked, it adds
+ * the id of the item to an array
+ * @returns {Int Array} array of item ids
  */
 function getCheckedItems(){
 	let checkedBoxes = [];
@@ -420,7 +399,6 @@ function getCheckedItems(){
 	for (let i=0; i<allBoxes.length; i++){
 		if(allBoxes[i].checked){
 			const itemID = parseInt(allBoxes[i].parentElement.parentElement.getAttribute('id'));
-
 			checkedBoxes.push(itemID);
 		}
 	}
@@ -434,7 +412,6 @@ function getCheckedItems(){
 async function loadCalendars(user_id){
 	//load all the calendars you have a subscription relationship with
 	//make the response into the cal list
-	//this endpoint actually just gets every calendar the user owns
 	const response = await fetch('/api/subscriptions/'+user_id);
 	if(!response.ok){
 		alert('Unable to load your subscriptions');
@@ -443,11 +420,12 @@ async function loadCalendars(user_id){
 	let cals = await response.json();
 	const subs = document.getElementById('subscribed-cals');
 
-	//make the button for each calendar, adding admin button where applicalbe
-	//if you click that clanedar, it will load into the item table
+	//make the button for each calendar, adding admin indicator where applicable
+	//if you click that calendar, it will load into the item table
 	document.getElementById('subscribed-cals').innerHTML = '';
 	cals.forEach((cal) =>{
 		if(document.getElementById('calId'+cal.id) === null) {
+			//determine if admin
 			const admin = (cal.owner_id === user_id);
 			//makke the button for the calendar
 			let aCal = document.createElement('button');
@@ -456,12 +434,10 @@ async function loadCalendars(user_id){
 			aCal.setAttribute('id', 'calId'+cal.id);
 			//add an event listen to the button to fill in the table of eventsf
 			aCal.addEventListener('click', () =>{
-				while( document.getElementById('eventTable').childNodes.length>0){
-					document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
-				}
+				//load the new table
 				loadTable(cal.id, true, user_id);
 			});
-			if(admin){
+			if(admin){ //TODO need to find a compromise here
 				aCal.innerHTML += ' - ADMIN';
 			}
 			subs.appendChild(aCal);
@@ -472,10 +448,12 @@ async function loadCalendars(user_id){
 	// it should redirect you to that events page
 	//this function assumes that the new subscription will be at the end
 	//of your list of subscriptions
+	//TODO do we still do this w/the local storage? I don't think so
 	if(window.localStorage.getItem('newSubscription')){
 		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'), true, user_id);
 		window.localStorage.removeItem('newSubscription');
 	}
+	//TODO what does this do?
 	let idPrep = subs.childNodes[0].getAttribute('id');
 	let idNum = parseInt(idPrep.substring(5));
 	loadTable(idNum, true, user_id);
@@ -486,23 +464,40 @@ async function loadCalendars(user_id){
  * Gets and renders all events and activities in a given calendar
  * @param {int} calId the id number for the calendar
  */
+/**
+ * Retrieves and renders all items in a given calendar
+ * @param {Int} calId of the calendar to render
+ * @param {Boolean} rebuild whether cal should have changed, and needs to rebuild
+ * @param {Int} user_id User to reference
+ */
 async function loadTable(calId, rebuild, user_id) {
-	if(rebuild === true) {
-		document.getElementById('eventTable').innerHTML = '';
-	}
+
+	//fetch specific calendar's data
 	const response = await fetch('/api/cals/'+calId+'/');
 	let calData = await response.json();
 	calData = calData[0];
-	//make this work with r
+	//dtermine if admin
 	const admin = (calData.owner_id === user_id);
 
+	//load the items associated with this calendar
+	const items = await fetch('/api/items/'+calId);
+	if(!items.ok){
+		console.log(items.error);
+		return;
+	}
+	let calItems = await items.json();
+
+	//If this calendar needs to be rebuilt, do so
 	if(rebuild === true) {
+		//clear out whatever is already in the table
+		while( document.getElementById('eventTable').childNodes.length>0){
+			document.getElementById('eventTable').removeChild(document.getElementById('eventTable').childNodes[0]);
+		}
+		//set cal-name and id to appropriate cal
 		document.getElementById('cal-name').innerHTML = calData.name;
 		document.getElementById('cal-name').setAttribute('calID', calId);
-	}
 
-	//Add or remove the edit column based on whether you are an admin
-	if(rebuild === true) {
+		//Add or remove the edit column based on whether you are an admin
 		if(!admin){
 			if(document.getElementById('table-edit')){
 				document.getElementById('table-head').removeChild(document.getElementById('table-edit'));
@@ -524,13 +519,7 @@ async function loadTable(calId, rebuild, user_id) {
 		}
 	}
 
-	//load the items associated with this calendar
-	const items = await fetch('/api/items/'+calId);
-	if(!items.ok){
-		console.log(items.error);
-		return;
-	}
-	let calItems = await items.json();
+
 	//load each item in this calendar
 	if(rebuild === true) {
 		calItems.forEach((item) => {
@@ -602,6 +591,7 @@ async function loadTable(calId, rebuild, user_id) {
 			infoBtn.id = 'DetailsFor'+item.id;
 			infoBtn.setAttribute('data-toggle', 'modal');
 			infoBtn.setAttribute('data-target', '#itemDetailsModal');
+			//TODO replace w/ my details modal
 			infoBtn.addEventListener('click', () =>{
 				//pop up modal with any details, non-editable
 				let detailAttributes = document.getElementsByClassName('detail-attributes');
@@ -660,6 +650,7 @@ async function loadTable(calId, rebuild, user_id) {
 
 		});
 	} else if (rebuild === false) {
+		//if you only need to add one item to the table?
 		let newItem = calItems[0];
 		for(let i = 0; i < calItems.length; i++) {
 			if(calItems[i].id > newItem.id) {
@@ -721,7 +712,7 @@ async function loadTable(calId, rebuild, user_id) {
 		status.appendChild(prog);
 		anItem.appendChild(status);
 
-
+		//TODO replace w/ my detail modal
 		//creates detail
 		let info = document.createElement('td');
 		let infoBtn = document.createElement ('button');
@@ -838,6 +829,7 @@ async function fillModalInfo(item, parentCalendar, userId) {
 
 /**
  * Function to switch between date settings in the edit modal
+ * deals with edit item modal
  */
 function setUpdateForm() {
 	let currentType = document.getElementById('itemType');
@@ -859,7 +851,7 @@ function setUpdateForm() {
 		document.getElementById('saveChanges').disabled = true;
 	}
 }
-
+//this deals with the adding item modal
 function setTimeFields() {
 	let currentType = document.getElementById('newItemType');
 	let itemStatus = document.getElementById('showNewStatus');
@@ -881,32 +873,36 @@ function setTimeFields() {
 	}
 }
 
-
+/**
+ * Check whether the field has a value before enabling the save button
+ */
 function checkRequiredFieldsForEdit() {
 	let itemNameVal = document.getElementById('itemName').value;
 	let itemType = document.getElementById('itemType').value;
+	let saveItemChanges = document.getElementById('saveChanges');
+
 	if(itemType === 'Action Item') {
+		//an action item will have a due date and name that need to be set
 		let dueDateVal = document.getElementById('itemDueDate').value;
 		if(itemNameVal === '' || dueDateVal === '') {
-			let saveItemChanges = document.getElementById('saveChanges');
 			saveItemChanges.disabled = true;
 		} else {
-			let saveItemChanges = document.getElementById('saveChanges');
 			saveItemChanges.disabled = false;
 		}
 	} else {
+		//an event has a start time, end time, and a name that need to be set
 		let startTimeVal = document.getElementById('startTime').value;
 		let endTimeVal = document.getElementById('endTime').value;
 		if(itemNameVal === '' || startTimeVal === '' || endTimeVal === '') {
-			let saveItemChanges = document.getElementById('saveChanges');
 			saveItemChanges.disabled = true;
 		} else {
-			let saveItemChanges = document.getElementById('saveChanges');
 			saveItemChanges.disabled = false;
 		}
 	}
 }
 
+//makes sure that the item has required elements
+//TODO why is it floating?
 let itemInputAddElements = document.getElementById('newItemForm');
 
 for(let item of itemInputAddElements) {
@@ -917,26 +913,29 @@ for(let item of itemInputAddElements) {
 	}
 }
 
+/**
+ * Checks that each field has content
+ * TODO replication of checkRequiredFieldForEdits, just deals with new item
+ * modal instead of edit item modal
+ */
 function checkRequiredFieldsForAddition() {
 	let itemNameVal = document.getElementById('newName').value;
 	let itemType = document.getElementById('newItemType').value;
+	let createItemChanges = document.getElementById('createItemBtn');
+
 	if(itemType === 'Action Item') {
 		let dueDateVal = document.getElementById('newItemDueDate').value;
 		if(itemNameVal === '' || dueDateVal === '') {
-			let createItemChanges = document.getElementById('createItemBtn');
 			createItemChanges.disabled = true;
 		} else {
-			let createItemChanges = document.getElementById('createItemBtn');
 			createItemChanges.disabled = false;
 		}
 	} else {
 		let startTimeVal = document.getElementById('newStartTime').value;
 		let endTimeVal = document.getElementById('newEndTime').value;
 		if(itemNameVal === '' || startTimeVal === '' || endTimeVal === '') {
-			let createItemChanges = document.getElementById('createItemBtn');
 			createItemChanges.disabled = true;
 		} else {
-			let createItemChanges = document.getElementById('createItemBtn');
 			createItemChanges.disabled = false;
 		}
 	}
@@ -1013,6 +1012,9 @@ async function sendItemChanges(itemId, userId) {
 	}
 }
 
+/**
+ * Function that adds a given item to users' personal cal
+ */
 async function addToPersonal(personalCalId, newPersonalItem) {
 	fetch('/api/items/'+personalCalId, {
 		method: 'POST',
