@@ -421,7 +421,7 @@ function getCheckedItems(){
 	return checkedBoxes;
 }
 
-function clearModals(){ //TODO what about select options
+function clearModals(){
 	document.getElementById('modalBodyItemId').setAttribute('item-id', '');
 	let editFields = document.getElementsByClassName('modal-editable-area');
 	for(let i=0; i<editFields.length; i++){
@@ -619,14 +619,9 @@ async function loadTable(calId, rebuild, user_id) {
 			infoBtn.id = 'DetailsFor'+item.id;
 			infoBtn.setAttribute('data-toggle', 'modal');
 			infoBtn.setAttribute('data-target', '#itemDetailsModal');
-			//TODO replace w/ my details modal
 			infoBtn.addEventListener('click', () =>{
 				//pop up modal with any details, non-editable
-				// fillModalInfo(item, document.getElementById('cal-name').textContent, user_id);
-				console.log(item);
 				fillConfirmationModal(item);
-				document.getElementById('btnsForEdits').setAttribute('hidden', true);
-				// document.getElementById('commitMessage').setAttribute('hidden', true);
 				document.getElementById('confEditHeader').innerText = 'Details';
 			});
 			info.appendChild(infoBtn);
