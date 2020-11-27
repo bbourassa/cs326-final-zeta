@@ -1,11 +1,13 @@
 # Zeta Group: Milestone 3
 
 ## Contributions
-Britney Bourassa: database set up; database implementation; 2 pre-made calendars; debugging
+Britney Bourassa: database setup; database implementation; 2 pre-made calendars; debugging
 
-Meghan Arnold: Authentication; 2 pre-made calendars; debugging. 
+Meghan Arnold: database setup; authentication; 2 pre-made calendars; debugging. 
 
-Note on contributions: The group understood, going into the milestone, that authentication was going to be a big portion of the work. While at a glance the distribution may seem unequal, authentication was a lot of work, and took about a week t complete. The work between the two of us was equally distributed, and we want to stress that we have been communication throughout the project, and participation between the two of us was equal. 
+Sara Whitlock: n/a - unable to contact
+
+Note on contributions: The group understood, going into the milestone, that authentication was going to be a big portion of the work. While at a glance the distribution may seem unequal, authentication was a lot of work, and took about a week to complete. The work between the two of us was equally distributed, and we want to stress that we have been communication throughout the project, and participation between the two of us was equal. 
 
 ## Deployment
 

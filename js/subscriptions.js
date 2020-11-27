@@ -1,4 +1,9 @@
+
 /* eslint-disable linebreak-style */
+
+//THIS IS THE COPY THAT I AM REFACTORING. IT IS ON MY FORK. IF IT IS IN MAIN, ERRORS HAVE BEEN MADE
+//unless I just forgot to remove this warning
+
 
 'use strict';
 //calls don't throw an error
