@@ -1,7 +1,6 @@
 /* eslint-disable linebreak-style */
 
 'use strict';
-/* eslint-env jquery */ //this tag is needed so that the $in the modal
 //calls don't throw an error
 let currentItemId = 0;
 async function getSession(){
@@ -18,30 +17,32 @@ async function getSession(){
 
 }
 
-let createItemChanges = document.getElementById('createItemBtn'); //there is a seperate modal for creating anc changing
-//let saveChangesBtn = document.getElementById('saveChanges');
+
 window.addEventListener('load', getSession());
 window.localStorage.clear();
 
 function loadAll(userId){
+	document.getElementById('logoutBtn').addEventListener('click', ()=>{
+		fetch('/logout');
+	});
 	loadCalendars(userId);
 	loadSettingListeners(userId);
-	createItemChanges.addEventListener('click', () => addNewItem(userId));
+	setUpReqFields();
 }
-document.getElementById('logoutBtn').addEventListener('click', ()=>{
-	fetch('/logout');
-});
 
-let itemInputEditElements = document.getElementById('editForm').getElementsByTagName('input');
-document.getElementById('itemType').addEventListener('change', checkRequiredFieldsForEdit);
-document.getElementById('itemStatus').addEventListener('change', checkRequiredFieldsForEdit);
-document.getElementById('itemDescription').addEventListener('keyup', checkRequiredFieldsForEdit);
-document.getElementById('itemLinks').addEventListener('keyup', checkRequiredFieldsForEdit);
-for(let item of itemInputEditElements) {
-	if(item.id === 'itemName') {
-		item.addEventListener('keyup', checkRequiredFieldsForEdit);
-	} else {
-		item.addEventListener('change', checkRequiredFieldsForEdit);
+
+function setUpReqFields(){
+	let itemInputEditElements = document.getElementById('editForm').getElementsByTagName('input');
+	document.getElementById('itemType').addEventListener('change', checkRequiredFieldsForEdit);
+	document.getElementById('itemStatus').addEventListener('change', checkRequiredFieldsForEdit);
+	document.getElementById('itemDescription').addEventListener('keyup', checkRequiredFieldsForEdit);
+	document.getElementById('itemLinks').addEventListener('keyup', checkRequiredFieldsForEdit);
+	for(let item of itemInputEditElements) {
+		if(item.id === 'itemName') {
+			item.addEventListener('keyup', checkRequiredFieldsForEdit);
+		} else {
+			item.addEventListener('change', checkRequiredFieldsForEdit);
+		}
 	}
 }
 
@@ -91,7 +92,7 @@ function loadSettingListeners(user_id){
 					let prepItem = await itemResponse.json();
 					let addThisItem = prepItem[0];
 					let thisPersonalItem = {name: addThisItem.name, itemType: addThisItem.item_type, startTime: addThisItem.start_time, endTime: addThisItem.end_time, description: addThisItem.description, itemStatus: addThisItem.item_status, relatedLinks: addThisItem.related_links, isParent: false, oldId: addThisItem.id};
-					
+
 					addToPersonal(parseInt(personalCalId), thisPersonalItem);
 					//setTimeout(function(){addToPersonal(personalCalId, thisPersonalItem);}, 500);
 				}
@@ -238,13 +239,26 @@ function loadSettingListeners(user_id){
 	//make a new event
 	document.getElementById('setCreate').addEventListener('click', ()=> {
 		document.getElementById('setCreate').setAttribute('data-toggle', 'modal');
-		document.getElementById('setCreate').setAttribute('data-target', '#itemAdditionCenter');
-		let currentCalendar = document.getElementById('parentCal');
+		document.getElementById('setCreate').setAttribute('data-target', '#itemEditCenter');
+		//clear out old values, set title and button to new item values
+		document.getElementById('editItemTitle').innerHTML = 'ADD NEW ITEM';
+		document.getElementById('saveChanges').innerHTML = 'Create New Item';
+		clearModals();
+		document.getElementById('calendarName').setAttribute('placeholder', document.getElementById('cal-name').innerHTML);
+		//fill appropriately w/ calendar name
+		let currentCalendar = document.getElementById('calendarName');
 		let calName = document.getElementById('cal-name').textContent;
 		currentCalendar.placeholder = calName;
-		setTimeFields();
-		let typeSet = document.getElementById('newItemType');
-		typeSet.addEventListener('change', setTimeFields);
+		setUpdateForm();
+		let typeSet = document.getElementById('itemType');
+		typeSet.addEventListener('change', setUpdateForm);
+
+		let saveChangesBtn = document.getElementById('saveChanges');
+		saveChangesBtn.innerHTML = 'Save Changes';
+		saveChangesBtn.addEventListener('click', () => {
+			sendItemChanges(null, user_id);} );
+
+
 	});
 
 	//delete selected items
@@ -402,6 +416,21 @@ function getCheckedItems(){
 	return checkedBoxes;
 }
 
+function clearModals(){ //TODO what about select options
+	document.getElementById('modalBodyItemId').setAttribute('item-id', '');
+	let editFields = document.getElementsByClassName('modal-editable-area');
+	for(let i=0; i<editFields.length; i++){
+		if(editFields[i].value !== ''){
+			editFields[i].value= '';
+		}
+	}
+	let itemStatus = document.getElementById('itemStatus');
+	itemStatus.value = 'Not Started';
+	let itemType = document.getElementById('itemType');
+	itemType.value = 'Action Item';
+}
+
+
 /**
  * Load all of the user's subscription calendars
  * @param {int} userId
@@ -520,15 +549,15 @@ async function loadTable(calId, rebuild, user_id) {
 	//load each item in this calendar
 	if(rebuild === true) {
 		calItems.forEach((item) => {
+			//the row will hold itmID
 			let anItem = document.createElement('tr');
-
 			anItem.setAttribute('id', item.id);
 
+			//checkbox
 			let check = document.createElement('td');
 			let box = document.createElement('input');
 			box.type ='checkbox';
 			box.classList.add('itemCheck');
-			// box.setAttribute('name', 'itemCheck');
 			check.appendChild(box);
 			anItem.appendChild(check);
 
@@ -543,9 +572,6 @@ async function loadTable(calId, rebuild, user_id) {
 				let time = new Date(item.start_time).toDateString();
 				date.innerHTML = time;
 			}
-			/*else if(item.end_time !== ''){
-				date.innerHTML = item.end_time;
-			}*/
 			anItem.appendChild(date);
 
 			//load type of Event
@@ -591,34 +617,12 @@ async function loadTable(calId, rebuild, user_id) {
 			//TODO replace w/ my details modal
 			infoBtn.addEventListener('click', () =>{
 				//pop up modal with any details, non-editable
-				let detailAttributes = document.getElementsByClassName('detail-attributes');
-				for(let item of detailAttributes) {
-					item.innerText = '';
-				}
-				document.getElementById('detailsName').innerText += 'ITEM NAME: ' + item.name;
-				document.getElementById('detailsDescription').innerText += 'ITEM DESCRIPTION: ' + item.description;
-				if(item.item_type === 1) {
-					document.getElementById('detailsType').innerText += 'ITEM TYPE: Action Item';
-				}
-				else {
-					document.getElementById('detailsType').innerText += 'ITEM TYPE: Event';
-				}
-				if(item.item_status === 1) {
-					document.getElementById('detailsStatus').innerText += 'ITEM STATUS: Not Started';
-				} else if(item.item_status === 2) {
-					document.getElementById('detailsStatus').innerText += 'ITEM STATUS: In Progress';
-				} else if(item.item_status === 3) {
-					document.getElementById('detailsStatus').innerText += 'ITEM STATUS: Completed';
-				} else {
-					document.getElementById('detailsStatus').innerText += 'ITEM STATUS: N/A';
-				}
-				document.getElementById('detailsStartTime').innerText += 'ITEM START TIME: ' + new Date(item.start_time).toDateString();
-				if(item.end_time !== null) {
-					document.getElementById('detailsEndTime').innerText += 'ITEM END TIME: ' +new Date(item.end_time).toDateString();
-				} else {
-					document.getElementById('detailsEndTime').innerText += 'ITEM END TIME: N/A';
-				}
-				document.getElementById('detailsLinks').innerText += 'ITEM RELATED LINKS: ' + item.related_links;
+				// fillModalInfo(item, document.getElementById('cal-name').textContent, user_id);
+				console.log(item);
+				fillConfirmationModal(item);
+				document.getElementById('btnsForEdits').setAttribute('hidden', true);
+				// document.getElementById('commitMessage').setAttribute('hidden', true);
+				document.getElementById('confEditHeader').innerText = 'Details';
 			});
 			info.appendChild(infoBtn);
 			anItem.appendChild(info);
@@ -720,34 +724,7 @@ async function loadTable(calId, rebuild, user_id) {
 		infoBtn.setAttribute('data-target', '#itemDetailsModal');
 		infoBtn.addEventListener('click', () =>{
 			//pop up modal with any details, non-editable
-			let detailAttributes = document.getElementsByClassName('detail-attributes');
-			for(let item of detailAttributes) {
-				item.innerText = '';
-			}
-			document.getElementById('detailsName').innerText += 'ITEM NAME: ' + newItem.name;
-			document.getElementById('detailsDescription').innerText += 'ITEM DESCRIPTION: ' + newItem.description;
-			if(newItem.item_type === 1) {
-				document.getElementById('detailsType').innerText += 'ITEM TYPE: Action Item';
-			}
-			else {
-				document.getElementById('detailsType').innerText += 'ITEM TYPE: Event';
-			}
-			if(newItem.item_status === 1) {
-				document.getElementById('detailsStatus').innerText += 'ITEM STATUS: Not Started';
-			} else if(newItem.item_status === 2) {
-				document.getElementById('detailsStatus').innerText += 'ITEM STATUS: In Progress';
-			} else if(newItem.item_status === 3) {
-				document.getElementById('detailsStatus').innerText += 'ITEM STATUS: Completed';
-			} else {
-				document.getElementById('detailsStatus').innerText += 'ITEM STATUS: N/A';
-			}
-			document.getElementById('detailsStartTime').innerText += 'ITEM START TIME: ' + new Date(newItem.start_time).toDateString();
-			if(newItem.end_time !== null) {
-				document.getElementById('detailsEndTime').innerText += 'ITEM END TIME: ' + new Date(newItem.end_time).toDateString();
-			} else {
-				document.getElementById('detailsEndTime').innerText += 'ITEM END TIME: N/A';
-			}
-			document.getElementById('detailsLinks').innerText += 'ITEM RELATED LINKS: ' + newItem.related_links;
+			fillConfirmationModal(newItem);
 		});
 		info.appendChild(infoBtn);
 		anItem.appendChild(info);
@@ -764,7 +741,7 @@ async function loadTable(calId, rebuild, user_id) {
 			editBtn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
 			editBtn.innerHTML = 'Edit';
 			editBtn.addEventListener('click', ()=> {
-				fillModalInfo(newItem, document.getElementById('cal-name').textContent, user_id);
+				fillModalInfo(newItem, document.getElementById('cal-name').innerHTML, user_id);
 			});
 			editable.appendChild(editBtn);
 			anItem.appendChild(editable);
@@ -776,12 +753,84 @@ async function loadTable(calId, rebuild, user_id) {
 
 }
 
+/**
+ * This will fill the confirmation modal based on contents of edit modal
+ * The confirmation modal should be used for both
+ * confirmaiton and to display details
+ * @param {<Object Item>} item to display
+ */
+function fillConfirmationModal(item){
+	let type;
+	let status;
 
+	let allDetails = [( 'ITEM NAME: '+ item.name)];
+	if(item.description !== ''){
+		allDetails.push('ITEM DESCRIPTION: '+item.description);
+	}
+	if(item.type == 1){
+		type = 'Action Item';
+		switch (item.status) {
+		case 1:
+			status = 'Not Started';
+			break;
+		case 2:
+			status = 'In Progress';
+			break;
+		default:
+			status = 'Completed';
+			break;
+		}
+		allDetails.push('ITEM TYPE: '+type);
+		allDetails.push('ITEM STATUS: '+status);
+	} else {
+		type = 'Event';
+		status = 'N/A';
+		allDetails.push('ITEM TYPE: '+type);
+	}
+	// console.log(item.start_time);
+	allDetails.push('START TIME: ' + new Date(item.start_time).toDateString());
+	if(item.end_time !== null){
+		console.log(item.end_time);
+		allDetails.push('END TIME: '+ new Date(item.end_time).toDateString());
+	}
+	if(item.related_links !== ''){
+		allDetails.push('ITEM RELATED LINKS: '+item.related_links);
+	}
+
+	//clear out any current list
+	if(document.getElementById('listOfInfo')){
+		document.getElementById('listOfInfo').parentElement.removeChild(document.getElementById('listOfInfo'));
+	}
+	//make it a list
+	let changeList = document.createElement('div');
+	changeList.classList.add('list-group');
+	changeList.setAttribute('id', 'listOfInfo');
+
+	//for each field, make a new list item
+	for(let i=0; i<allDetails.length; i++){
+		if(allDetails[i].value !== ''){
+			let li = document.createElement('li');
+			li.classList.add('list-group-item');
+			li.textContent = allDetails[i];
+
+			changeList.appendChild(li);
+		}
+	}
+	console.log(changeList);
+	document.getElementById('detailsBody').appendChild(changeList);
+
+}
+
+/**
+ * Fills the edit modal with info
+ * @param {Object} item
+ * @param {String} parentCalendar
+ * @param {Int} userId
+ */
 async function fillModalInfo(item, parentCalendar, userId) {
 	currentItemId = item.id;
 	let thisItemId = item.id;
-	let saveChangesBtn = document.getElementById('saveChanges');
-	saveChangesBtn.addEventListener('click', () => sendItemChanges(thisItemId, userId));
+
 	const response = await fetch('/api/items/'+item.calendar_id+'/'+item.id);
 	if (!response.ok) {
 		console.log(response.error);
@@ -792,7 +841,7 @@ async function fillModalInfo(item, parentCalendar, userId) {
 	let itemName = document.getElementById('itemName');
 	itemName.value = currentItem.name;
 	let editHeader = document.getElementById('editItemTitle');
-	editHeader.innerHTML = 'Edit ' + currentItem.name;
+	editHeader.innerHTML = 'Edit: ' + currentItem.name;
 	let calendarName = document.getElementById('calendarName');
 	calendarName.setAttribute('placeholder', parentCalendar);
 	let itemDescription = document.getElementById('itemDescription');
@@ -822,6 +871,12 @@ async function fillModalInfo(item, parentCalendar, userId) {
 	}
 	let itemLinks = document.getElementById('itemLinks');
 	itemLinks.value = currentItem.related_links;
+
+	let saveChangesBtn = document.getElementById('saveChanges');
+	saveChangesBtn.innerHTML = 'Save Changes';
+	saveChangesBtn.addEventListener('click', () => {
+		console.log('fillModal');
+		sendItemChanges(thisItemId, userId);} );
 }
 
 /**
@@ -848,27 +903,7 @@ function setUpdateForm() {
 		document.getElementById('saveChanges').disabled = true;
 	}
 }
-//this deals with the adding item modal
-function setTimeFields() {
-	let currentType = document.getElementById('newItemType');
-	let itemStatus = document.getElementById('showNewStatus');
-	let dueDateShow = document.getElementById('showNewDueDate');
-	let startTimeShow = document.getElementById('showNewStartTime');
-	let endTimeShow = document.getElementById('showNewEndTime');
-	if(currentType.value === 'Action Item') {
-		itemStatus.style.display = 'inline-block';
-		dueDateShow.style.display = 'inline-block';
-		startTimeShow.style.display = 'none';
-		endTimeShow.style.display = 'none';
-		document.getElementById('createItemBtn').disabled = true;
-	} else if (currentType.value === 'Event') {
-		itemStatus.style.display = 'none';
-		dueDateShow.style.display = 'none';
-		startTimeShow.style.display = 'inline-block';
-		endTimeShow.style.display = 'inline-block';
-		document.getElementById('createItemBtn').disabled = true;
-	}
-}
+
 
 /**
  * Check whether the field has a value before enabling the save button
@@ -898,105 +933,33 @@ function checkRequiredFieldsForEdit() {
 	}
 }
 
-//makes sure that the item has required elements
-//TODO why is it floating?
-let itemInputAddElements = document.getElementById('newItemForm');
-
-for(let item of itemInputAddElements) {
-	if(item.id === 'newName') {
-		item.addEventListener('keyup', checkRequiredFieldsForAddition);
-	} else {
-		item.addEventListener('change', checkRequiredFieldsForAddition);
-	}
-}
-
-/**
- * Checks that each field has content
- * TODO replication of checkRequiredFieldForEdits, just deals with new item
- * modal instead of edit item modal
- */
-function checkRequiredFieldsForAddition() {
-	let itemNameVal = document.getElementById('newName').value;
-	let itemType = document.getElementById('newItemType').value;
-	let createItemChanges = document.getElementById('createItemBtn');
-
-	if(itemType === 'Action Item') {
-		let dueDateVal = document.getElementById('newItemDueDate').value;
-		if(itemNameVal === '' || dueDateVal === '') {
-			createItemChanges.disabled = true;
-		} else {
-			createItemChanges.disabled = false;
-		}
-	} else {
-		let startTimeVal = document.getElementById('newStartTime').value;
-		let endTimeVal = document.getElementById('newEndTime').value;
-		if(itemNameVal === '' || startTimeVal === '' || endTimeVal === '') {
-			createItemChanges.disabled = true;
-		} else {
-			createItemChanges.disabled = false;
-		}
-	}
-}
-
-async function addNewItem(userId) {
-	document.getElementById('createItemBtn').setAttribute('data-dismiss', 'modal');
-	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-	let newItemToAdd = {name: '', description: '', itemType: 0, itemStatus: 0, startTime: '', endTime: null, relatedLinks: '', isParent: true};
-	newItemToAdd.name = document.getElementById('newName').value;
-	newItemToAdd.description = document.getElementById('newDescription').value;
-	if(document.getElementById('newItemType').value === 'Action Item') {
-		newItemToAdd.itemType = 1;
-		newItemToAdd.startTime = document.getElementById('newItemDueDate').value;
-		let newStatus = document.getElementById('newItemStatus').value;
-		if(newStatus === 'Not Started') {
-			newItemToAdd.itemStatus = 1;
-		} else if(newStatus === 'In Progress') {
-			newItemToAdd.itemStatus = 2;
-		} else if (newStatus === 'Completed') {
-			newItemToAdd.itemStatus = 3;
-		}
-	} else {
-		newItemToAdd.itemType = 2;
-		newItemToAdd.startTime = document.getElementById('newStartTime').value;
-		newItemToAdd.endTime = document.getElementById('newEndTime').value;
-	}
-	newItemToAdd.relatedLinks = document.getElementById('newItemLinks').value;
-	fetch('/api/items/'+cal_id, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(newItemToAdd)
-	});
-	//ADD NEW ROW IN THE TABLE
-	loadTable(cal_id, false, userId);
-}
-
 async function sendItemChanges(itemId, userId) {
-	if(itemId === currentItemId) {
-		document.getElementById('saveChanges').setAttribute('data-dismiss', 'modal');
-		const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
-		let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: cal_id, related_links: null};
-		updatedItem.name = document.getElementById('itemName').value;
-		updatedItem.description = document.getElementById('itemDescription').value;
-		let itemType = document.getElementById('itemType');
-		if(itemType.value === 'Action Item') {
-			updatedItem.type = 1;
-			let itemStatus = document.getElementById('itemStatus');
-			if(itemStatus.value === 'Not Started') {
-				updatedItem.status = 1;
-			} else if(itemStatus.value === 'In Progress') {
-				updatedItem.status = 2;
-			} else if (itemStatus.value === 'Completed') {
-				updatedItem.status = 3;
-			}
-			updatedItem.start = document.getElementById('itemDueDate').value;
-		} else {
-			updatedItem.type = 2;
-			updatedItem.start = document.getElementById('startTime').value;
-			updatedItem.end = document.getElementById('endTime').value;
+	document.getElementById('saveChanges').setAttribute('data-dismiss', 'modal');
+	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
+	let updatedItem = {name: null, itemType: null, startTime: null, endTime: null, description: null, itemStatus: null, calendarId: cal_id, related_links: null};
+	//collect info from modal
+	updatedItem.name = document.getElementById('itemName').value;
+	updatedItem.description = document.getElementById('itemDescription').value;
+	let itemType = document.getElementById('itemType');
+	if(itemType.value === 'Action Item') {
+		updatedItem.itemType = 1;
+		let itemStatus = document.getElementById('itemStatus');
+		if(itemStatus.value === 'Not Started') {
+			updatedItem.itemStatus = 1;
+		} else if(itemStatus.value === 'In Progress') {
+			updatedItem.itemStatus = 2;
+		} else if (itemStatus.value === 'Completed') {
+			updatedItem.itemStatus = 3;
 		}
-		updatedItem.related_links = document.getElementById('itemLinks').value;
+		updatedItem.startTime = document.getElementById('itemDueDate').value;
+	} else {
+		updatedItem.itemType = 2;
+		updatedItem.startTime = document.getElementById('startTime').value;
+		updatedItem.endTime = document.getElementById('endTime').value;
+	}
+	updatedItem.related_links = document.getElementById('itemLinks').value;
+	// console.log(itemId);
+	if(itemId === currentItemId) { //if you should be updating an item
 		fetch('/api/items/'+cal_id+'/'+itemId, {
 			method: 'PUT',
 			headers: {
@@ -1006,6 +969,19 @@ async function sendItemChanges(itemId, userId) {
 		});
 		itemId = null;
 		loadTable(cal_id, true, userId);
+	}
+
+	else if(itemId == null){ //new item, post
+		console.log(updatedItem);
+		fetch('/api/items/'+cal_id, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(updatedItem)
+		});
+		// new row, don't rebuild table
+		loadTable(cal_id, false, userId);
 	}
 }
 
