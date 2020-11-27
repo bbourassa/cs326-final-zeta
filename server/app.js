@@ -7,6 +7,7 @@ const app = express();
 
 //SECRET
 // const dbconnection = require('../secretRef.json');
+
 // const username= dbconnection.username;
 // const password=dbconnection.password;
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -20,6 +21,7 @@ const pgp = require('pg-promise')({
     }*/
 });
 const url = process.env.DATABASE_URL; //|| `postgres://${username}:${password}@ec2-54-146-91-153.compute-1.amazonaws.com:5432/d1l0f3d95r5emj?sslmode=require`;
+
 
 
 exports.db = pgp(url);
