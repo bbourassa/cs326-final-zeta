@@ -243,6 +243,7 @@ function loadSettingListeners(user_id){
 
 	//make a new event
 	document.getElementById('setCreate').addEventListener('click', ()=> {
+		let sent  = false;
 		document.getElementById('setCreate').setAttribute('data-toggle', 'modal');
 		document.getElementById('setCreate').setAttribute('data-target', '#itemEditCenter');
 		//clear out old values, set title and button to new item values
@@ -261,7 +262,13 @@ function loadSettingListeners(user_id){
 		let saveChangesBtn = document.getElementById('saveChanges');
 		saveChangesBtn.innerHTML = 'Save Changes';
 		saveChangesBtn.addEventListener('click', () => {
-			sendItemChanges(null, user_id);} );
+			if(sent){
+				return;
+			} else {
+				sendItemChanges(null, user_id);
+				sent = true;
+			}
+		} );
 
 
 	});
@@ -276,7 +283,6 @@ function loadSettingListeners(user_id){
 		document.getElementById('confirmBtn').addEventListener('click', async ()=> {
 			document.getElementById('confirmBtn').setAttribute('data-dismiss', 'modal');
 			for(let i = 0; i < checkedItemIds.length; i++) {
-				console.log(cal_id, checkedItemIds[i]);
 				fetch('/api/items/'+cal_id+'/'+checkedItemIds[i], {
 					method: 'DELETE',
 					headers: {
@@ -793,7 +799,7 @@ function fillConfirmationModal(item){
 		console.log(item.end_time);
 		allDetails.push('END TIME: '+ new Date(item.end_time).toDateString());
 	}
-	if(item.related_links !== ''){
+	if(item.related_links !== null && item.related_links !== '' ){
 		allDetails.push('ITEM RELATED LINKS: '+item.related_links);
 	}
 
@@ -972,7 +978,6 @@ async function sendItemChanges(itemId, userId) {
 	}
 
 	else if(itemId == null){ //new item, post
-		console.log(updatedItem);
 		fetch('/api/items/'+cal_id, {
 			method: 'POST',
 			headers: {
