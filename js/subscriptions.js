@@ -58,12 +58,14 @@ function loadSettingListeners(user_id){
 
 	//  the header checkbox will cause all other check oxes to check/uncheck
 	document.getElementById('checkAll').addEventListener('change', ()=> {
+		let mainCheck = document.getElementById('checkAll');
 		let rows = document.getElementById('eventTable').childNodes;
 		for(let i =0; i<rows.length; i++){
+			//if it is not checked, go through and uncheck everything
+			//if it is checked, go through and check everything
 			let checkbox = document.getElementById('eventTable').childNodes[i].childNodes[0].childNodes[0];
-			checkbox.checked = checkbox.checked ? false:true;
+			checkbox.checked = mainCheck.checked ? true:false;
 		}
-
 	});
 
 	//for each selected item, add it to personal cal
@@ -101,6 +103,12 @@ function loadSettingListeners(user_id){
 					addToPersonal(parseInt(personalCalId), thisPersonalItem);
 					//setTimeout(function(){addToPersonal(personalCalId, thisPersonalItem);}, 500);
 				}
+			}
+			//uncheck everything
+			let rows = document.getElementById('eventTable').childNodes;
+			for(let i =0; i<rows.length; i++){
+				let checkbox = document.getElementById('eventTable').childNodes[i].childNodes[0].childNodes[0];
+				checkbox.checked = false;
 			}
 		});
 	});
@@ -225,7 +233,7 @@ function loadSettingListeners(user_id){
 			for(let i = 0; i < allCalItems.length; i++) {
 				if(allCalItems[i].parent_id === currentParent) {
 					let updatedInfo = {name: currentItem.name, type: currentItem.item_type, start: currentItem.start_time, end: currentItem.end_time, description: currentItem.description, status: currentItem.item_status, related_links: currentItem.related_links};
-					fetch('/api/items/'+personalCalendar.id+'/'+allCalItems[i].id, {
+					await fetch('/api/items/'+personalCalendar.id+'/'+allCalItems[i].id, {
 						method: 'PUT',
 						headers: {
 							'Content-Type': 'application/json'
@@ -236,7 +244,12 @@ function loadSettingListeners(user_id){
 			}
 			//FIND THE ITEM FROM THE PERSONAL CALENDAR WHO'S PARENT ID MATCHES THE ID OF THE CHECKED ITEM
 			//FOR A MATCH, UPDATE THE ITEM FROM THE PERSONAL CALENDAR WITH THE INFORMATION FROM THE PARENT ITEM
-
+		}
+		//uncheck everything
+		let rows = document.getElementById('eventTable').childNodes;
+		for(let i =0; i<rows.length; i++){
+			let checkbox = document.getElementById('eventTable').childNodes[i].childNodes[0].childNodes[0];
+			checkbox.checked = false;
 		}
 	});
 
@@ -796,7 +809,6 @@ function fillConfirmationModal(item){
 	// console.log(item.start_time);
 	allDetails.push('START TIME: ' + new Date(item.start_time).toDateString());
 	if(item.end_time !== null){
-		console.log(item.end_time);
 		allDetails.push('END TIME: '+ new Date(item.end_time).toDateString());
 	}
 	if(item.related_links !== null && item.related_links !== '' ){
@@ -822,7 +834,6 @@ function fillConfirmationModal(item){
 			changeList.appendChild(li);
 		}
 	}
-	console.log(changeList);
 	document.getElementById('detailsBody').appendChild(changeList);
 
 }
@@ -834,6 +845,7 @@ function fillConfirmationModal(item){
  * @param {Int} userId
  */
 async function fillModalInfo(item, parentCalendar, userId) {
+	let sent = false;
 	currentItemId = item.id;
 	let thisItemId = item.id;
 
@@ -881,8 +893,11 @@ async function fillModalInfo(item, parentCalendar, userId) {
 	let saveChangesBtn = document.getElementById('saveChanges');
 	saveChangesBtn.innerHTML = 'Save Changes';
 	saveChangesBtn.addEventListener('click', () => {
-		console.log('fillModal');
-		sendItemChanges(thisItemId, userId);} );
+		if(sent){
+			return;
+		}else {
+			sendItemChanges(thisItemId, userId);
+		}} );
 }
 
 /**
@@ -966,19 +981,24 @@ async function sendItemChanges(itemId, userId) {
 	updatedItem.related_links = document.getElementById('itemLinks').value;
 	// console.log(itemId);
 	if(itemId === currentItemId) { //if you should be updating an item
-		fetch('/api/items/'+cal_id+'/'+itemId, {
+		updatedItem.itemId = itemId;
+		// the edit endpoint uses different req keys than the create one
+		let updateItemRedo = {id: itemId, name: updatedItem['name'], start: updatedItem['startTime'], type: updatedItem['itemType'], end:updatedItem['endTime'], description:updatedItem['description'],
+			status: updatedItem['itemStatus'], cal: cal_id, related_links:updatedItem['relatedLinks'] };
+
+		await fetch('/api/items/'+cal_id+'/'+itemId, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(updatedItem)
+			body: JSON.stringify(updateItemRedo)
 		});
 		itemId = null;
 		loadTable(cal_id, true, userId);
 	}
 
 	else if(itemId == null){ //new item, post
-		fetch('/api/items/'+cal_id, {
+		await fetch('/api/items/'+cal_id, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -994,7 +1014,7 @@ async function sendItemChanges(itemId, userId) {
  * Function that adds a given item to users' personal cal
  */
 async function addToPersonal(personalCalId, newPersonalItem) {
-	fetch('/api/items/'+personalCalId, {
+	await fetch('/api/items/'+personalCalId, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
