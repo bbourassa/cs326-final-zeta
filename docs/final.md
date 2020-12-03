@@ -3,13 +3,18 @@
 Fall Semester 2020
 
 ### Overview  
+---
 ### Team Members  
+---
 Britney Bourassa, git alias: bbourassa  
 Meghan Arnold, git alias: arnol24m  
 Sara Whitlock, git alias: nimwhit  
 ### User Interface  
+---
 ### API  
+---
 ### Database  
+---
 
 Our database was create with Postges.
 
@@ -65,8 +70,11 @@ Our database was create with Postges.
 | description | Text | Description of the calendar |
 
 ### URL Routes/Mappings  
+---
 ### Authentication/Authorization  
+---
 ### Division of Labor  
+---
 **Britney Bourassa** -- Personal Calendar creation and implementation; front-end of login and sign up; Database set up and implementation; API functionality; Pre-made calendars; Debugging; documentation  
 **Meghan Arnold** -- Subscriptions creation and implementation; Item creation; back-end of login authentication; Database set up; API functionality; Pre-made calendars; Debugging; Documentation  
 **Sara Whitlock** -- API stubs; API functionality; Fake data generation
