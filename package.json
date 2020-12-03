@@ -23,8 +23,8 @@
   "homepage": "https://github.com/bbourassa/cs326-final-zeta#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "bootstrap": "^4.5.3",
     "connect-ensure-login": "^0.1.1",
-    "cookie-session": "^1.4.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
