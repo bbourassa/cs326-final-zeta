@@ -954,6 +954,11 @@ function checkRequiredFieldsForEdit() {
 	}
 }
 
+/**
+ * POST/PUTs the item data, dependent on whether it is new or edited
+ * @param {int} itemId Current item; null for newly created
+ * @param {int} userId
+ */
 async function sendItemChanges(itemId, userId) {
 	document.getElementById('saveChanges').setAttribute('data-dismiss', 'modal');
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
@@ -972,11 +977,11 @@ async function sendItemChanges(itemId, userId) {
 		} else if (itemStatus.value === 'Completed') {
 			updatedItem.itemStatus = 3;
 		}
-		updatedItem.startTime = document.getElementById('itemDueDate').value;
+		updatedItem.startTime = new Date(document.getElementById('itemDueDate').value);
 	} else {
 		updatedItem.itemType = 2;
-		updatedItem.startTime = document.getElementById('startTime').value;
-		updatedItem.endTime = document.getElementById('endTime').value;
+		updatedItem.startTime = new Date(document.getElementById('startTime').value);
+		updatedItem.endTime = new Date(document.getElementById('endTime').value);
 	}
 	updatedItem.related_links = document.getElementById('itemLinks').value;
 	// console.log(itemId);
