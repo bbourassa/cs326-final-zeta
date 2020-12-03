@@ -647,13 +647,16 @@ async function loadPersonalCalendar(user_id) {
 async function searchForCalendarItems() {
     //let personalCalId = window.localStorage.getItem('personalCalId');
     let thisPersonalCalId = personalCalId;
-	const response = await fetch('/api/items/'+thisPersonalCalId);
-	if(!response.ok) {
-		console.log(response.error);
-		return;
-	}
-	let itemData = await response.json();
-	return itemData;
+    console.log('thisPersonalCalId', thisPersonalCalId);
+    if(thisPersonalCalId !== null) {
+        const response = await fetch('/api/items/'+thisPersonalCalId);
+	    if(!response.ok) {
+		    console.log(response.error);
+		    return;
+	    }
+	    let itemData = await response.json();
+	    return itemData;
+    }
 }
 
 async function populateToDoList(user_id) {
