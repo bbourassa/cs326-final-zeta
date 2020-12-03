@@ -21,6 +21,7 @@ let currentDay = new Date();
 let currentMonth = currentDay.getMonth();
 let currentYear = currentDay.getFullYear();
 let lastDay = 0;
+let personalCalId = null;
 
 /*
 months array is used to quickly access the correct
@@ -283,8 +284,8 @@ async function setUpDayCard(day, month, year) {
 
 async function fillModalInfo(itemId, parentCalendar) {
 	tempId = itemId;
-	let personalCalId = window.localStorage.getItem('personalCalId');
-	const response = await fetch('/api/items/'+personalCalId+'/'+itemId);
+	let thisPersonalCalId = personalCalId;
+	const response = await fetch('/api/items/'+thisPersonalCalId+'/'+itemId);
 	if (!response.ok) {
 		console.log(response.error);
 		return;
@@ -546,8 +547,9 @@ function disableSave() {
 
 async function updateItemChanges(itemId) {
 	document.getElementById('saveItemChanges').setAttribute('data-dismiss', 'modal');
-	let personalCalId = window.localStorage.getItem('personalCalId');
-	let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: personalCalId, related_links: null};
+    //let personalCalId = window.localStorage.getItem('personalCalId');
+    let thisPersonalCalId = personalCalId;
+	let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: thisPersonalCalId, related_links: null};
 	updatedItem.name = document.getElementById('itemName').value;
 	updatedItem.description = document.getElementById('itemDescription').value;
 	let itemType = document.getElementById('itemType');
@@ -568,7 +570,7 @@ async function updateItemChanges(itemId) {
 		updatedItem.end = document.getElementById('endTime').value;
 	}
 	updatedItem.related_links = document.getElementById('itemLinks').value;
-	fetch('/api/items/'+personalCalId+'/'+itemId, {
+	fetch('/api/items/'+thisPersonalCalId+'/'+itemId, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json'
@@ -612,8 +614,9 @@ function confirmDelete() {
 
 async function deleteItem(itemId) {
 	document.getElementById('confirmDeletionBtn').setAttribute('data-dismiss', 'modal');
-	let personalCalId = window.localStorage.getItem('personalCalId');
-	fetch('/api/items/'+personalCalId+'/'+itemId, {
+    //let personalCalId = window.localStorage.getItem('personalCalId');
+    let thisPersonalCalId = personalCalId;
+	fetch('/api/items/'+thisPersonalCalId+'/'+itemId, {
 		method: 'DELETE',
 		headers: {
 			'Content-Type': 'application/json'
@@ -633,7 +636,8 @@ async function loadPersonalCalendar(user_id) {
 	let calendarData = await response.json();
 	for(let i = 0; i < calendarData.length; i++) {
 		if(calendarData[i].owner_id === user_id && calendarData[i].personal === 1) {
-			window.localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
+            personalCalId = calendarData[i].id;
+			//localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
 		}
 	}
 	setUpCalendar(currentMonth, currentYear);
@@ -641,8 +645,9 @@ async function loadPersonalCalendar(user_id) {
 }
 
 async function searchForCalendarItems() {
-	let personalCalId = window.localStorage.getItem('personalCalId');
-	const response = await fetch('/api/items/'+personalCalId);
+    //let personalCalId = window.localStorage.getItem('personalCalId');
+    let thisPersonalCalId = personalCalId;
+	const response = await fetch('/api/items/'+thisPersonalCalId);
 	if(!response.ok) {
 		console.log(response.error);
 		return;
