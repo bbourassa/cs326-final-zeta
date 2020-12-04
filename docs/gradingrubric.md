@@ -1,7 +1,7 @@
 # Final Rubric
 
 ### General										    ___ / 25 pts
---
+---
 - Authentication
   - Successfully create a user through sign up
   - Successfully login a user
