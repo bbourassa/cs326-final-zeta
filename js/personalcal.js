@@ -17,6 +17,9 @@ async function getSession(){
 	}
 }
 
+/*
+helper variables for mycalendar page
+*/
 let currentDay = new Date();
 let currentMonth = currentDay.getMonth();
 let currentYear = currentDay.getFullYear();
@@ -24,7 +27,6 @@ let lastDay = 0;
 let personalCalId = null;
 
 async function loadPersonalCalendar(user_id) {
-    console.log('load cal');
 	const response = await fetch('/api/cals/'+user_id+'/all');
 	if (!response.ok) {
 		console.log(response.error);
@@ -33,13 +35,10 @@ async function loadPersonalCalendar(user_id) {
 	let calendarData = await response.json();
 	for(let i = 0; i < calendarData.length; i++) {
 		if(calendarData[i].owner_id === user_id && calendarData[i].personal === 1) {
-            console.log('call personalCalId', calendarData[i].id);
             personalCalId = calendarData[i].id;
-			//localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
 		}
     }
     setUpCalendar(currentMonth, currentYear);
-	//setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
 }
 
 /*
@@ -49,6 +48,9 @@ as the part of calendar header appropriately
 */
 let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+/*
+more initial setup
+*/
 const dayItems = document.getElementsByClassName('day-item');
 const calSelections = document.getElementsByClassName('calendar-selection');
 let dueDateInput = document.getElementById('itemType');
@@ -61,8 +63,14 @@ let itemTextAreaElements = document.getElementById('itemForm').getElementsByTagN
 let closeItemBtn = document.getElementById('closeItemBtn');
 let confirmDeletionBtn = document.getElementById('confirmDeletionBtn');
 
+/*
+initialize the page
+*/
 window.addEventListener('load', getSession);
 
+/*
+initial setup of my calendar page
+*/
 function setAllForPage(user_id) {
 	for (let item of dayItems) {
 		item.addEventListener('click', () => switchItem(item.textContent));
@@ -95,16 +103,13 @@ function setAllForPage(user_id) {
 	confirmDeletionBtn.addEventListener('click', () => deleteItem(tempId));
 
     loadPersonalCalendar(user_id);
-    console.log('userid', user_id);
     setTimeout(function () {
         setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
 	    setUpCalendarSelection();
         setUpdateForm();
-        console.log('the personal cal id is', personalCalId);
 	    searchForCalendarItems();
 	    populateToDoList(user_id);
-        window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth, 'year': currentYear}));
-        console.log('the personal cal id is', personalCalId);
+        window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth+1, 'year': currentYear}));
     }, 1000);
 
 }
@@ -115,12 +120,8 @@ document.getElementById('logoutBtn').addEventListener('click', ()=>{
 });
 
 /*
-FOR NOW: -this function updates the DayView Title
-		  when a day is clicked on the calendar
-		 -it also updates the calendar to show which
-		  date has been clicked
-FUTURE:  -will update ALL card date for daily view on date
-		  button click
+updates the current date you are on and switches
+day card accordingly
 */
 function switchDate(day, month, year) {
 	let currentDate = document.getElementById(day);
@@ -158,11 +159,9 @@ function switchDate(day, month, year) {
 }
 
 /*
-FOR NOW: -sets calendar body based on the current day
-		  information which comes from getting the current
-		  date as well as accounting for the number of days
-		  in the current month (daysInMonth() accounts for
-		  this)
+sets up the monthly calendar view with the current day
+if applicable and days with items. On initial load,
+will set current day view to the current day
 */
 function setUpCalendar(month, year) {
 	let firstDay = (new Date(year, month)).getDay();
@@ -198,6 +197,10 @@ function setUpCalendar(month, year) {
 	checkForItems(month, year);
 }
 
+/*
+checks that items exist on a current day and updates calendar
+accordingly
+*/
 async function checkForItems(month, year) {
 	let listOfItems = await searchForCalendarItems();
 	for(let i = 0; i < listOfItems.length; i++) {
@@ -218,8 +221,8 @@ async function checkForItems(month, year) {
 }
 
 /*
-FOR NOW: assists in generating the correct number of days
-		 based on the month and year that we are looking for
+assists in getting the correct days in a month for the calendar
+build
 */
 function daysInMonth(month, year) {
 	let thirtyDays = ['April', 'June', 'September', 'November'];
@@ -238,13 +241,8 @@ function daysInMonth(month, year) {
 }
 
 /*
-FOR NOW: updates the Daily view with correct date header
-		 for initial date --> anymore updates to the card
-		 happen in switchDate() as of now but some of that
-		 code may be pulled out to another method
-FUTURE:  will update item information based on status in
-		 order to demonstrate the correct information
-		 for what is due on which day
+updates the daily view card with the applicable information in terms
+of current action items and their status along with events
 */
 async function setUpDayCard(day, month, year) {
 	let dayViewTitle = document.getElementById('dayViewTitle');
@@ -307,6 +305,9 @@ async function setUpDayCard(day, month, year) {
 	window.localStorage.setItem('currentDayItemInfo', JSON.stringify(dayEvents));
 }
 
+/*
+fills edit modal with appropriate item information
+*/
 async function fillModalInfo(itemId, parentCalendar) {
 	tempId = itemId;
 	let thisPersonalCalId = personalCalId;
@@ -351,7 +352,9 @@ async function fillModalInfo(itemId, parentCalendar) {
 	itemLinks.value = currentItem.related_links;
 }
 
-
+/*
+resets the day card to assist in rebuilding on appropriate actions
+*/
 function resetDayCard() {
 	let scheduleDiv = document.getElementById('todaysSchedule');
 	scheduleDiv.innerHTML = '';
@@ -383,15 +386,16 @@ function resetDayCard() {
 }
 
 /*
-FOR NOW: only updates modal title
-FUTURE:  will update all modal information to reflect
-		 the information for the item being stored
+assists in changing the modal title
 */
 function switchItem(itemName) {
 	let itemTitle = document.getElementById('modalTitle');
 	itemTitle.innerHTML = itemName;
 }
 
+/*
+sets up calendar selection to switch between months
+*/
 function setUpCalendarSelection() {
 	let thisMonth = document.getElementById('currentMonth');
 	thisMonth.innerHTML += months[currentMonth];
@@ -419,6 +423,9 @@ function setUpCalendarSelection() {
 	}
 }
 
+/*
+switches calendar when month or year change accordingly
+*/
 function switchCalendar(selectedMonth, selectedYear) {
 	let firstDay = (new Date(selectedYear, months.indexOf(selectedMonth))).getDay();
 	let days = document.getElementById('days');
@@ -449,6 +456,9 @@ function switchCalendar(selectedMonth, selectedYear) {
 	checkForItems(months.indexOf(selectedMonth), parseInt(selectedYear));
 }
 
+/*
+assists in updating calendar
+*/
 function updateCalendar() {
 	let monthValue = document.getElementById('monthSelection');
 	let viewMonth = document.getElementById('currentMonth');
@@ -463,6 +473,9 @@ function updateCalendar() {
 	}
 }
 
+/*
+switches to do locations based on archived or unarchived
+*/
 async function switchToDoLocation(toDo, user_id) {
 	let toDoItem = toDo.getElementsByTagName('input');
 	if(toDoItem[0].checked === true) {
@@ -544,7 +557,6 @@ async function setNewToDo(user_id) {
 
 
 function checkRequiredFields() {
-	console.log('checked fields');
 	let itemNameVal = document.getElementById('itemName').value;
 	let itemType = document.getElementById('itemType').value;
 	if(itemType === 'Action Item') {
@@ -560,7 +572,6 @@ function checkRequiredFields() {
 		if(itemNameVal === '' || startTimeVal === '' || endTimeVal === '') {
 			saveItemChanges.disabled = true;
 		} else {
-			console.log('keep disabled');
 			saveItemChanges.disabled = false;
 		}
 	}
@@ -572,7 +583,6 @@ function disableSave() {
 
 async function updateItemChanges(itemId) {
 	document.getElementById('saveItemChanges').setAttribute('data-dismiss', 'modal');
-    //let personalCalId = window.localStorage.getItem('personalCalId');
     let thisPersonalCalId = personalCalId;
 	let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: thisPersonalCalId, related_links: null};
 	updatedItem.name = document.getElementById('itemName').value;
@@ -605,7 +615,6 @@ async function updateItemChanges(itemId) {
 	searchForCalendarItems();
 	let itemToMove = document.getElementById('item'+itemId);
 	document.getElementById('item'+itemId).remove();
-	//FIND THE ITEM
 	const updateItemResponse = await fetch('/api/item/'+itemId);
 	if (!updateItemResponse.ok) {
 		console.log(updateItemResponse.error);
@@ -628,18 +637,22 @@ async function updateItemChanges(itemId) {
 		let todaysScheduleDiv = document.getElementById('todaysSchedule');
 		todaysScheduleDiv.appendChild(itemToMove);
 	}
-	//CHECK ITS STATUS
 }
 
+/*
+confirmation on deletion
+*/
 function confirmDelete() {
 	document.getElementById('deleteItemBtn').setAttribute('data-dismiss', 'modal');
 	document.getElementById('deleteItemBtn').setAttribute('data-toggle', 'modal');
 	document.getElementById('deleteItemBtn').setAttribute('data-target', '#confirmItemDelete');
 }
 
+/*
+delete an item from personal calendar
+*/
 async function deleteItem(itemId) {
 	document.getElementById('confirmDeletionBtn').setAttribute('data-dismiss', 'modal');
-    //let personalCalId = window.localStorage.getItem('personalCalId');
     let thisPersonalCalId = personalCalId;
 	fetch('/api/items/'+thisPersonalCalId+'/'+itemId, {
 		method: 'DELETE',
@@ -653,9 +666,7 @@ async function deleteItem(itemId) {
 }
 
 async function searchForCalendarItems() {
-    //let personalCalId = window.localStorage.getItem('personalCalId');
     let thisPersonalCalId = personalCalId;
-    console.log('thisPersonalCalId', thisPersonalCalId);
     if(thisPersonalCalId !== null) {
         const response = await fetch('/api/items/'+thisPersonalCalId);
 	    if(!response.ok) {
