@@ -67,7 +67,7 @@ The calendar gallery is where calendar creation and subscription happen. The fir
 #### Login/Sign Up
 Login and sign-up interfaces are very generic. To sign up you give your first and last name, an email, and create a username and password. You are required to confirm your password. Your information is used to connect you up to your personal calendar and subscriptions/created calendars. Your username and password are also used on the login page to log you in as you would normally do on any other website.
 
-![alt text](./FinalUI/singupview.JPG)
+![alt text](./FinalUI/signupview.JPG)
 
 ![alt text](./FinalUI/loginview.JPG)
 
