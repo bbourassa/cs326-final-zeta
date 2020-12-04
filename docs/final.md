@@ -37,53 +37,52 @@ Login and sign-up interfaces are very generic. To sign up you give your first an
 All API endpoints are located in server/app.js
 #### API Endpoints Associated With To-Dos:
 - *GET: /api/todos/:user*  
- - This call gets all of the user's todo items associated with their user id.  
+  - This call gets all of the user's todo items associated with their user id.  
 - *POST: /api/todos/:user*  
   - This call creates a new todo item for a user associated with their user id.  
 - *PUT: /api/todos/:user/:todo*  
   - This call edits a user's todo item. Todo items are only edited on archive/unarchive and only the time of archive can be upated. The item is found by matching the user's id and the todo item's id.  
 - *DELETE: /api/todos/:user/:todo*  
-  - This call deletes a user's todo item which is only done 24 hours after archive. It finds the  
+   - This call deletes a user's todo item which is only done 24 hours after archive. It finds the  
       correct todo item by the todo item's id and the user's id and deletes that item.  
 
 #### API Endpoints Associated With Subscriptions:
 - *POST: /api/subscriptions/:user*  
- - This call creates a new calendar subscription for the user and associates their user id with the calendar id that is given through the request body.  
+  - This call creates a new calendar subscription for the user and associates their user id with the calendar id that is given through the request body.  
 - *USE: /api/subscriptions/:user*  
- - This call lists all of a user's subscriptions by finding all subscriptions using their id. This is then used to find the appropriate calendars on the subscription page. Calendar APIs are described below.  
-*GET: /api/subscriptionlist/:cal*  
-    * This call gets all of the subscriptions associated with a particular calendar id.  
-*DELETE: /api/subscriptions/:sub*  
-    * This call deletes a subscription by locating it based on its subscription id.  
+  - This call lists all of a user's subscriptions by finding all subscriptions using their id. This is then used to find the appropriate calendars on the subscription page. Calendar APIs are described below.  
+- *GET: /api/subscriptionlist/:cal*  
+  - This call gets all of the subscriptions associated with a particular calendar id.  
+- *DELETE: /api/subscriptions/:sub*  
+  - This call deletes a subscription by locating it based on its subscription id.  
 
 #### API Endpoints Associated With Calendars:  
-*GET: /api/cals*  
-    * This call lists all available calendars.  
-*GET: /api/cals/:user/all*  
-    * This call gets all of a user's calendars by finding the calendar's that have the user's id as their owner id.  
-*POST: /api/cals/:user*  
-    * This call creates a new calendar based on the given information and sets the user's id to be the calendar's owner id.  
-*GET: /api/cals/:cal/*  
-    * This call finds a specific calendar by searching for it by its id.  
-*PUT: /api/cals/:cal*  
-    * This call allows for a calendar to be edited by locating it by its id.  
-*DELETE: /api/cals/:cal*  
-    * This call deletes a calendar by locating it by its id and removing it.  
+- *GET: /api/cals*  
+  - This call lists all available calendars.  
+- *GET: /api/cals/:user/all*  
+  - This call gets all of a user's calendars by finding the calendar's that have the user's id as their owner id.  
+- *POST: /api/cals/:user*  
+  - This call creates a new calendar based on the given information and sets the user's id to be the calendar's owner id.  
+- *GET: /api/cals/:cal/*  
+  - This call finds a specific calendar by searching for it by its id.  
+- *PUT: /api/cals/:cal*  
+  - This call allows for a calendar to be edited by locating it by its id.  
+- *DELETE: /api/cals/:cal*  
+  - This call deletes a calendar by locating it by its id and removing it.  
 
 #### API Endpoints Associated With Items:
-*GET: /api/items/:cal*  
-    * This call gets all items on a particular calendar by locating them by the calendar id and lists all the items.  
-*POST: /api/items/:cal*  
-    * This call creates a new item for a calendar by adding the item based on the user generated info the associated calendar id.  
-*GET: /api/items/:cal/:item*  
-    * This call finds a specific item by locating it based on its calendar id and its item id.  
-*GET: /api/item/:item*  
-    * This call finds a specific item by its item id.  
-*PUT: /api/items/:cal/:item*  
-    * This call locates an item based on its calendar id and its item id and edits it based on the    
-      new information provided.  
-*DELTE: /api/items/:cal/:item*  
-    * This call removes an item by locating it based on its calendar id and item id and deleting it.  
+- *GET: /api/items/:cal*  
+  - This call gets all items on a particular calendar by locating them by the calendar id and lists all the items.  
+- *POST: /api/items/:cal*  
+  - This call creates a new item for a calendar by adding the item based on the user generated info the associated calendar id.  
+- *GET: /api/items/:cal/:item*  
+  - This call finds a specific item by locating it based on its calendar id and its item id.  
+- *GET: /api/item/:item*  
+  - This call finds a specific item by its item id.  
+- *PUT: /api/items/:cal/:item*  
+  - This call locates an item based on its calendar id and its item id and edits it based on the new information provided.  
+- *DELTE: /api/items/:cal/:item*  
+  - This call removes an item by locating it based on its calendar id and item id and deleting it.  
 ### Database  
 ---
 
