@@ -21,5 +21,5 @@ To set up our project and build it:
 
 8. After setting up app.js, run the command “NODE_TLS_REJECT_UNAUTHORIZED='0' node server/app.js” to bring up the server locally.
 
-*PLEASE NOTE: If you set up this web app to run locally, you will not have the admin account or premade calendars we created as these are stored specifically in our database. This will lead to some subscription errors - our premade calendars have designated ids that are checked on subscription to prevent them from being used as codes. Locally, this will be different but this problem does not occur on our web app.
+*PLEASE NOTE: If you set up this web app to run locally, you will not have the admin account or premade calendars we created as these are stored specifically in our database. This will lead to some subscription errors - our premade calendars have designated ids that are checked on subscription to prevent them from being used as codes. Locally, this will be different but this problem does not occur on our web app.*
 
