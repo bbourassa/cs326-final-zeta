@@ -48,7 +48,7 @@ All API endpoints are located in server/app.js
 
 #### API Endpoints Associated With Subscriptions:
 *POST: /api/subscriptions/:user*  
-    * This call creates a new calendar subscription for the user and associates their user id with the calendar id that is given through the request body.  
+-This call creates a new calendar subscription for the user and associates their user id with the calendar id that is given through the request body.  
 *USE: /api/subscriptions/:user*  
     * This call lists all of a user's subscriptions by finding all subscriptions using their id. This is then used to find the appropriate calendars on the subscription page. Calendar APIs are described below.  
 *GET: /api/subscriptionlist/:cal*  
