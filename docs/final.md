@@ -6,7 +6,18 @@ Fall Semester 2020
 ---
 *Link to application:* https://life-on-track.herokuapp.com/
 
-Our web application is called "Life On Track" and is a scheduling app geared towards teachers and students but has full capabilities to be used for daily planning purposes and everyday use. "Life on Track" allows you to create shareable "calendars" that allow you to create action items or events to share with yourself and others. It also provides you with your own personal calendar that you can customize to include the information that pertains the most to you. This is where "Life On Track" stands out from other scheduling web apps. With many platforms like Google Calendars, Apple Calendars, etc., most of the time if you edit an item on your calendar, if others are associated with this event, they will get these updates. "Life On Track" allows you to pick and choose the updates that pertain the most to you. It also allows you to add those events or items to your personal calendar and customize them to your liking without affecting other users' personal items. Each calendar you create in the Calendar Gallery places you as an admin of that particular calendar and you have the ability to customize these calendars under "Subscriptions" as well. This is where your subscribers will see your admin updates and will have the ability to pull in the changes or not - whichever they may choose. Another aspect that sets "Life On Track" apart is the To-Do List feature on your Personal Calendar page. This option has been provided to allow the user to maintain productivity and create small quick lists with the option to archive items based on how they see fit. The "Life On Track" admins have also provided you with a few curated calendars you may choose to subscribe to in order to allow you to expand and explore new interests. We have worked to put together four premade calendars that will change and be updated monthly - "Song of the Day", "Daily Mantra", "Daily Podcast", and "Daily Updates". These calendars are available to you and you can add them to your personal as you see fit. This gives you the opportunity to expand your horizons or check out some new interests if you would like. Overall, the thing that sets "Life On Track" apart from others is it is built to be a customizable calendar and productivity app such that you can track your own items and events in your own way as well as keep track of your personal completion of events without overstepping others' changes. It also allows you to stay up to date with any possible changes to events or items from others you may need to know about.
+Our web application is called "Life On Track" and is a scheduling app geared towards teachers and students but has full capabilities to be used for daily planning purposes and everyday use. "Life on Track" allows you to create shareable "calendars" that allow you to create action items or events to share with yourself and others. It also provides you with your own personal calendar that you can customize to include the information that pertains the most to you. 
+
+This is where "Life On Track" stands out from other scheduling web apps. With many platforms like Google Calendars, Apple Calendars, etc., most of the time if you edit an item on your calendar, if others are associated with this event, they will get these updates. "Life On Track" allows you to pick and choose the updates that pertain the most to you. It also allows you to add those events or items to your personal calendar and customize them to your liking without affecting other users' personal items. 
+
+Each calendar you create in the Calendar Gallery places you as an admin of that particular calendar and you have the ability to customize these calendars under "Subscriptions" as well. This is where your subscribers will see your admin updates and will have the ability to pull in the changes or not - whichever they may choose. 
+
+Another aspect that sets "Life On Track" apart is the To-Do List feature on your Personal Calendar page. This option has been provided to allow the user to maintain productivity and create small quick lists with the option to archive items based on how they see fit. 
+
+The "Life On Track" admins have also provided you with a few curated calendars you may choose to subscribe to in order to allow you to expand and explore new interests. We have worked to put together four premade calendars that will change and be updated monthly - "Song of the Day", "Daily Mantra", "Daily Podcast", and "Daily Updates". These calendars are available to you and you can add them to your personal as you see fit. This gives you the opportunity to expand your horizons or check out some new interests.
+
+"Life On Track" is a uniquely customizable calendar and productivity app that helps you to track you own actions and events in the way that is most helpful to you, combining the best of collaborative calendars with the strengths of a personal calendar.
+
 ### Team Members  
 ---
 Britney Bourassa, git alias: bbourassa  
@@ -20,19 +31,19 @@ The User Interface is broken into three main sections - Personal Calendar, Subsc
 The personal calendar is the section of the user interface that holds your completely personalized items. These are items or events that you have added to your calendar from the Subscriptions page. Here is where you can edit and customize these items to your liking as well as track your progress by switching the status. The action items you have are set to their status when you click on a day from the calendar. The events are simply under today's schedule. The calendar on the left shows days that have items on them outlined in grey. The current day is in red and is the default "Day at a Glance" view. The personal calendar interface also has a "To-Do" list that allows you to create quick to-dos for yourself. Checking off the to-dos archives them for 24 hours so that on the off chance that something is archived before it is meant to be, it can be recovered for up to 24 hours.
 
 #### Subscriptions
-The subscriptions page interface is where your calendars - both created and subscribed - are stored in table form. This provides a list of all action items and events that have been added by the owner and allow for users to pick and choose what they want to add from the overall calendar to be added to their presonal calendar. The settings portion on the right side of the page are different depending on whether or not you are an "Admin" or owner of a calendar. You know which calendars you are an "Admin" of by looking at the subscriptions navigation pane which lists "- ADMIN" next to the calendar names you own.
+The subscriptions page interface is where your calendars - both created and subscribed - are stored in table form. This provides a list of all action items and events that have been added by the owner and allow for users to pick and choose what they want to add from the overall calendar to be added to their personal calendar. The settings portion on the right side of the page are different depending on whether or not you are an "Admin" or owner of a calendar. You know which calendars you are an "Admin" of by looking at the subscriptions navigation pane which lists "- ADMIN" next to the calendar names you own.
 
 ##### Subscriptions - Subscriber View
 When you are a "subscriber" to the calendar you have the ability to add selected items, add all action items, or add events to your personal calendar. You can also select items that have been updated by the owner and apply those updates to the events and action items on your personal. It is important to note that the current implementation is that updating an item on your personal will replace any edits you have made with the owner's updates. This is the current implementation as there are many user cases where this could be helpful. 
 
 ##### Subscriptions - Admin View
-When you are an "admin" of a calendar your settings change. As an admin, you have an edit capability on the table that allows you to update items as you see fit and will provide your subscribers with those updates. You are also able to add items to the table on your subscription page. You have two deltion capabilities - you can delete selected items or choose to delete your whole calendar which would then delete it for your subscribers as well. You also are able to generate a letter code for your calendar on this page to share with other users to allow them to subscribe to your calendar.
+When you are an "admin" of a calendar your settings change. As an admin, you have an edit capability on the table that allows you to update items as you see fit and will provide your subscribers with those updates. You are also able to add items to the table on your subscription page. You have two deletion capabilities - you can delete selected items or choose to delete your whole calendar which would then delete it for your subscribers as well. You also are able to generate a letter code for your calendar on this page to share with other users to allow them to subscribe to your calendar.
 
 #### Calendar Gallery
-The calendar gallery is where calendar creation and subscription happens. The first section contains the admin curated calendars that are free for you to subscribe to. Hitting "Add Calendar" redirects you to your Subscriptions page and places you on the calendar you just added. These calendars are monthly calendars that will be updated by the admins for each month. The second portion allows you to create your own calendar. You simply enter the name of your calendar and hit the "Create New Calendar" button and will be redirected to the Subscriptions page under your new calendar. The third portion allows you to subscribe to another user's calendar using a code they give you. All codes are case sensitive and must be lowercase. You enter your code and hit "Subscribe to Calendar" to be redirected to the subscriptions page under your newly subscribed calendar. You cannot subscribe to a calendar more than once.  
+The calendar gallery is where calendar creation and subscription happen. The first section contains the admin curated calendars that are free for you to subscribe to. Hitting "Add Calendar" redirects you to your Subscriptions page and places you on the calendar you just added. These calendars are monthly calendars that will be updated by the admins for each month. The second portion allows you to create your own calendar. You simply enter the name of your calendar and hit the "Create New Calendar" button and will be redirected to the Subscriptions page under your new calendar. The third portion allows you to subscribe to another user's calendar using a code they give you. All codes are case sensitive and must be lowercase. You enter your code and hit "Subscribe to Calendar" to be redirected to the subscriptions page under your newly subscribed calendar. You cannot subscribe to a calendar more than once.  
 
 #### Login/Sign Up
-Login and sign-up interfaces are very generic. To sign up you give your first and last name, an email, and create a username and passowrd. You are required to confirm your password. Your information is used to connect you up to your personal calendar and subscriptions/created calendars. Your username and password are also used on the login page to log you in as you would normally do on any other website.
+Login and sign-up interfaces are very generic. To sign up you give your first and last name, an email, and create a username and password. You are required to confirm your password. Your information is used to connect you up to your personal calendar and subscriptions/created calendars. Your username and password are also used on the login page to log you in as you would normally do on any other website.
 
 ### API  
 ---
@@ -43,7 +54,7 @@ All API endpoints are located in server/app.js
 - *POST: /api/todos/:user*  
   - This call creates a new todo item for a user associated with their user id.  
 - *PUT: /api/todos/:user/:todo*  
-  - This call edits a user's todo item. Todo items are only edited on archive/unarchive and only the time of archive can be upated. The item is found by matching the user's id and the todo item's id.  
+  - This call edits a user's todo item. Todo items are only edited on archive/unarchive and only the time of archive can be updated. The item is found by matching the user's id and the todo item's id.  
 - *DELETE: /api/todos/:user/:todo*  
    - This call deletes a user's todo item which is only done 24 hours after archive. It finds the  
       correct todo item by the todo item's id and the user's id and deletes that item.  
@@ -85,6 +96,7 @@ All API endpoints are located in server/app.js
   - This call locates an item based on its calendar id and its item id and edits it based on the new information provided.  
 - *DELTE: /api/items/:cal/:item*  
   - This call removes an item by locating it based on its calendar id and item id and deleting it.  
+
 ### Database  
 ---
 
@@ -162,12 +174,19 @@ Our database was create with Postges.
     - This is the page used to allow users to subscribe to premade admin calendars, premade calendars by other users, or create their own calendar.
     - It is accessed by clicking on "Calendar Gallery" in the navigation bar.
     - This page is only accessed by authenticated users.
+    
 ### Authentication/Authorization  
 ---
+Life On Track uses Passport and Express-Session to manage the authentication of users. It also uses an encryption program, as provided in class. Upon user registration, the User has a username and user id associated with their account for identification. The user's password is encrypted in a salt and hash and stored within our database. 
+
+Upon login, the user has immediate access to a personal calendar. This calendar cannot be accessed by any other user, as it is not sharable, and the user is the only individual that can ever be the administrator of it. This calendar is viewed through the personal calendar page; upon login, the user is routed to this view.
+
+The calendars which the user has subscriptions to fall into two different categories. The user can be the creator, and therefor administrator, of a calendar; or they can be a subscriber. If the user is only a subscriber to a calendar, the settings on the right hand side of the subscriptions page includes the ability to add items to from the subscription to their personal calendar, as well as to update those items. If the user is the admin of a calendar, they have an additional set of settings. The administrator settings allow the user to create, edit, and delete items from the calendar. It also allows the user to delete the calendar entirely, and to access the sharable code for that calendar.
+
 ### Division of Labor  
 ---
-**Britney Bourassa** -- Personal Calendar creation and implementation; front-end of login and sign up; Database set up and implementation; API functionality; Pre-made calendars; Debugging; documentation  
-**Meghan Arnold** -- Subscriptions creation and implementation; Item creation; back-end of login authentication; Database set up; API functionality; Pre-made calendars; Debugging; Documentation  
+**Britney Bourassa** -- Personal Calendar creation, user interface, and implementation; front-end of login and sign up; Database set up and implementation; API functionality; Pre-made calendars; Debugging; documentation  
+**Meghan Arnold** -- Subscriptions creation, user interface, and implementation; Item creation; back-end of login authentication; Database set up; API functionality; Pre-made calendars; Debugging; Documentation  
 **Sara Whitlock** -- API stubs; API functionality; Fake data generation
 
 ### Conclusion  
