@@ -141,6 +141,25 @@ Our database was create with Postges.
 
 ### URL Routes/Mappings  
 ---
+- *https://life-on-track.herokuapp.com/html/index.html*
+    - This is the main login page and is where users login with their credentials. On a successful login it redirects to your personal calendar.
+    - This page is also accessed when a user hits "Logout" on the navigation bar.
+- *https://life-on-track.herokuapp.com/html/signup.html*
+    - This is the page where users sign up to use "Life On Track" - On sign-up it redirects to the login page.
+    - It is accessed on the "Sign Up" part of the navigation bar.
+- *https://life-on-track.herokuapp.com/html/personalcal.html*
+    - This is the page used to access a user's personal calendar. 
+    - It is accessed by clicking on "My Calendar" in the navigation bar.
+    - This page is only accessed by authenticated users.
+- *https://life-on-track.herokuapp.com/html/subscriptions.html*
+    - This is the page used to allow the user to access their subscriptions. 
+    - It is accessed by clicking on "My Subscriptions" in the navigation bar.
+    - It is also accessed when a user clicks "Add Calendar", "Create New Calendar" or "Subscribe to Calendar" on the "Calendar Gallery" page.
+    - This page is only accessed by authenticated users.
+- *https://life-on-track.herokuapp.com/html/calgallery.html*
+    - This is the page used to allow users to subscribe to premade admin calendars, premade calendars by other users, or create their own calendar.
+    - It is accessed by clicking on "Calendar Gallery" in the navigation bar.
+    - This page is only accessed by authenticated users.
 ### Authentication/Authorization  
 ---
 ### Division of Labor  
