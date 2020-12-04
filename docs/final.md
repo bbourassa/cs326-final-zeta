@@ -37,7 +37,7 @@ Login and sign-up interfaces are very generic. To sign up you give your first an
 All API endpoints are located in server/app.js
 #### API Endpoints Associated With To-Dos:
 *GET: /api/todos/:user*  
-    * This call gets all of the user's todo items associated with their user id.  
+ - This call gets all of the user's todo items associated with their user id.  
 *POST: /api/todos/:user*  
     * This call creates a new todo item for a user associated with their user id.  
 *PUT: /api/todos/:user/:todo*  
