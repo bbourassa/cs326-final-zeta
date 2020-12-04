@@ -503,6 +503,9 @@ async function switchToDoLocation(toDo, user_id) {
 	populateToDoList(user_id);
 }
 
+/*
+set the form to update an event or item
+*/
 function setUpdateForm() {
 	let currentType = document.getElementById('itemType');
 	let itemStatus = document.getElementById('showStatus');
@@ -524,6 +527,9 @@ function setUpdateForm() {
 	}
 }
 
+/*
+create a new todo item and add to list
+*/
 async function setNewToDo(user_id) {
 	let newToDo = document.getElementById('toDoName');
 	let currentToDoList = document.getElementById('toDoItems');
@@ -555,7 +561,9 @@ async function setNewToDo(user_id) {
 	document.getElementById('addToDo').setAttribute('data-dismiss', 'modal');
 }
 
-
+/*
+checks fields for user input
+*/
 function checkRequiredFields() {
 	let itemNameVal = document.getElementById('itemName').value;
 	let itemType = document.getElementById('itemType').value;
@@ -577,10 +585,16 @@ function checkRequiredFields() {
 	}
 }
 
+/*
+disables save button when necessary
+*/
 function disableSave() {
 	saveItemChanges.disabled = true;
 }
 
+/*
+updates items accordingly based on their changes
+*/
 async function updateItemChanges(itemId) {
 	document.getElementById('saveItemChanges').setAttribute('data-dismiss', 'modal');
     let thisPersonalCalId = personalCalId;
@@ -665,6 +679,9 @@ async function deleteItem(itemId) {
 	setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
 }
 
+/*
+searches for calendar items to assist in calendar monthly view creation
+*/
 async function searchForCalendarItems() {
     let thisPersonalCalId = personalCalId;
     if(thisPersonalCalId !== null) {
@@ -678,6 +695,9 @@ async function searchForCalendarItems() {
     }
 }
 
+/*
+intially populates todo list for user
+*/
 async function populateToDoList(user_id) {
 
 	const response = await fetch('/api/todos/'+user_id);
@@ -690,6 +710,9 @@ async function populateToDoList(user_id) {
 	buildArchivedToDos(toDoData, user_id);
 }
 
+/*
+build list of unarchived todos for user
+*/
 function buildCurrentToDos(toDoData, user_id) {
 	let toDoItems = document.getElementById('toDoItems');
 	toDoItems.innerHTML = '';
@@ -718,6 +741,9 @@ function buildCurrentToDos(toDoData, user_id) {
 	}
 }
 
+/*
+checks archive time and deletes todos if past 24 hours
+*/
 function checkArchiveTime(toDoItem) {
 	let archiveTime = new Date(toDoItem.time_of_archive);
 	let maxTimeWindow = new Date(new Date(archiveTime).getTime() + 60 * 60 * 24 * 1000);
@@ -728,6 +754,9 @@ function checkArchiveTime(toDoItem) {
 	return false;
 }
 
+/*
+builds list of archived todos for user
+*/
 async function buildArchivedToDos(toDoData, user_id) {
 	let archivedToDos = document.getElementById('archivedToDos');
 	archivedToDos.innerHTML = '';
