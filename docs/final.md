@@ -36,21 +36,21 @@ Login and sign-up interfaces are very generic. To sign up you give your first an
 ---
 All API endpoints are located in server/app.js
 #### API Endpoints Associated With To-Dos:
-*GET: /api/todos/:user*  
+- *GET: /api/todos/:user*  
  - This call gets all of the user's todo items associated with their user id.  
-*POST: /api/todos/:user*  
-    * This call creates a new todo item for a user associated with their user id.  
-*PUT: /api/todos/:user/:todo*  
-    * This call edits a user's todo item. Todo items are only edited on archive/unarchive and only the time of archive can be upated. The item is found by matching the user's id and the todo item's id.  
-*DELETE: /api/todos/:user/:todo*  
-    * This call deletes a user's todo item which is only done 24 hours after archive. It finds the  
+- *POST: /api/todos/:user*  
+  - This call creates a new todo item for a user associated with their user id.  
+- *PUT: /api/todos/:user/:todo*  
+  - This call edits a user's todo item. Todo items are only edited on archive/unarchive and only the time of archive can be upated. The item is found by matching the user's id and the todo item's id.  
+- *DELETE: /api/todos/:user/:todo*  
+  - This call deletes a user's todo item which is only done 24 hours after archive. It finds the  
       correct todo item by the todo item's id and the user's id and deletes that item.  
 
 #### API Endpoints Associated With Subscriptions:
-*POST: /api/subscriptions/:user*  
--This call creates a new calendar subscription for the user and associates their user id with the calendar id that is given through the request body.  
-*USE: /api/subscriptions/:user*  
-    * This call lists all of a user's subscriptions by finding all subscriptions using their id. This is then used to find the appropriate calendars on the subscription page. Calendar APIs are described below.  
+- *POST: /api/subscriptions/:user*  
+ - This call creates a new calendar subscription for the user and associates their user id with the calendar id that is given through the request body.  
+- *USE: /api/subscriptions/:user*  
+ - This call lists all of a user's subscriptions by finding all subscriptions using their id. This is then used to find the appropriate calendars on the subscription page. Calendar APIs are described below.  
 *GET: /api/subscriptionlist/:cal*  
     * This call gets all of the subscriptions associated with a particular calendar id.  
 *DELETE: /api/subscriptions/:sub*  
