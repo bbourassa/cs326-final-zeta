@@ -23,6 +23,25 @@ let currentYear = currentDay.getFullYear();
 let lastDay = 0;
 let personalCalId = null;
 
+async function loadPersonalCalendar(user_id) {
+    console.log('load cal');
+	const response = await fetch('/api/cals/'+user_id+'/all');
+	if (!response.ok) {
+		console.log(response.error);
+		return;
+	}
+	let calendarData = await response.json();
+	for(let i = 0; i < calendarData.length; i++) {
+		if(calendarData[i].owner_id === user_id && calendarData[i].personal === 1) {
+            console.log('call personalCalId', calendarData[i].id);
+            personalCalId = calendarData[i].id;
+			//localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
+		}
+    }
+    setUpCalendar(currentMonth, currentYear);
+	//setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
+}
+
 /*
 months array is used to quickly access the correct
 month for the calendar in order to set month name
@@ -74,13 +93,18 @@ function setAllForPage(user_id) {
 
 	confirmDeletionBtn.addEventListener('click', () => deleteItem(tempId));
 
-	loadPersonalCalendar(user_id);
-	setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
-	setUpCalendarSelection();
-	setUpdateForm();
-	searchForCalendarItems();
-	populateToDoList(user_id);
-	window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth, 'year': currentYear}));
+    loadPersonalCalendar(user_id);
+    console.log('userid', user_id);
+    setTimeout(function () {
+        setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
+	    setUpCalendarSelection();
+        setUpdateForm();
+        console.log('the personal cal id is', personalCalId);
+	    searchForCalendarItems();
+	    populateToDoList(user_id);
+        window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth, 'year': currentYear}));
+        console.log('the personal cal id is', personalCalId);
+    }, 1000);
 
 }
 
@@ -625,23 +649,6 @@ async function deleteItem(itemId) {
 	searchForCalendarItems();
 	let dayInfo = JSON.parse(window.localStorage.getItem('dayCardInfo'));
 	setUpDayCard(dayInfo.day, dayInfo.month, dayInfo.year);
-}
-
-async function loadPersonalCalendar(user_id) {
-	const response = await fetch('/api/cals/'+user_id+'/all');
-	if (!response.ok) {
-		console.log(response.error);
-		return;
-	}
-	let calendarData = await response.json();
-	for(let i = 0; i < calendarData.length; i++) {
-		if(calendarData[i].owner_id === user_id && calendarData[i].personal === 1) {
-            personalCalId = calendarData[i].id;
-			//localStorage.setItem('personalCalId', JSON.stringify(calendarData[i].id));
-		}
-	}
-	setUpCalendar(currentMonth, currentYear);
-	setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
 }
 
 async function searchForCalendarItems() {
