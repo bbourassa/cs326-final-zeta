@@ -70,7 +70,8 @@ function setAllForPage(user_id) {
 	for (let item of calSelections) {
 		item.addEventListener('change', updateCalendar);
 	}
-	dueDateInput.addEventListener('change', setUpdateForm);
+    dueDateInput.addEventListener('change', setUpdateForm);
+    dueDateInput.addEventListener('change', checkRequiredFields);
 	addToDoItem.addEventListener('click', () => setNewToDo(user_id));
 
 	saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
