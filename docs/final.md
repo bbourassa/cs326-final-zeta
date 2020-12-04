@@ -14,22 +14,22 @@ Sara Whitlock, git alias: nimwhit
 ---
 The User Interface is broken into three main sections - Personal Calendar, Subscriptions, and Calendar Gallery. 
 
-## Personal Calendar
+#### Personal Calendar
 The personal calendar is the section of the user interface that holds your completely personalized items. These are items or events that you have added to your calendar from the Subscriptions page. Here is where you can edit and customize these items to your liking as well as track your progress by switching the status. The action items you have are set to their status when you click on a day from the calendar. The events are simply under today's schedule. The calendar on the left shows days that have items on them outlined in grey. The current day is in red and is the default "Day at a Glance" view. The personal calendar interface also has a "To-Do" list that allows you to create quick to-dos for yourself. Checking off the to-dos archives them for 24 hours so that on the off chance that something is archived before it is meant to be, it can be recovered for up to 24 hours.
 
-## Subscriptions
+#### Subscriptions
 The subscriptions page interface is where your calendars - both created and subscribed - are stored in table form. This provides a list of all action items and events that have been added by the owner and allow for users to pick and choose what they want to add from the overall calendar to be added to their presonal calendar. The settings portion on the right side of the page are different depending on whether or not you are an "Admin" or owner of a calendar. You know which calendars you are an "Admin" of by looking at the subscriptions navigation pane which lists "- ADMIN" next to the calendar names you own.
 
-# Subscriptions - Subscriber View
+##### Subscriptions - Subscriber View
 When you are a "subscriber" to the calendar you have the ability to add selected items, add all action items, or add events to your personal calendar. You can also select items that have been updated by the owner and apply those updates to the events and action items on your personal. It is important to note that the current implementation is that updating an item on your personal will replace any edits you have made with the owner's updates. This is the current implementation as there are many user cases where this could be helpful. 
 
-# Subscriptions - Admin View
+##### Subscriptions - Admin View
 When you are an "admin" of a calendar your settings change. As an admin, you have an edit capability on the table that allows you to update items as you see fit and will provide your subscribers with those updates. You are also able to add items to the table on your subscription page. You have two deltion capabilities - you can delete selected items or choose to delete your whole calendar which would then delete it for your subscribers as well. You also are able to generate a letter code for your calendar on this page to share with other users to allow them to subscribe to your calendar.
 
-## Calendar Gallery
+#### Calendar Gallery
 The calendar gallery is where calendar creation and subscription happens. The first section contains the admin curated calendars that are free for you to subscribe to. Hitting "Add Calendar" redirects you to your Subscriptions page and places you on the calendar you just added. These calendars are monthly calendars that will be updated by the admins for each month. The second portion allows you to create your own calendar. You simply enter the name of your calendar and hit the "Create New Calendar" button and will be redirected to the Subscriptions page under your new calendar. The third portion allows you to subscribe to another user's calendar using a code they give you. All codes are case sensitive and must be lowercase. You enter your code and hit "Subscribe to Calendar" to be redirected to the subscriptions page under your newly subscribed calendar. You cannot subscribe to a calendar more than once.  
 
-## Login/Sign Up
+#### Login/Sign Up
 Login and sign-up interfaces are very generic. To sign up you give your first and last name, an email, and create a username and passowrd. You are required to confirm your password. Your information is used to connect you up to your personal calendar and subscriptions/created calendars. Your username and password are also used on the login page to log you in as you would normally do on any other website.
 
 ### API  
