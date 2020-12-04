@@ -18,10 +18,16 @@ async function getSession(){
 //onload function
 window.addEventListener('load', getSession);
 
+/*
+sets logout
+*/
 document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
 
+/*
+global helper variables
+*/
 let letterMap = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 0};
 let subscribeButton = document.getElementById('subscribeButton');
 let songOfDay = document.getElementById('songOfDay');
@@ -32,6 +38,9 @@ let createCalendar = document.getElementById('createCalendar');
 let calendarName = document.getElementById('calendarName');
 let calendarLink = document.getElementById('calendarLink');
 
+/*
+initial page setup
+*/
 function setAllForPage(user_id) {
 	subscribeButton.addEventListener('click', () => redirectOnSubscription(user_id));
 	songOfDay.addEventListener('click', () => redirectSongOfDay(user_id));
@@ -44,6 +53,9 @@ function setAllForPage(user_id) {
 
 }
 
+/*
+check if there is a new calendar name in the input
+*/
 function checkCalInput() {
 	if(document.getElementById('calendarName').value !== '') {
 		createCalendar.disabled = false;
@@ -52,6 +64,9 @@ function checkCalInput() {
 	}
 }
 
+/*
+check there is a code entered
+*/
 function checkLink() {
 	if(document.getElementById('calendarLink').value !== '') {
 		subscribeButton.disabled = false;
@@ -60,8 +75,10 @@ function checkLink() {
 	}
 }
 
+/*
+adds a new calendar you own and redirects to subscription 
+*/
 async function redirectOnCreation(user_id) {
-	console.log('hit redirect');
 	let newCalName = document.getElementById('calendarName').value;
 	let newCalDescription = 'new calendar titled - ' + newCalName;
 	let newCalInfo = {name: newCalName, personal: 0, description: newCalDescription};
@@ -76,6 +93,9 @@ async function redirectOnCreation(user_id) {
 	setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
 }
 
+/*
+adds a new subscription to a calendar for a user and redirects to subscription
+*/
 async function redirectOnSubscription(user_id) {
 	let calendarLink = document.getElementById('calendarLink');
 	let calendarCode = calendarLink.value;
@@ -100,13 +120,11 @@ async function redirectOnSubscription(user_id) {
 			}
 			let allSubs = await subResponse.json();
 			for(let i = 0; i < allSubs.length; i++) {
-				console.log(allSubs[i].id, parseInt(calendarId));
 				if(allSubs[i].id === parseInt(calendarId)) {
 					makeSubscription = false;
 				}
 			}
 			if(makeSubscription === true) {
-				console.log(true);
 				fetch('/api/subscriptions/'+user_id, {
 					method: 'POST',
 					headers: {
@@ -120,6 +138,9 @@ async function redirectOnSubscription(user_id) {
 	}
 }
 
+/*
+adds song of the day subscription and redirects to subscriptions
+*/
 async function redirectSongOfDay(user_id) {
 	let makeSubscription = true;
 	const response = await fetch('/api/cals/2');
@@ -130,7 +151,6 @@ async function redirectSongOfDay(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
-		//const subResponse = await fetch('/api/cals/'+calendarId);
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
@@ -154,6 +174,9 @@ async function redirectSongOfDay(user_id) {
 	}
 }
 
+/*
+adds subscription for daily mantras and redirects to subscriptions
+*/
 async function redirectDailyMantra(user_id) {
 	let makeSubscription = true;
 	const response = await fetch('/api/cals/3');
@@ -165,7 +188,6 @@ async function redirectDailyMantra(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
-		//const subResponse = await fetch('/api/cals/'+calendarId);
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
@@ -189,6 +211,9 @@ async function redirectDailyMantra(user_id) {
 	}
 }
 
+/*
+add a daily updates subscription and redirect to subscriptions page
+*/
 async function redirectDailyUpdates(user_id) {
 	let makeSubscription = true;
 	const response = await fetch('/api/cals/4');
@@ -200,7 +225,6 @@ async function redirectDailyUpdates(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
-		//const subResponse = await fetch('/api/cals/'+calendarId);
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;
@@ -224,6 +248,9 @@ async function redirectDailyUpdates(user_id) {
 	}
 }
 
+/*
+adds daily podcast subscription and redirects to subscriptions page
+*/
 async function redirectDailyPodcast(user_id) {
 	let makeSubscription = true;
 	const response = await fetch('/api/cals/5');
@@ -235,7 +262,6 @@ async function redirectDailyPodcast(user_id) {
 	let newCalData = await response.json();
 	if(newCalData !== null) {
 		const subResponse = await fetch('/api/subscriptions/'+user_id);
-		//const subResponse = await fetch('/api/cals/'+calendarId);
 		if(!subResponse.ok) {
 			console.log(subResponse.error);
 			return;

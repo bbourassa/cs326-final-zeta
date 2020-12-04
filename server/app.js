@@ -8,8 +8,8 @@ const app = express();
 //SECRET
 const dbconnection = require('./secrets.json');
 
-//const username= dbconnection.username;
-//const password=dbconnection.password;
+// const username= dbconnection.username;
+// const password=dbconnection.password;
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const pgp = require('pg-promise')({
@@ -20,7 +20,7 @@ const pgp = require('pg-promise')({
         console.log('Disconnected from database:', client.connectionParameters.database);
     }*/
 });
-const url = process.env.DATABASE_URL; //|| `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?sslmode=require`;
+const url = process.env.DATABASE_URL; // || `postgres://${username}:${password}@ec2-52-206-15-227.compute-1.amazonaws.com:5432/db0tah8l1g50dv?sslmode=require`;
 
 
 
@@ -42,7 +42,6 @@ app.use('/images', express.static(path.join(dir, 'images')));
 app.use('/css', express.static(path.join(dir, 'css')));
 app.use('/js', express.static(path.join(dir, 'js')));
 app.use('/html', express.static(path.join(dir, 'html')));
-// app.use('/', express.static(path.join(dir, 'html')));
 
 
 //PASSPORT CONFIGS ---------------------------------------------DO NOT REORDER------
@@ -140,44 +139,25 @@ app.post('/signup',
 		}
 	});
 
-//app.get('/api/users', users.list);
-//app.post('/api/users', users.create);
-//app.use('/api/users/:user', users.load);
-app.get('/api/username/:username', users.findById); //ENDPOINT USED
-//app.delete('/api/users/:user', users.remove);
 
-// app.get('/api/users/:user/notifications', users.notifications);
-// app.post('/api/users/:user/notifications', users.notify);
+app.get('/api/username/:username', users.findById); //ENDPOINT USED
 
 app.get('/api/todos/:user', todos.list); //ENDPOINT USED
 app.post('/api/todos/:user', todos.create); //ENDPOINT USED
-//app.get('/api/todos/:user/:todo', todos.find);
 app.put('/api/todos/:user/:todo', todos.edit); //ENDPOINT USED
 app.delete('/api/todos/:user/:todo', todos.remove); //ENDPOINT USED
 
-//app.use('/api/users/:user/subscriptions', subs.loadUser);
-//app.get('/api/users/:user/subscriptions', subs.list);
 app.post('/api/subscriptions/:user', subs.create); //ENDPOINT USED
 app.use('/api/subscriptions/:user', subs.listSubscribed); //ENDPOINT USED
-//app.get('/api/users/:user/subscriptions/calendars', cals.listSubscribed);
-//app.get('/api/users/:user/subscriptions/calendars/items', items.listSubscribed);
 app.get('/api/subscriptionlist/:cal', subs.find); //ENDPOINT USED
 app.delete('/api/subscription/:sub', subs.remove); //ENDPOINT USED
-
-//app.put('/api/users/:user/calendar/pull', cals.updatePersonal);
 
 app.get('/api/cals', cals.listAll); //ENDPOINT USED
 app.get('/api/cals/:user/all', cals.getUsersCals); //ENDPOINT USED
 app.post('/api/cals/:user', cals.create); //ENDPOINT USED
-//app.get('/api/cals/ours', cals.listOurs);
-//app.use('/api/cals/:cal', cals.load);
 app.get('/api/cals/:cal/', cals.find); //ENDPOINT USED
 app.put('/api/cals/:cal', cals.edit); //ENDPOINT USED
 app.delete('/api/cals/:cal', cals.remove); //ENDPOINT USED
-
-//app.use('/api/calendars/:cal/subscriptions', subs.loadCalendar);
-//app.get('/api/calendars/:cal/subscriptions', subs.list);
-//app.get('/api/calendars/:cal/subscriptions/users', users.listSubscribed);
 
 app.get('/api/items/:cal', items.list); //ENDPOINT USED
 app.post('/api/items/:cal', items.create); //ENDPOINT USED
@@ -185,11 +165,6 @@ app.get('/api/items/:cal/:item', items.find); //ENDPOINT USED
 app.get('/api/item/:item', items.search); //ENDPOINT USED
 app.put('/api/items/:cal/:item', items.edit); //ENDPOINT USED
 app.delete('/api/items/:cal/:item', items.remove); //ENDPOINT USED
-
-//app.get('/api/todos', todos.listAll);
-//app.get('/api/subscriptions', subs.listAll);
-//app.get('/api/items', items.listAll);
-//app.get('/api/items/:item', items.findUnlinked);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
