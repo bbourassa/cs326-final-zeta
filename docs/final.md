@@ -95,12 +95,21 @@ All API endpoints are located in server/app.js
 - *PUT: /api/items/:cal/:item*  
   - This call locates an item based on its calendar id and its item id and edits it based on the new information provided.  
 - *DELTE: /api/items/:cal/:item*  
-  - This call removes an item by locating it based on its calendar id and item id and deleting it.  
+  - This call removes an item by locating it based on its calendar id and item id and deleting it.   
+  
+#### API Endpoints Associated with Authentication:
+- *GET: /user*
+  - This call checks that a user is logged in, and if so, puts the user's username in the response.
+- *POST: /login*  
+  - This call submits the values in the login form for authentication. If authentication is successful, the user will be routed to their personal calendar. If not, the form will be cleared for another attempt.
+- *POST: /logout*
+  - This call logs the user out by removing them from the current session.  
+- *POST: /signup*
+  - This call submits the values in the account sign up form, creating a new user. Upon creation, the user is routed to the login form.  
 
 ### Database  
----
-
-Our database was create with Postges.
+---  
+Our database was created with Postges.
 
 #### Users table
 | Column| Data Type| Description|
@@ -190,3 +199,15 @@ The calendars which the user has subscriptions to fall into two different catego
 **Sara Whitlock** -- API stubs; API functionality; Fake data generation
 
 ### Conclusion  
+---
+Our team had a very bumpy road to completion, but we pulled through and made an application that we are proud of.  
+
+Some technical difficulties that we ran into were related to authentication. The authentication was difficult to implement and took a long time to resolve. Due to the authentication issues, some of the routing of pages did not work as intended. Instead of a given page that required an authenticated user checking for a user on the route, and immediately redirecting back to login, we had to implement it so that the page would check authentication on load. While this is clearly not best practice, it does not result in any data leaking. We decided that for the purposes of this project, it was a sufficient solution, specifically because this and the rest of authentication took an entire week to resolve.  
+
+We learned a great deal from this project. We found that aside from the technical pieces that we learned—of which there were many—we learned a lot about the web design process overall. We found that planning was essential to getting started and structuring out work, but that the development process was extremely dynamic. Some of our anticipated back end structure changed drastically throughout the process.  
+
+Another aspect that we learned along the way was the importance of testing. Throughout the first two milestones, we found that frequent, repeated testing was necessary. We found many instances where a bug did not crop up until the second or third repetition. Additionally, we found that having users beta-test the site was extremely helpful. We realized that, as the programmers, we had a different way of looking at the site—a blind spot. Having users test the application made it possible to find and examine those spots that we were missing. The individuals who helped us to test were responsible for finding many bugs, and they pointed out many additional features that could be explored in the future.  
+
+One thing that it may have been helpful to know going into the project was how much the application could change, and that the major changes what we needed to make were acceptable. It may also have been helpful to have a checklist of what was due for each milestone. The documents for the assignment were amazingly detailed and immensely helpful, and a checklist may have made things clearer. It would also have been helpful to receive a breakdown of the relative importance of each aspect of a given milestone.  
+
+We had a bumpy ride, but we put in a lot of time and effort, and we are proud of the outcome. It was difficult, but we both enjoyed it, and we are considering continuing to expand and improve upon it in the future!
