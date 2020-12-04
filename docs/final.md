@@ -222,7 +222,7 @@ The calendars which the user has subscriptions to fall into two different catego
 ---
 **Britney Bourassa** -- Personal Calendar creation, user interface, and implementation; front-end of login and sign up; Database set up and implementation; API functionality; Pre-made calendars; Debugging; documentation  
 **Meghan Arnold** -- Subscriptions creation, user interface, and implementation; Item creation; back-end of login authentication; Database set up; API functionality; Pre-made calendars; Debugging; Documentation  
-**Sara Whitlock** -- API stubs; API functionality; Fake data generation
+**Sara Whitlock** -- API stubs; API functionality; Fake data generation; Not available during Milestone 1, 3, and final submission
 
 ### Conclusion  
 ---
