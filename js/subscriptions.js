@@ -1,13 +1,10 @@
 
 /* eslint-disable linebreak-style */
 
-//THIS IS THE COPY THAT I AM REFACTORING. IT IS ON MY FORK. IF IT IS IN MAIN, ERRORS HAVE BEEN MADE
-//unless I just forgot to remove this warning
-
-
 'use strict';
 //calls don't throw an error
 let currentItemId = 0;
+let newItemId = true;
 async function getSession(){
 	try{
 		let user = await fetch('/user');
@@ -25,6 +22,7 @@ async function getSession(){
 
 window.addEventListener('load', getSession());
 window.localStorage.clear();
+let sendChanges = true;
 
 function loadAll(userId){
 	document.getElementById('logoutBtn').addEventListener('click', ()=>{
@@ -276,10 +274,13 @@ function loadSettingListeners(user_id){
 		saveChangesBtn.innerHTML = 'Save Changes';
 		saveChangesBtn.addEventListener('click', () => {
 			if(sent){
+                console.log('hit');
 				return;
 			} else {
-				sendItemChanges(null, user_id);
-				sent = true;
+                //currentItemId = null;
+                newItemId = true;
+                sendItemChanges(null, user_id);
+                sent = true;
 			}
 		} );
 
@@ -521,7 +522,7 @@ async function loadCalendars(user_id){
  * @param {Int} user_id User to reference
  */
 async function loadTable(calId, rebuild, user_id) {
-
+    console.log('hit load table');
 	//fetch specific calendar's data
 	const response = await fetch('/api/cals/'+calId+'/');
 	let calData = await response.json();
@@ -670,10 +671,12 @@ async function loadTable(calId, rebuild, user_id) {
 
 		});
 	} else if (rebuild === false) {
+        console.log('hit rebuild as false');
 		//if you only need to add one item to the table?
 		let newItem = calItems[0];
 		for(let i = 0; i < calItems.length; i++) {
 			if(calItems[i].id > newItem.id) {
+                console.log('hit new item id');
 				newItem = calItems[i];
 			}
 		}
@@ -888,7 +891,8 @@ async function fillModalInfo(item, parentCalendar, userId) {
 		itemEndTime.value = currentItem.end_time.slice(0, 16);
 	}
 	let itemLinks = document.getElementById('itemLinks');
-	itemLinks.value = currentItem.related_links;
+    itemLinks.value = currentItem.related_links;
+    console.log('itemLinks.value', itemLinks.value);
 
 	let saveChangesBtn = document.getElementById('saveChanges');
 	saveChangesBtn.innerHTML = 'Save Changes';
@@ -896,8 +900,10 @@ async function fillModalInfo(item, parentCalendar, userId) {
 		if(sent){
 			return;
 		}else {
-			sendItemChanges(thisItemId, userId);
-		}} );
+            sendItemChanges(thisItemId, userId);
+            sent = true;
+        }} );
+    //currentItemId = null;
 }
 
 /**
@@ -960,6 +966,7 @@ function checkRequiredFieldsForEdit() {
  * @param {int} userId
  */
 async function sendItemChanges(itemId, userId) {
+    //console.log('send changes');
 	document.getElementById('saveChanges').setAttribute('data-dismiss', 'modal');
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 	let updatedItem = {name: null, itemType: null, startTime: null, endTime: null, description: null, itemStatus: null, calendarId: cal_id, related_links: null};
@@ -983,13 +990,14 @@ async function sendItemChanges(itemId, userId) {
 		updatedItem.startTime = new Date(document.getElementById('startTime').value);
 		updatedItem.endTime = new Date(document.getElementById('endTime').value);
 	}
-	updatedItem.related_links = document.getElementById('itemLinks').value;
+    updatedItem.related_links = document.getElementById('itemLinks').value;
+    console.log('the related links are', updatedItem.related_links);
 	// console.log(itemId);
 	if(itemId === currentItemId) { //if you should be updating an item
 		updatedItem.itemId = itemId;
 		// the edit endpoint uses different req keys than the create one
 		let updateItemRedo = {id: itemId, name: updatedItem['name'], start: updatedItem['startTime'], type: updatedItem['itemType'], end:updatedItem['endTime'], description:updatedItem['description'],
-			status: updatedItem['itemStatus'], cal: cal_id, related_links:updatedItem['relatedLinks'] };
+			status: updatedItem['itemStatus'], cal: cal_id, related_links: updatedItem['related_links'] };
 
 		await fetch('/api/items/'+cal_id+'/'+itemId, {
 			method: 'PUT',
@@ -998,11 +1006,13 @@ async function sendItemChanges(itemId, userId) {
 			},
 			body: JSON.stringify(updateItemRedo)
 		});
-		itemId = null;
-		loadTable(cal_id, true, userId);
+        itemId = null;
+        currentItemId = 0;
+        loadTable(cal_id, true, userId);
+        
 	}
 
-	else if(itemId == null){ //new item, post
+	else if(itemId === null && newItemId === true){ //new item, post
 		await fetch('/api/items/'+cal_id, {
 			method: 'POST',
 			headers: {
@@ -1010,7 +1020,8 @@ async function sendItemChanges(itemId, userId) {
 			},
 			body: JSON.stringify(updatedItem)
 		});
-		// new row, don't rebuild table
+        // new row, don't rebuild table
+        newItemId = false;
 		loadTable(cal_id, false, userId);
 	}
 }
