@@ -35,10 +35,10 @@ async function loadPersonalCalendar(user_id) {
 	let calendarData = await response.json();
 	for(let i = 0; i < calendarData.length; i++) {
 		if(calendarData[i].owner_id === user_id && calendarData[i].personal === 1) {
-            personalCalId = calendarData[i].id;
+			personalCalId = calendarData[i].id;
 		}
-    }
-    setUpCalendar(currentMonth, currentYear);
+	}
+	setUpCalendar(currentMonth, currentYear);
 }
 
 /*
@@ -78,8 +78,8 @@ function setAllForPage(user_id) {
 	for (let item of calSelections) {
 		item.addEventListener('change', updateCalendar);
 	}
-    dueDateInput.addEventListener('change', setUpdateForm);
-    dueDateInput.addEventListener('change', checkRequiredFields);
+	dueDateInput.addEventListener('change', setUpdateForm);
+	dueDateInput.addEventListener('change', checkRequiredFields);
 	addToDoItem.addEventListener('click', () => setNewToDo(user_id));
 
 	saveItemChanges.addEventListener('click', () => updateItemChanges(tempId));
@@ -102,15 +102,15 @@ function setAllForPage(user_id) {
 
 	confirmDeletionBtn.addEventListener('click', () => deleteItem(tempId));
 
-    loadPersonalCalendar(user_id);
-    setTimeout(function () {
-        setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
-	    setUpCalendarSelection();
-        setUpdateForm();
-	    searchForCalendarItems();
-	    populateToDoList(user_id);
-        window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth+1, 'year': currentYear}));
-    }, 1000);
+	loadPersonalCalendar(user_id);
+	setTimeout(function () {
+		setUpDayCard(currentDay.getDate(), currentMonth+1, currentYear);
+		setUpCalendarSelection();
+		setUpdateForm();
+		searchForCalendarItems();
+		populateToDoList(user_id);
+		window.localStorage.setItem('dayCardInfo', JSON.stringify({'day': currentDay.getDate(), 'month': currentMonth+1, 'year': currentYear}));
+	}, 1000);
 
 }
 
@@ -597,7 +597,7 @@ updates items accordingly based on their changes
 */
 async function updateItemChanges(itemId) {
 	document.getElementById('saveItemChanges').setAttribute('data-dismiss', 'modal');
-    let thisPersonalCalId = personalCalId;
+	let thisPersonalCalId = personalCalId;
 	let updatedItem = {name: null, type: null, start: null, end: null, description: null, status: null, calendar_id: thisPersonalCalId, related_links: null};
 	updatedItem.name = document.getElementById('itemName').value;
 	updatedItem.description = document.getElementById('itemDescription').value;
@@ -667,7 +667,7 @@ delete an item from personal calendar
 */
 async function deleteItem(itemId) {
 	document.getElementById('confirmDeletionBtn').setAttribute('data-dismiss', 'modal');
-    let thisPersonalCalId = personalCalId;
+	let thisPersonalCalId = personalCalId;
 	fetch('/api/items/'+thisPersonalCalId+'/'+itemId, {
 		method: 'DELETE',
 		headers: {
@@ -683,16 +683,16 @@ async function deleteItem(itemId) {
 searches for calendar items to assist in calendar monthly view creation
 */
 async function searchForCalendarItems() {
-    let thisPersonalCalId = personalCalId;
-    if(thisPersonalCalId !== null) {
-        const response = await fetch('/api/items/'+thisPersonalCalId);
-	    if(!response.ok) {
-		    console.log(response.error);
-		    return;
-	    }
-	    let itemData = await response.json();
-	    return itemData;
-    }
+	let thisPersonalCalId = personalCalId;
+	if(thisPersonalCalId !== null) {
+		const response = await fetch('/api/items/'+thisPersonalCalId);
+		if(!response.ok) {
+			console.log(response.error);
+			return;
+		}
+		let itemData = await response.json();
+		return itemData;
+	}
 }
 
 /*

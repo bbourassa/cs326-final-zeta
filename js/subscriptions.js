@@ -1,7 +1,15 @@
 'use strict';
-//calls don't throw an error
+
+window.addEventListener('load', getSession());
+window.localStorage.clear();
+
+// Some variables that are needed later to prevent items from dupicating
 let currentItemId = 0;
 let newItemId = true;
+/**
+ * This function retrrieves all of the session data for the current user
+ * If there is no user logged in, it will redirect to login
+ */
 async function getSession(){
 	try{
 		let user = await fetch('/user');
@@ -10,16 +18,17 @@ async function getSession(){
 		let id = await mID.json();
 		loadAll(id[0].id);
 	} catch (e){
-
 		window.location.replace('./index.html');
 	}
 
 }
 
 
-window.addEventListener('load', getSession());
-window.localStorage.clear();
-
+/**
+ * Function to run all of the loads. It will only be run if the
+ * session is confirmed
+ * @param {Integer} userId
+ */
 function loadAll(userId){
 	document.getElementById('logoutBtn').addEventListener('click', ()=>{
 		fetch('/logout');
@@ -29,7 +38,10 @@ function loadAll(userId){
 	setUpReqFields();
 }
 
-
+/**
+ * Function to add event listeners to the edit forms to make sure the required fields
+ * are filled
+ */
 function setUpReqFields(){
 	let itemInputEditElements = document.getElementById('editForm').getElementsByTagName('input');
 	document.getElementById('itemType').addEventListener('change', checkRequiredFieldsForEdit);

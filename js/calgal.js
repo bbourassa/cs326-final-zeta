@@ -25,8 +25,8 @@ document.getElementById('logoutBtn').addEventListener('click', ()=>{
 	fetch('/logout');
 });
 
-/*
-global helper variables
+/**
+ * global helper variables
 */
 let letterMap = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 0};
 let subscribeButton = document.getElementById('subscribeButton');
@@ -76,7 +76,7 @@ function checkLink() {
 }
 
 /*
-adds a new calendar you own and redirects to subscription 
+adds a new calendar you own and redirects to subscription
 */
 async function redirectOnCreation(user_id) {
 	let newCalName = document.getElementById('calendarName').value;
@@ -134,7 +134,7 @@ async function redirectOnSubscription(user_id) {
 				});
 			}
 			setTimeout(function(){window.location.replace('./subscriptions.html');}, 500);
-		} 
+		}
 	}
 }
 
