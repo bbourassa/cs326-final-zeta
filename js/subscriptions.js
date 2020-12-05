@@ -1,6 +1,3 @@
-
-/* eslint-disable linebreak-style */
-
 'use strict';
 //calls don't throw an error
 let currentItemId = 0;
@@ -22,7 +19,6 @@ async function getSession(){
 
 window.addEventListener('load', getSession());
 window.localStorage.clear();
-let sendChanges = true;
 
 function loadAll(userId){
 	document.getElementById('logoutBtn').addEventListener('click', ()=>{
@@ -99,7 +95,6 @@ function loadSettingListeners(user_id){
 					let thisPersonalItem = {name: addThisItem.name, itemType: addThisItem.item_type, startTime: addThisItem.start_time, endTime: addThisItem.end_time, description: addThisItem.description, itemStatus: addThisItem.item_status, relatedLinks: addThisItem.related_links, isParent: false, oldId: addThisItem.id};
 
 					addToPersonal(parseInt(personalCalId), thisPersonalItem);
-					//setTimeout(function(){addToPersonal(personalCalId, thisPersonalItem);}, 500);
 				}
 			}
 			//uncheck everything
@@ -274,13 +269,14 @@ function loadSettingListeners(user_id){
 		saveChangesBtn.innerHTML = 'Save Changes';
 		saveChangesBtn.addEventListener('click', () => {
 			if(sent){
-                console.log('hit');
 				return;
 			} else {
-                //currentItemId = null;
-                newItemId = true;
-                sendItemChanges(null, user_id);
-                sent = true;
+				//there is a new item to send
+				newItemId = true;
+				//send the changes
+				sendItemChanges(null, user_id);
+				//it has been sent, don't do it again
+				sent = true;
 			}
 		} );
 
@@ -441,6 +437,9 @@ function getCheckedItems(){
 	return checkedBoxes;
 }
 
+/**
+ * Clears the data out of the edit modal
+ */
 function clearModals(){
 	document.getElementById('modalBodyItemId').setAttribute('item-id', '');
 	let editFields = document.getElementsByClassName('modal-editable-area');
@@ -497,9 +496,6 @@ async function loadCalendars(user_id){
 	});
 	// If you have been redirected because you have a new subscription,
 	// it should redirect you to that events page
-	//this function assumes that the new subscription will be at the end
-	//of your list of subscriptions
-	//TODO do we still do this w/the local storage? I don't think so
 	if(window.localStorage.getItem('newSubscription')){
 		loadTable(subs.childNodes[subs.childElementCount].getAttribute('cal_id'), true, user_id);
 		window.localStorage.removeItem('newSubscription');
@@ -512,17 +508,12 @@ async function loadCalendars(user_id){
 }
 
 /**
- * Gets and renders all events and activities in a given calendar
- * @param {int} calId the id number for the calendar
- */
-/**
  * Retrieves and renders all items in a given calendar
  * @param {Int} calId of the calendar to render
  * @param {Boolean} rebuild whether cal should have changed, and needs to rebuild
  * @param {Int} user_id User to reference
  */
 async function loadTable(calId, rebuild, user_id) {
-    console.log('hit load table');
 	//fetch specific calendar's data
 	const response = await fetch('/api/cals/'+calId+'/');
 	let calData = await response.json();
@@ -573,6 +564,7 @@ async function loadTable(calId, rebuild, user_id) {
 
 	//load each item in this calendar
 	if(rebuild === true) {
+		//load the row for each item, fil it
 		calItems.forEach((item) => {
 			//the row will hold itmID
 			let anItem = document.createElement('tr');
@@ -606,7 +598,6 @@ async function loadTable(calId, rebuild, user_id) {
 			} else {
 				type.innerHTML = 'Event';
 			}
-			//type.innerHTML = item.item_type;
 			anItem.appendChild(type);
 
 			//creates status indicator
@@ -671,12 +662,10 @@ async function loadTable(calId, rebuild, user_id) {
 
 		});
 	} else if (rebuild === false) {
-        console.log('hit rebuild as false');
-		//if you only need to add one item to the table?
+		//if you only need to add one item to the table, get the id
 		let newItem = calItems[0];
 		for(let i = 0; i < calItems.length; i++) {
 			if(calItems[i].id > newItem.id) {
-                console.log('hit new item id');
 				newItem = calItems[i];
 			}
 		}
@@ -711,7 +700,6 @@ async function loadTable(calId, rebuild, user_id) {
 		} else {
 			type.innerHTML = 'Event';
 		}
-		//type.innerHTML = item.item_type;
 		anItem.appendChild(type);
 
 		//creates status indicator
@@ -735,7 +723,6 @@ async function loadTable(calId, rebuild, user_id) {
 		status.appendChild(prog);
 		anItem.appendChild(status);
 
-		//TODO replace w/ my detail modal
 		//creates detail
 		let info = document.createElement('td');
 		let infoBtn = document.createElement ('button');
@@ -837,6 +824,7 @@ function fillConfirmationModal(item){
 			changeList.appendChild(li);
 		}
 	}
+	//put all the details into the modal
 	document.getElementById('detailsBody').appendChild(changeList);
 
 }
@@ -852,6 +840,7 @@ async function fillModalInfo(item, parentCalendar, userId) {
 	currentItemId = item.id;
 	let thisItemId = item.id;
 
+	//collect all of the date from the item and fill the modal with it
 	const response = await fetch('/api/items/'+item.calendar_id+'/'+item.id);
 	if (!response.ok) {
 		console.log(response.error);
@@ -867,6 +856,7 @@ async function fillModalInfo(item, parentCalendar, userId) {
 	calendarName.setAttribute('placeholder', parentCalendar);
 	let itemDescription = document.getElementById('itemDescription');
 	itemDescription.value = currentItem.description;
+	//set appropriate type; continue to detect if it changes
 	let itemType = document.getElementById('itemType');
 	itemType.addEventListener('change', () => setUpdateForm(item));
 	if(currentItem.item_type === 1) {
@@ -891,8 +881,7 @@ async function fillModalInfo(item, parentCalendar, userId) {
 		itemEndTime.value = currentItem.end_time.slice(0, 16);
 	}
 	let itemLinks = document.getElementById('itemLinks');
-    itemLinks.value = currentItem.related_links;
-    console.log('itemLinks.value', itemLinks.value);
+	itemLinks.value = currentItem.related_links;
 
 	let saveChangesBtn = document.getElementById('saveChanges');
 	saveChangesBtn.innerHTML = 'Save Changes';
@@ -900,10 +889,10 @@ async function fillModalInfo(item, parentCalendar, userId) {
 		if(sent){
 			return;
 		}else {
-            sendItemChanges(thisItemId, userId);
-            sent = true;
-        }} );
-    //currentItemId = null;
+			sendItemChanges(thisItemId, userId);
+			//the item has been sent; prevents it from running multiple times
+			sent = true;
+		}} );
 }
 
 /**
@@ -966,7 +955,6 @@ function checkRequiredFieldsForEdit() {
  * @param {int} userId
  */
 async function sendItemChanges(itemId, userId) {
-    //console.log('send changes');
 	document.getElementById('saveChanges').setAttribute('data-dismiss', 'modal');
 	const cal_id = parseInt(document.getElementById('cal-name').getAttribute('calID'));
 	let updatedItem = {name: null, itemType: null, startTime: null, endTime: null, description: null, itemStatus: null, calendarId: cal_id, related_links: null};
@@ -990,9 +978,7 @@ async function sendItemChanges(itemId, userId) {
 		updatedItem.startTime = new Date(document.getElementById('startTime').value);
 		updatedItem.endTime = new Date(document.getElementById('endTime').value);
 	}
-    updatedItem.related_links = document.getElementById('itemLinks').value;
-    console.log('the related links are', updatedItem.related_links);
-	// console.log(itemId);
+	updatedItem.related_links = document.getElementById('itemLinks').value;
 	if(itemId === currentItemId) { //if you should be updating an item
 		updatedItem.itemId = itemId;
 		// the edit endpoint uses different req keys than the create one
@@ -1006,10 +992,11 @@ async function sendItemChanges(itemId, userId) {
 			},
 			body: JSON.stringify(updateItemRedo)
 		});
-        itemId = null;
-        currentItemId = 0;
-        loadTable(cal_id, true, userId);
-        
+		//clear out the item id
+		itemId = null;
+		currentItemId = 0;
+		loadTable(cal_id, true, userId);
+
 	}
 
 	else if(itemId === null && newItemId === true){ //new item, post
@@ -1020,8 +1007,9 @@ async function sendItemChanges(itemId, userId) {
 			},
 			body: JSON.stringify(updatedItem)
 		});
-        // new row, don't rebuild table
-        newItemId = false;
+		// new row, don't rebuild table
+		//there is no longer a new item to post
+		newItemId = false;
 		loadTable(cal_id, false, userId);
 	}
 }

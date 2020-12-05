@@ -5,9 +5,8 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-//SECRET
-const dbconnection = require('./secrets.json');
-
+//S Local connection information
+//const dbconnection = require('./secrets.json');
 // const username= dbconnection.username;
 // const password=dbconnection.password;
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
