@@ -1,6 +1,6 @@
-# Life On Track
+# Life On Track  
 
-*Link to application: https://life-on-track.herokuapp.com/
+*Link to application: https://life-on-track.herokuapp.com/*
 
 Our web application is called "Life On Track" and is a scheduling app geared towards teachers and students but has full capabilities to be used for daily planning purposes and everyday use. "Life on Track" allows you to create shareable "calendars" that allow you to create action items or events to share with yourself and others. It also provides you with your own personal calendar that you can customize to include the information that pertains the most to you.
 
