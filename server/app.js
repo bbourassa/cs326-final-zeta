@@ -1,13 +1,11 @@
-/* eslint-disable linebreak-style */
 'use strict';
 require('dotenv').config(); //loading environmen variables; should be as high as possible
 const express = require('express');
 const path = require('path');
 const app = express();
 
-//SECRET
-const dbconnection = require('./secrets.json');
-
+// Local connection information
+//const dbconnection = require('./secrets.json');
 // const username= dbconnection.username;
 // const password=dbconnection.password;
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -51,8 +49,7 @@ const LocalStrategy = require('passport-local').Strategy; // username/password s
 
 //session configuration
 const session = {
-    secret: process.env.SECRET,
-    // || dbconnection.secret,
+	secret: process.env.SECRET, // || dbconnection.secret,
 	resave:false,
 	saveUninitialized : false
 };
