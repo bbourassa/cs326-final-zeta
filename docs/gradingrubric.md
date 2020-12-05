@@ -1,6 +1,6 @@
 # Final Rubric
 
-### General										    ___ / 25 pts
+### General &emsp; &emsp; &emsp; &emsp; &emsp; ___ / 25 pts
 
 - Authentication
   - Successfully create a user through sign up
@@ -10,14 +10,14 @@
 - Routing
 - Linting/ code style
 
-### Subscription page									    ___ / 25 pts
+### Subscription Page &emsp; &emsp; &emsp; &emsp; &emsp; ___ / 25 pts
 - Successfully view calendars you are subscribed to
 - Successfully changes setting options between calendars you are the administrator or and ones you are not
 - Successfully creates and edits items
 - Edit/creation modal efficiently switches between the time fields for action items and events
 - Successfully pulls items onto the personal calendar
 
-### Personal Calendar									    ___ / 25 pts
+### Personal Calendar &emsp; &emsp; &emsp; &emsp; &emsp; ___ / 25 pts
 - Calendar view is successfully set to the current month and day
 - Calendar days with items are successfully set
 - The Day View successfully adds correct items when a day is clicked
@@ -27,28 +27,28 @@
 - To-dos can be unarchived on unchecking them
 - Archived to-dos are successfully removed after 24 hours
 
-### Calendar Gallery									    ___ / 20 pts
+### Calendar Gallery &emsp; &emsp; &emsp; &emsp; &emsp; ___ / 20 pts
 - Pre-made calendars are subscribable
 - Can successfully create a calendar
 - Can successfully subscribe to a pre-made calendar
 - Can successfully subscribe to another user’s calendar
 
-### CRUD											      ___ / 5 pts									
-- Create: 1 pt
+### CRUD &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp;  ___ / 5 pts									
+- Create: **1 pt**
   - Users
   - Calendars
   - Items
   - Subscriptions
-- Read: 1pt
+- Read: **1 pt**
   - View personal calendar
   - View subscribed calendars
   - View items in calendars
-- Update: 1pt
+- Update: **1 pt**
   - Edit items on calendars you are the administrator for.
   - Edit items on your personal calendar.
-- Delete: 1pt
+- Delete: **1 pt**
   - Delete a calendar you are the administrator of.
   - Delete an item from a calendar you are the administrator of.
   - Delete an item from your personal calendar.
 
-### __ / 100 points
+### &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; Total:  ___ / 100 points
