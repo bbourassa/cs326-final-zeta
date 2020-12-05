@@ -612,11 +612,11 @@ async function updateItemChanges(itemId) {
 		} else if (itemStatus.value === 'Completed') {
 			updatedItem.status = 3;
 		}
-		updatedItem.start = document.getElementById('itemDueDate').value;
+		updatedItem.start = new Date(document.getElementById('itemDueDate').value);
 	} else {
 		updatedItem.type = 2;
-		updatedItem.start = document.getElementById('startTime').value;
-		updatedItem.end = document.getElementById('endTime').value;
+		updatedItem.start = new Date(document.getElementById('startTime').value);
+		updatedItem.end = new Date(document.getElementById('endTime').value);
 	}
 	updatedItem.related_links = document.getElementById('itemLinks').value;
 	fetch('/api/items/'+thisPersonalCalId+'/'+itemId, {
